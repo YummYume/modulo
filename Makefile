@@ -33,12 +33,12 @@ down:
 	$(COMPOSE) down -v --rmi 'all'
 
 db:
-	$(EXECAPI) bin/console doctrine:database:create --if-not-exists
-	$(EXECAPI) bin/console doctrine:schema:update --force
-	$(EXECAPI) bin/console doctrine:fixtures:load --append
+	$(EXECAPI) php bin/console doctrine:database:create --if-not-exists
+	$(EXECAPI) php bin/console doctrine:schema:update --force
+	$(EXECAPI) php bin/console doctrine:fixtures:load --append
 
 db-drop:
-	$(EXECAPI) bin/console doctrine:database:drop --if-exists --force
+	$(EXECAPI) php bin/console doctrine:database:drop --if-exists --force
 	make db
 
 perm:
