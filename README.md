@@ -6,11 +6,11 @@ The Modulo project.
 - Copy the `.env` file in the root folder and name it `.env.local`, override any needed variable (**!!if you change the db username and/or password, you also need to change the configuration for the mariadb connection in api/.env!!**)
 - Copy the `docker-compose-dev.yml.dist` in the root folder and name it `docker-compose-dev.yml`, override any needed configuration
 - Run `make start`
-- *Extra* : add `modulo.local 127.0.0.1` in your hosts file
+- *Extra* : add `127.0.0.1 modulo.local` in your hosts file
 - You can now access the different services of modulo (using `localhost` or `modulo.local`)
 
 ## Ports
-- <a href="https://modulo.local:8000" target="_blank">API</a> (Symfony) : **8000**
+- <a href="https://modulo.local" target="_blank">API</a> (Symfony) : **8000**
 - <a href="http://modulo.local:3000" target="_blank">App</a> (React) : **3000**
 - DB (default mariadb port) : **3306**
 - <a href="http://modulo.local:8080" target="_blank">phpmyadmin</a> : **8080**

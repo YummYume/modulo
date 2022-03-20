@@ -42,11 +42,12 @@ db-drop:
 	make db
 
 perm:
-ifeq ($(OS),Linux)
-	sudo chown -R www-data:$(USER)
-	sudo chmod -R g+rwx .
-else
+	$(EXECAPI) chmod +x bin/console
+ifeq ($(OS),Windows_NT)
 	$(EXECAPI) chown -R www-data:root var/
+else
+	sudo chown -R www-data:$(USER) .
+	sudo chmod -R g+rwx .
 endif
 
 ssh-api:
