@@ -1,0 +1,85 @@
+### root ###
+.env.local
+docker-compose-dev.yml
+
+### nginx ###
+nginx/logs/*
+
+### react ###
+/app/.DS_*
+/app/*.log
+/app/logs
+/app/**/*.backup.*
+/app/**/*.back.*
+
+/app/node_modules
+/app/bower_components
+
+/app/*.sublime*
+
+/app/psd
+/app/thumb
+/app/sketch
+
+### Symfony ###
+# Email spool folder
+/api/app/spool/*
+
+# var
+/api/var/*
+!/api/var/.gitkeep
+
+# Parameters
+/api/app/config/parameters.yml
+/api/app/config/parameters.ini
+
+# Managed by Composer
+/api/app/bootstrap.php.cache
+/api/var/bootstrap.php.cache
+/api/bin/*
+!/api/bin/console
+!/api/bin/symfony_requirements
+/api/vendor/
+
+# Assets and user uploads
+/api/web/bundles/
+/api/web/uploads/
+
+# PHPUnit
+/api/app/phpunit.xml
+/api/phpunit.xml
+
+# Build data
+/api/build/
+
+# Composer PHAR
+/api/composer.phar
+
+# Backup entities generated with doctrine:generate:entities command
+**/api/Entity/*~
+
+# Embedded web-server pid file
+/api/.web-server-pid
+
+### Symfony Patch ###
+/api/web/css/
+/api/web/js/
+
+### VisualStudioCode ###
+.vscode
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide

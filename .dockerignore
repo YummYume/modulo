@@ -1,0 +1,6 @@
+*.md
+*.DS_STORE
+*.git
+*.github
+app/node_modules
+api/vendor
