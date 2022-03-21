@@ -22,8 +22,6 @@ services:
     stdin_open: true
     environment:
       - CI=true
-      - CHOKIDAR_USEPOLLING=true
-      - FAST_REFRESH=false
       - NODE_ENV=development
     ports:
       - "3000:3000"
