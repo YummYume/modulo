@@ -5,22 +5,6 @@ docker-compose-dev.yml
 ### nginx ###
 nginx/logs/*
 
-### react ###
-/app/.DS_*
-/app/*.log
-/app/logs
-/app/**/*.backup.*
-/app/**/*.back.*
-
-/app/node_modules
-/app/bower_components
-
-/app/*.sublime*
-
-/app/psd
-/app/thumb
-/app/sketch
-
 ### Symfony ###
 # Email spool folder
 /api/app/spool/*
