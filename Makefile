@@ -9,6 +9,7 @@ start:
 	make up
 	make perm
 	make db-drop
+	make sync-dependencies
 	@echo Ready!
 
 up:
@@ -77,3 +78,9 @@ else
 	break>nginx/logs/error.log
 	break>nginx/logs/access.log
 endif
+
+sync-dependencies:
+	@echo Syncing dependencies...
+	$(DOCKER) cp modulo-api:/app/api/vendor ./api/vendor
+	$(DOCKER) cp modulo-app:/usr/src/app/node_modules ./app/node_modules
+	@echo Dependencies synced!

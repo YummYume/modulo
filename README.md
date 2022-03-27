@@ -10,14 +10,14 @@ The Modulo project.
 - You can now access the different services of modulo (using `localhost` or `modulo.local`)
 
 ## Ports
-- <a href="https://modulo.local" target="_blank">API</a> (Symfony) : **8000**
+- <a href="https://modulo.local" target="_blank">API</a> (Symfony) : **80** (http, redirects to 443) and **443** (https)
 - <a href="http://modulo.local:3000" target="_blank">App</a> (React) : **3000**
 - DB (default mariadb port) : **3306**
 - <a href="http://modulo.local:8080" target="_blank">phpmyadmin</a> : **8080**
 - <a href="http://modulo.local:1080" target="_blank">Mailcatcher</a> : **1080**
 
 ## Commands
-- `make start` : executes `make rm`, `make up`, `make perm` and `make db-drop`, in this exact order
+- `make start` : executes `make rm`, `make up`, `make perm`, `make db-drop` and `make sync-dependencies`, in this exact order
 - `make up` : kills every running container and rebuilds + run them
 - `make up-db` : executes `make up` and `make db`, in this exact order
 - `make stop` : stops and kills every running container
@@ -33,9 +33,14 @@ The Modulo project.
 - `make yarn` : runs `yarn install` for the app container
 - `make cc` : clears cache for the api container
 - `make cl` : clears the nginx logs (the nginx container must be STOPPED to run this command)
+- `make sync-dependencies` : copies the `vendor` and `node_modules` folders to the host
+
+## Install a new dependency
+**This is important** : To install a `yarn` or `composer` package, `ssh` into the container (`make ssh-app` or `make ssh-api`) and install it there, then run `make sync-dependencies`
 
 ## Extra
 - **Nginx** logs are available in **nginx/logs**
 - Use **make** commands for **Windows** :
   - Install GnuWin32 <a href="https://altushost-swe.dl.sourceforge.net/project/gnuwin32/make/3.81/make-3.81.exe" target="_blank">here</a>
   - Add the make.exe (**GnuWin32/bin**) to your *PATH*
+- If a command does not work, use `make perm` and make sure you are running your cmd as an administrator
