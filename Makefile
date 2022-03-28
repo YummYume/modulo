@@ -34,13 +34,18 @@ down:
 	$(COMPOSE) down -v --rmi 'all'
 
 db:
+	make db-wait
 	$(EXECAPI) php bin/console doctrine:database:create --if-not-exists
 	$(EXECAPI) php bin/console doctrine:schema:update --force
 	$(EXECAPI) php bin/console doctrine:fixtures:load --append
 
 db-drop:
+	make db-wait
 	$(EXECAPI) php bin/console doctrine:database:drop --if-exists --force
 	make db
+
+db-wait:
+	$(EXECAPI) php -r "set_time_limit(60);for(;;){if(@fsockopen(\"db\",3306)){break;}echo \"Waiting for DB to be ready...\n\";sleep(1);}"
 
 perm:
 	$(EXECAPI) chmod +x bin/console
