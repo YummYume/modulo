@@ -31,9 +31,13 @@ The Modulo project.
 - `make ssh-nginx` : `bash` in the nginx container
 - `make composer` : runs `composer install` for the api container
 - `make yarn` : runs `yarn install` for the app container
+- `make composer-sync` : runs `make composer` and `make sync-dependencies-api`, in this exact order
+- `make yarn-sync` : runs `make yarn` and `make sync-dependencies-app`, in this exact order
 - `make cc` : clears cache for the api container
 - `make cl` : clears the nginx logs (the nginx container must be STOPPED to run this command)
-- `make sync-dependencies` : copies the `vendor` and `node_modules` folders to the host
+- `make sync-dependencies-api` : syncs the `vendor` api folder with the host
+- `make sync-dependencies-app` : syncs the `node_modules` app folder with the host
+- `make sync-dependencies` : runs `make sync-dependencies-api` and `make sync-dependencies-app`, in this exact order
 
 ## Install a new dependency
 **This is important** : To install a `yarn` or `composer` package, `ssh` into the container (`make ssh-app` or `make ssh-api`) and install it there, then run `make sync-dependencies`

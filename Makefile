@@ -71,21 +71,48 @@ composer:
 yarn:
 	$(EXECAPP) yarn install
 
+composer-sync: composer sync-dependencies-api
+
+yarn-sync: yarn sync-dependencies-app
+
 cc:
 	$(EXECAPI) bin/console c:cl --no-warmup
 	$(EXECAPI) bin/console c:warmup
 
 cl:
-ifeq ($(OS),Linux)
-	truncate -s 0 nginx/logs/error.log
-	truncate -s 0 nginx/logs/access.log
-else
+ifeq ($(OS),Windows_NT)
 	break>nginx/logs/error.log
 	break>nginx/logs/access.log
+else
+	truncate -s 0 nginx/logs/error.log
+	truncate -s 0 nginx/logs/access.log
 endif
+	@echo Nginx logs cleared
+
+sync-dependencies-api:
+	@echo Syncing Api dependencies...
+ifeq ($(OS),Windows_NT)
+	if exist api\vendor rmdir api\vendor /S /Q
+else
+	rm -f api\vendor
+endif
+	mkdir api\vendor
+	$(DOCKER) cp modulo-api:/app/api/vendor ./api/
+	@echo Dependencies synced!
+
+sync-dependencies-app:
+	@echo Syncing App dependencies...
+ifeq ($(OS),Windows_NT)
+	if exist app\node_modules rmdir app\node_modules /S /Q
+else
+	rm -f app\node_modules
+endif
+	mkdir app\node_modules
+	$(DOCKER) cp modulo-app:/usr/src/app/node_modules ./app/
+	@echo Dependencies synced!
 
 sync-dependencies:
 	@echo Syncing dependencies...
-	$(DOCKER) cp modulo-api:/app/api/vendor ./api/vendor
-	$(DOCKER) cp modulo-app:/usr/src/app/node_modules ./app/node_modules
+	make sync-dependencies-api
+	make sync-dependencies-app
 	@echo Dependencies synced!
