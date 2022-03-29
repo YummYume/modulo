@@ -1,6 +1,0 @@
-.env.local
-bin/*
-!bin/console
-public/bundles
-var/
-vendor/
