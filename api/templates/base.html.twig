@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale }}">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
@@ -13,7 +13,22 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="{% block bodyClass %}{% endblock %}">
+        {% block body %}
+            {% block flashMessages %}
+                {% set allMessages = app.session.flashBag.all %}
+                {% if allMessages|length > 0 %}
+                    <div class="flash-messages">
+                        {% for type, messages in allMessages %}
+                            <ul class="messages messages--{{ type }}">
+                                {% for message in messages %}
+                                    <li class="message">{{ message|trans }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endblock %}
+        {% endblock %}
     </body>
 </html>

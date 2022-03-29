@@ -11,3 +11,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN mkdir -p var/cache/prod var/cache/dev var/cache/test var/log \
    && chown -R www-data:www-data var/ \
    && chmod -R ug+rwX var/
+
+COPY ./api/package.json ./api/yarn.lock ./
+
+RUN apk update && apk add -u yarn
+RUN yarn install
+
+CMD [ "yarn", "dev" ]

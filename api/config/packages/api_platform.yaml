@@ -1,92 +1,11 @@
 api_platform:
-    title: 'Modulo API'
-    description: 'API for the Modulo project.'
-    version: 1.0.0
-    show_webby: true #Much needed :)
-    enable_swagger: true
-    enable_swagger_ui: true
-    enable_re_doc: true
-    enable_entrypoint: true
-    enable_docs: true
-    enable_profiler: true
-    enable_fos_user: false
-    allow_plain_identifiers: false
-    asset_package: null
-
-    defaults:
-        pagination_enabled: true
-        pagination_client_enabled: false
-        pagination_client_items_per_page: false
-        pagination_client_partial: false
-        pagination_items_per_page: 30
-        pagination_maximum_items_per_page: ~
-        pagination_partial: false
-
-        cache_headers:
-            etag: true
-            max_age: 0
-            shared_max_age: 3600
-            vary: ['Content-Type', 'Authorization', 'Origin']
-
-    collection:
-        exists_parameter_name: 'exists'
-        order_parameter_name: 'order'
-        order: 'ASC'
-
-        pagination:
-            page_parameter_name: 'page'
-            enabled_parameter_name: 'pagination'
-            items_per_page_parameter_name: 'itemsPerPage'
-            partial_parameter_name: 'partial'
-
-    validator:
-        serialize_payload_fields: []
-
-    elasticsearch:
-        enabled: false
-        hosts: []
-        mapping: []
-
-    eager_loading:
-        enabled: true
-        fetch_partial: false
-        max_joins: 30
-        force_eager: true
-
-    http_cache:
-        invalidation:
-            enabled: true
-            varnish_urls: ['%env(VARNISH_URL)%']
-
-        public: true
-
-    formats:
-        jsonld:
-            mime_types: ['application/ld+json']
-
-        json:
-            mime_types: ['application/json']
-
-        html:
-            mime_types: ['text/html']
-
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
-
     patch_formats:
         json: ['application/merge-patch+json']
-
     swagger:
         versions: [3]
-
-    mercure:
-        enabled: false
-
-    messenger:
-        enabled: false
-
-    exception_to_status:
-        Symfony\Component\Serializer\Exception\ExceptionInterface: 400
-        ApiPlatform\Core\Exception\InvalidArgumentException: !php/const Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
-        ApiPlatform\Core\Exception\FilterValidationException: 400
-        Doctrine\ORM\OptimisticLockException: 409
+        api_keys:
+            apiKey:
+                name: Authorization
+                type: header
