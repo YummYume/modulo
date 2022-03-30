@@ -16,5 +16,3 @@ COPY ./api/package.json ./api/yarn.lock ./
 
 RUN apk update && apk add -u yarn
 RUN yarn install
-
-CMD [ "yarn", "dev" ]

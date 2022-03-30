@@ -6,7 +6,6 @@ use App\Entity\Role;
 use App\Entity\Scope;
 use App\Entity\Structure;
 use App\Entity\User;
-use Faker;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use LogicException;
@@ -22,7 +21,7 @@ class UserFixture extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Faker\Factory::create('fr_FR');
+        $faker = \Faker\Factory::create('fr_FR');
         $file = fopen(sprintf('%s/resources/fixtures/users-fixture.csv', $this->projectDir), 'r');
         $index = 0;
         while ($row = fgetcsv($file, 1000)) {
@@ -35,7 +34,7 @@ class UserFixture extends Fixture
             $genre = $faker->boolean() ? 'H' : 'F';
             $firstName = $faker->firstName;
             $lastName = $faker->lastName;
-            $email = strtolower(sprintf('%s.%s@%s', $firstName, $lastName, $faker->safeEmailDomain));
+            $email = strtolower(sprintf('%s.%s@%s', $firstName, $lastName, $faker->unique(true)->safeEmailDomain));
             $user = new User($code, $email, $firstName, $lastName, $genre);
             $user->setPassword($this->passwordHasher->hashPassword(
                 $user,
