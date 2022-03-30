@@ -17,8 +17,8 @@ The Modulo project.
 - <a href="http://modulo.local:1080" target="_blank">Mailcatcher</a> : **1080**
 
 ## Commands
-- `make start` : executes `make rm`, `make up`, `make perm`, `make db-drop` and `make sync-dependencies`, in this exact order
-- `make up` : kills every running container and rebuilds + run them
+- `make start` : executes `make rm`, `make up`, `make db-drop`, `make yarn-api-compile` and `make sync-dependencies`, in this exact order
+- `make up` : kills every running container and rebuilds + run them, then executes `make perm` and `make composer`, in this exact order
 - `make up-db` : executes `make up` and `make db`, in this exact order
 - `make stop` : stops and kills every running container
 - `make rm` : remove stopped containers
@@ -29,18 +29,23 @@ The Modulo project.
 - `make ssh-api` : `sh` in the api container
 - `make ssh-app` : `sh` in the app container
 - `make ssh-nginx` : `bash` in the nginx container
-- `make composer` : runs `composer install` for the api container
+- `make composer` : runs `composer update` and `composer install` for the api container
 - `make yarn` : runs `yarn install` for the app container
+- `make yarn-api` : runs `yarn install` for the api container
+- `make yarn-api-compile` : runs `yarn dev` for the api container
+- `make yarn-api-watch` : runs `yarn watch` for the api container
 - `make composer-sync` : runs `make composer` and `make sync-dependencies-api`, in this exact order
 - `make yarn-sync` : runs `make yarn` and `make sync-dependencies-app`, in this exact order
+- `make yarn-api-sync` : runs `make yarn-api` and `make sync-dependencies-yarn-app`, in this exact order
 - `make cc` : clears cache for the api container
 - `make cl` : clears the nginx logs (the nginx container must be STOPPED to run this command)
 - `make sync-dependencies-api` : syncs the `vendor` api folder with the host
 - `make sync-dependencies-app` : syncs the `node_modules` app folder with the host
-- `make sync-dependencies` : runs `make sync-dependencies-api` and `make sync-dependencies-app`, in this exact order
+- `make sync-dependencies-yarn-api` : syncs the `node_modules` api folder with the host
+- `make sync-dependencies` : runs `make sync-dependencies-api`, `make sync-dependencies-app` and `make sync-dependencies-yarn-api`, in this exact order
 
 ## Install a new dependency
-**This is important** : To install a `yarn` or `composer` package, `ssh` into the container (`make ssh-app` or `make ssh-api`) and install it there, then run `make sync-dependencies`
+**This is important** : To install a `yarn` or `composer` package, `ssh` into the container (`make ssh-app` or `make ssh-api`) and install it there, then run `make sync-dependencies` (or any `sync-dependencies` command to sync only the required container)
 
 ## The API Submodule
 **If you didn't clone with the `--recurse-submodules` option :**

@@ -2,5 +2,9 @@
 *.DS_STORE
 *.git
 *.github
-app/node_modules
-api/vendor
+app/.next/
+app/node_modules/
+api/vendor/
+api/public/bundles/
+api/var/
+api/bundles/

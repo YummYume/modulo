@@ -7,8 +7,8 @@ EXECNGINX=$(COMPOSE) exec nginx
 start:
 	make rm
 	make up
-	make perm
 	make db-drop
+	make yarn-api-compile
 	make sync-dependencies
 	@echo Ready!
 
@@ -16,6 +16,7 @@ up:
 	$(COMPOSE) kill
 	$(COMPOSE) build --force-rm
 	$(COMPOSE) up -d
+	make perm
 	make composer
 
 up-db:
@@ -66,14 +67,26 @@ ssh-nginx:
 	$(EXECNGINX) bash
 
 composer:
+	$(EXECAPI) composer update
 	$(EXECAPI) composer install
 
 yarn:
 	$(EXECAPP) yarn install
 
+yarn-api:
+	$(EXECAPI) yarn install
+
+yarn-api-compile:
+	$(EXECAPI) yarn dev
+
+yarn-api-watch:
+	$(EXECAPI) yarn watch
+
 composer-sync: composer sync-dependencies-api
 
 yarn-sync: yarn sync-dependencies-app
+
+yarn-api-sync: yarn-api sync-dependencies-yarn-api
 
 cc:
 	$(EXECAPI) bin/console c:cl --no-warmup
@@ -91,28 +104,40 @@ endif
 
 sync-dependencies-api:
 	@echo Syncing Api dependencies...
-ifeq ($(OS),Windows_NT)
+ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
 	if exist api\vendor rmdir api\vendor /S /Q
 else
-	rm -f api\vendor
+	rm -rf api\vendor
 endif
 	mkdir api\vendor
 	$(DOCKER) cp modulo-api:/app/api/vendor ./api/
-	@echo Dependencies synced!
+	@echo Api dependencies synced!
 
 sync-dependencies-app:
 	@echo Syncing App dependencies...
-ifeq ($(OS),Windows_NT)
+ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
 	if exist app\node_modules rmdir app\node_modules /S /Q
 else
-	rm -f app\node_modules
+	rm -rf app\node_modules
 endif
 	mkdir app\node_modules
 	$(DOCKER) cp modulo-app:/usr/src/app/node_modules ./app/
-	@echo Dependencies synced!
+	@echo App dependencies synced!
+
+sync-dependencies-yarn-api:
+	@echo Syncing Api yarn dependencies...
+ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
+	if exist api\node_modules rmdir api\node_modules /S /Q
+else
+	rm -rf api\node_modules
+endif
+	mkdir api\node_modules
+	$(DOCKER) cp modulo-api:/app/api/node_modules ./api/
+	@echo Api yarn dependencies synced!
 
 sync-dependencies:
 	@echo Syncing dependencies...
 	make sync-dependencies-api
 	make sync-dependencies-app
+	make sync-dependencies-yarn-api
 	@echo Dependencies synced!
