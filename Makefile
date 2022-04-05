@@ -16,8 +16,8 @@ up:
 	$(COMPOSE) kill
 	$(COMPOSE) build --force-rm
 	$(COMPOSE) up -d
-	make perm
 	make composer
+	make perm
 
 up-db:
 	make up
