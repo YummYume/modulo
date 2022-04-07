@@ -34,7 +34,7 @@ class UserFixture extends Fixture
             $genre = $faker->boolean() ? 'H' : 'F';
             $firstName = $faker->firstName;
             $lastName = $faker->lastName;
-            $email = strtolower(sprintf('%s.%s@%s', $firstName, $lastName, $faker->unique(true)->safeEmailDomain));
+            $email = strtolower(sprintf('%s.%s_%s@%s', $firstName, $lastName, $index, $faker->unique(true)->safeEmailDomain));
             $user = new User($code, $email, $firstName, $lastName, $genre);
             $user->setPassword($this->passwordHasher->hashPassword(
                 $user,
