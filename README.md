@@ -17,19 +17,20 @@ The Modulo project.
 - <a href="http://modulo.local:1080" target="_blank">Mailcatcher</a> : **1080**
 
 ## Commands
-- `make start` : executes `make rm`, `make up`, `make db-drop`, `make yarn-api-compile` and `make sync-dependencies`, in this exact order
-- `make up` : kills every running container and rebuilds + run them, then executes `make perm` and `make composer`, in this exact order
+- `make start` : executes `make rm`, `make up`, `make perm`, `make jwt-keypair`, `make db-drop`, `make yarn-api-compile` and `make sync-dependencies`, in this exact order
+- `make up` : kills every running container and rebuilds + run them, then executes `make perm`, `make composer` and `make jwt-keypair`, in this exact order
 - `make up-db` : executes `make up` and `make db`, in this exact order
 - `make stop` : stops and kills every running container
 - `make rm` : remove stopped containers
 - `make down` : stops and removes all containers, networks, volumes and images
 - `make db` : creates everything related to the database (including fixtures)
 - `make db-drop` : drops the current database and recreates it with `make db`
-- `make perm` : grant permissions to the api `var` folder
+- `make perm` : grants permissions for the api folders
 - `make ssh-api` : `sh` in the api container
 - `make ssh-app` : `sh` in the app container
 - `make ssh-nginx` : `bash` in the nginx container
 - `make composer` : runs `composer update` and `composer install` for the api container
+- `make jwt-keypair` : runs `php bin/console lexik:jwt:generate-keypair` in the api container to generate the jwt keys
 - `make yarn` : runs `yarn install` for the app container
 - `make yarn-api` : runs `yarn install` for the api container
 - `make yarn-api-compile` : runs `yarn dev` for the api container

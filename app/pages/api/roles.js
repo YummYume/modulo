@@ -1,7 +1,7 @@
-import axios from 'axios';
+import { axiosApiInstance } from './axios/api';
 
-export async function getRoles() {
-    // TODO - Replace with API url from the .env file
-    const response = await axios.get('https://modulo.local/api/roles');
+export const getRoles = async () => {
+    const response = await axiosApiInstance().get('/roles');
+
     return response.data;
 }

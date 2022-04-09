@@ -7,6 +7,7 @@ EXECNGINX=$(COMPOSE) exec nginx
 start:
 	make rm
 	make up
+	make perm
 	make db-drop
 	make yarn-api-compile
 	make sync-dependencies
@@ -16,8 +17,9 @@ up:
 	$(COMPOSE) kill
 	$(COMPOSE) build --force-rm
 	$(COMPOSE) up -d
-	make composer
 	make perm
+	make composer
+	make jwt-keypair
 
 up-db:
 	make up
@@ -51,7 +53,8 @@ db-wait:
 perm:
 	$(EXECAPI) chmod +x bin/console
 ifeq ($(OS),Windows_NT)
-	$(EXECAPI) chown -R www-data:root var/
+	$(EXECAPI) chown -R www-data:root .
+	$(EXECAPI) chown -R www-data:root public/
 else
 	sudo chown -R www-data:$(USER) .
 	sudo chmod -R g+rwx .
@@ -68,18 +71,23 @@ ssh-nginx:
 
 composer:
 	$(EXECAPI) composer update
-	$(EXECAPI) composer install
+	$(EXECAPI) composer install -n
+
+jwt-keypair:
+	$(EXECAPI) php bin/console lexik:jwt:generate-keypair --skip-if-exists
 
 yarn:
 	$(EXECAPP) yarn install
 
 yarn-api:
-	$(EXECAPI) yarn install
+	$(EXECAPI) yarn install --pure-lockfile
 
 yarn-api-compile:
+	$(EXECAPI) php bin/console assets:install --symlink
 	$(EXECAPI) yarn dev
 
 yarn-api-watch:
+	$(EXECAPI) php bin/console assets:install --symlink
 	$(EXECAPI) yarn watch
 
 composer-sync: composer sync-dependencies-api
