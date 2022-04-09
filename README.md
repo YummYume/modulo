@@ -11,7 +11,7 @@ The Modulo project.
 
 ## Ports
 - <a href="https://modulo.local" target="_blank">API</a> (Symfony) : **80** (http, redirects to 443) and **443** (https)
-- <a href="http://modulo.local:3000" target="_blank">App</a> (React) : **3000**
+- <a href="https://modulo.local:3000" target="_blank">App</a> (React) : **3000** (!!uses https for jwt!!)
 - DB (default mariadb port) : **3306**
 - <a href="http://modulo.local:8080" target="_blank">phpmyadmin</a> : **8080**
 - <a href="http://modulo.local:1080" target="_blank">Mailcatcher</a> : **1080**
