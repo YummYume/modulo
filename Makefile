@@ -70,7 +70,6 @@ ssh-nginx:
 	$(EXECNGINX) bash
 
 composer:
-	$(EXECAPI) composer update
 	$(EXECAPI) composer install -n
 
 jwt-keypair:
