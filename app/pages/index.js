@@ -36,7 +36,7 @@ export default function Home() {
                 <button type="submit" disabled={loginMutation.isLoading}>{loginMutation.isLoading ? 'Connexion...' : 'Se connecter' }</button>
             </form>
             {loginMutation.isError && (
-                <div>Erreur: {loginMutation.error.response.data.message ?? loginMutation.error.message}</div>
+                <div>Erreur: {loginMutation.error.response ? loginMutation.error.response.data.message : loginMutation.error.message}</div>
             )}
             {loginMutation.isSuccess && (
                 <div>

@@ -80,14 +80,16 @@ yarn:
 	$(EXECAPP) yarn install
 
 yarn-api:
-	$(EXECAPI) yarn install --pure-lockfile
+	$(EXECAPI) yarn install
 
 yarn-api-compile:
-	$(EXECAPI) php bin/console assets:install --symlink
+	make yarn-api
+	$(EXECAPI) php bin/console assets:install
 	$(EXECAPI) yarn dev
 
 yarn-api-watch:
-	$(EXECAPI) php bin/console assets:install --symlink
+	make yarn-api
+	$(EXECAPI) php bin/console assets:install
 	$(EXECAPI) yarn watch
 
 composer-sync: composer sync-dependencies-api
