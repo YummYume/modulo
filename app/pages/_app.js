@@ -1,18 +1,26 @@
-import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import React from "react";
+import { ThemeProvider } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
-import '../styles/globals.scss';
+import Layout from "../components/Layout";
+import theme from "../themes/appTheme";
 
-const queryClient = new QueryClient();
+import "../styles/globals.scss";
 
-function MyApp({ Component, pageProps }) {
+function App({ Component, pageProps }) {
+    const queryClient = new QueryClient();
+
     return (
-        <QueryClientProvider client={queryClient}>
-            <Component {...pageProps} />
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-    )
+        <ThemeProvider theme={theme}>
+            <QueryClientProvider client={queryClient}>
+                <Layout>
+                    <Component {...pageProps} />
+                </Layout>
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+        </ThemeProvider>
+    );
 }
 
-export default MyApp
+export default App;

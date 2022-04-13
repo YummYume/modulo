@@ -1,13 +1,15 @@
-import React from 'react';
-import Link from 'next/link';
-import { useMutation } from 'react-query';
+import React from "react";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import LoadingButton from "@mui/lab/LoadingButton";
+import LoginIcon from "@mui/icons-material/Login";
+import { useMutation } from "react-query";
 
-import { login } from './api/login';
-
-import styles from '../styles/Home.module.scss';
+import { login } from "../api/login";
+import AppAlert from "../components/AppAlert";
 
 export default function Home() {
-    const loginMutation = useMutation(credentials => login(credentials.uuid, credentials.password));
+    const loginMutation = useMutation((credentials) => login(credentials.uuid, credentials.password));
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -15,37 +17,54 @@ export default function Home() {
         const form = event.target;
         const formData = new FormData(form);
 
-        const uuid = formData.get('uuid');
-        const password = formData.get('password');
+        const uuid = formData.get("uuid");
+        const password = formData.get("password");
 
         loginMutation.mutate({ uuid, password });
-    }
+    };
 
     return (
-        <div className={styles.container}>
-            <h1>Login</h1>
+        <React.Fragment>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="uuid">UUID : </label>
-                    <input type="text" name="uuid" />
-                </div>
-                <div>
-                    <label htmlFor="password">Mot de passe : </label>
-                    <input type="password" name="password" />
-                </div>
-                <button type="submit" disabled={loginMutation.isLoading}>{loginMutation.isLoading ? 'Connexion...' : 'Se connecter' }</button>
+                <Box
+                    sx={{
+                        width: 400,
+                        height: 300,
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        position: "absolute",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                        borderRadius: "4px",
+                        boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.25)",
+                        padding: "1rem",
+                        justifyContent: "space-between"
+                    }}
+                >
+                    <h1>Connexion</h1>
+                    <TextField id="uuid" name="uuid" label="N° d'adhérent" variant="outlined" fullWidth />
+                    <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
+                    <LoadingButton loading={loginMutation.isLoading} type="submit" loadingPosition="end" variant="contained" endIcon={<LoginIcon />}>
+                        Connexion
+                    </LoadingButton>
+                </Box>
             </form>
-            {loginMutation.isError && (
-                <div>Erreur: {loginMutation.error.response ? loginMutation.error.response.data.message : loginMutation.error.message}</div>
-            )}
-            {loginMutation.isSuccess && (
-                <div>
-                    <p>Succès! Vous devriez être connectés. :)</p>
-                    <Link href="/roles">
-                        <a>Cliquer ici pour voir les roles</a>
-                    </Link>
-                </div>
-            )}
-        </div>
-    )
+            <AppAlert message={"Succès! Vous devriez être connectés. :)"} severity={"success"} open={loginMutation.isSuccess} />
+            <AppAlert
+                message={
+                    loginMutation.error
+                        ? loginMutation.error.response
+                            ? loginMutation.error.response.data.message
+                            : loginMutation.error.message
+                        : "Une erreur inconnue est survenue."
+                }
+                severity={"error"}
+                open={loginMutation.isError}
+            />
+        </React.Fragment>
+    );
 }

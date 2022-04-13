@@ -1,5 +1,14 @@
 {
     "printWidth": 150,
     "tabWidth": 4,
-    "trailingComma": "none"
+    "trailingComma": "none",
+    "editor.formatOnSave": true,
+    "overrides": [
+        {
+            "files": ["*.css", "*.scss"],
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
 }
