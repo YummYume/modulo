@@ -2,7 +2,7 @@
 The Modulo project.
 
 ## How to install
-- Clone the project using `git clone --recurse-submodules https://github.com/YummYume/modulo.git`
+- Clone the project using `git clone --recurse-submodules git@github.com:YummYume/modulo.git`
 - Copy the `.env` file in the root folder and name it `.env.local`, override any needed variable (**!!if you change the db username and/or password, you also need to change the configuration for the mariadb connection in api/.env!!**)
 - Copy the `docker-compose-dev.yml.dist` in the root folder and name it `docker-compose-dev.yml`, override any needed configuration
 - Run `make start`

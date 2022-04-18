@@ -2,11 +2,13 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import { getRoles } from "../api/roles";
+import { useUser } from "../hooks/useUser";
 
 import styles from "../styles/Roles.module.scss";
 
 export default function Roles() {
-    const { isLoading, isError, data, error } = useQuery("roles", getRoles, { refetchInterval: 2000 });
+    const { data: user } = useUser();
+    const { isLoading, isError, data, error } = useQuery("roles", getRoles, { refetchInterval: 10000, enabled: (user && user.data) !== false });
 
     return (
         <div className={styles.container}>

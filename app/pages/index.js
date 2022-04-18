@@ -3,15 +3,24 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
+import { useRouter } from "next/router";
 
-import { login } from "../api/login";
+import { login } from "../api/user";
 import AppAlert from "../components/AppAlert";
 
 export default function Home() {
-    const loginMutation = useMutation((credentials) => login(credentials.uuid, credentials.password));
+    const router = useRouter();
+    const queryClient = useQueryClient();
+    const loginMutation = useMutation((credentials) => login(credentials.uuid, credentials.password), {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("user");
 
-    const handleSubmit = async (event) => {
+            router.push("/roles");
+        }
+    });
+
+    const handleSubmit = (event) => {
         event.preventDefault();
 
         const form = event.target;
@@ -53,14 +62,13 @@ export default function Home() {
                     </LoadingButton>
                 </Box>
             </form>
-            <AppAlert message={"Succès! Vous devriez être connectés. :)"} severity={"success"} open={loginMutation.isSuccess} />
             <AppAlert
                 message={
                     loginMutation.error
                         ? loginMutation.error.response
                             ? loginMutation.error.response.data.message
-                            : loginMutation.error.message
-                        : "Une erreur inconnue est survenue."
+                            : "Une erreur est survenue."
+                        : "Une erreur est survenue."
                 }
                 severity={"error"}
                 open={loginMutation.isError}
