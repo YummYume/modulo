@@ -2,11 +2,12 @@
 The Modulo project.
 
 ## How to install
-- Clone the project using `git clone --recurse-submodules https://github.com/YummYume/modulo.git`
+- Clone the project using `git clone --recurse-submodules git@github.com:YummYume/modulo.git`
 - Copy the `.env` file in the root folder and name it `.env.local`, override any needed variable (**!!if you change the db username and/or password, you also need to change the configuration for the mariadb connection in api/.env!!**)
 - Copy the `docker-compose-dev.yml.dist` in the root folder and name it `docker-compose-dev.yml`, override any needed configuration
 - Run `make start`
 - *Extra* : add `127.0.0.1 modulo.local` in your hosts file
+- *Extra* : copy the `api/.php-cs-fixer.dist.php` file and rename it `.php-cs-fixer.php` and configure your IDE to use this file as PHP formatter
 - You can now access the different services of modulo (using `localhost` or `modulo.local`)
 
 ## Ports

@@ -41,6 +41,7 @@ db:
 	$(EXECAPI) php bin/console doctrine:database:create --if-not-exists
 	$(EXECAPI) php bin/console doctrine:schema:update --force
 	$(EXECAPI) php bin/console doctrine:fixtures:load --append
+	$(EXECAPI) php bin/console doctrine:migrations:migrate --no-interaction
 
 db-drop:
 	make db-wait
