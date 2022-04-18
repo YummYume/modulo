@@ -7,6 +7,7 @@ The Modulo project.
 - Copy the `docker-compose-dev.yml.dist` in the root folder and name it `docker-compose-dev.yml`, override any needed configuration
 - Run `make start`
 - *Extra* : add `127.0.0.1 modulo.local` in your hosts file
+- *Extra* : copy the `api/.php-cs-fixer.dist.php` file and rename it `.php-cs-fixer.php` and configure your IDE to use this file as PHP formatter
 - You can now access the different services of modulo (using `localhost` or `modulo.local`)
 
 ## Ports
