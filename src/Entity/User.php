@@ -2,16 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[UniqueEntity(fields: ['uuid'], message: 'There is already an account with this uuid')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[ApiResource(
+    normalizationContext: ['groups' => ['get']]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -20,24 +25,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 96, unique: true)]
+    #[Groups(['get'])]
     private string $uuid;
 
     #[ORM\Column(type: 'string', length: 200, unique: true)]
+    #[Groups(['get'])]
     private string $email;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(['get'])]
     private array $roles = [];
 
     #[ORM\Column(type: 'string')]
     private string $password;
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['get'])]
     private string $firstName;
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['get'])]
     private string $lastName;
 
     #[ORM\Column(type: 'string', length: 1)]
+    #[Groups(['get'])]
     private string $genre;
 
     public function __construct(string $uuid, string $email, string $firstName, string $lastName, string $genre)
@@ -151,12 +162,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Groups(['get'])]
     public function getFullName(): string
     {
         return trim(sprintf('%s %s', $this->getFirstName(), $this->getLastName()));
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
+    }
+
+    public function getApiFields(): array
+    {
+        return [
+            'uuid' => $this->uuid,
+            'email' => $this->email,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'fullName' => $this->getFullName(),
+            'gender' => $this->genre,
+            'roles' => $this->getRoles(),
+        ];
     }
 }
