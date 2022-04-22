@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Traits\BlameableTrait;
+use App\Entity\Traits\TimestampableTrait;
 use App\Repository\AgeSectionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -12,6 +14,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ApiResource]
 class AgeSection
 {
+    use BlameableTrait;
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -25,13 +30,6 @@ class AgeSection
 
     #[ORM\Column(type: 'string', length: 50)]
     private string $color;
-
-    public function __construct(string $name, string $code, string $color)
-    {
-        $this->name = $name;
-        $this->code = $code;
-        $this->color = $color;
-    }
 
     public function getId(): ?int
     {

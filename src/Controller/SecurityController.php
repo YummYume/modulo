@@ -10,6 +10,7 @@ class SecurityController extends AbstractController
 {
     /**
      * @Route("/logout", name="logout", methods={"GET"})
+     *
      * @throws Exception
      */
     public function logout(): void
