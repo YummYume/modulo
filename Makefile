@@ -41,12 +41,14 @@ db:
 	$(EXECAPI) php bin/console doctrine:database:create --if-not-exists
 	$(EXECAPI) php bin/console doctrine:schema:update --force
 	$(EXECAPI) php bin/console doctrine:fixtures:load --append
-	$(EXECAPI) php bin/console doctrine:migrations:migrate --no-interaction
 
 db-drop:
 	make db-wait
 	$(EXECAPI) php bin/console doctrine:database:drop --if-exists --force
 	make db
+
+db-migrate:
+	$(EXECAPI) php bin/console doctrine:migrations:migrate --no-interaction
 
 db-wait:
 	$(EXECAPI) php -r "set_time_limit(60);for(;;){if(@fsockopen(\"db\",3306)){break;}echo \"Waiting for DB to be ready...\n\";sleep(1);}"
@@ -71,6 +73,11 @@ ssh-nginx:
 	$(EXECNGINX) bash
 
 composer:
+ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
+	if exist api\public\bundles rmdir api\public\bundles /S /Q
+else
+	rm -rf api\public\bundles
+endif
 	$(EXECAPI) composer install -n
 
 jwt-keypair:
@@ -84,11 +91,21 @@ yarn-api:
 
 yarn-api-compile:
 	make yarn-api
+ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
+	if exist api\public\bundles rmdir api\public\bundles /S /Q
+else
+	rm -rf api\public\bundles
+endif
 	$(EXECAPI) php bin/console assets:install
 	$(EXECAPI) yarn dev
 
 yarn-api-watch:
 	make yarn-api
+ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
+	if exist api\public\bundles rmdir api\public\bundles /S /Q
+else
+	rm -rf api\public\bundles
+endif
 	$(EXECAPI) php bin/console assets:install
 	$(EXECAPI) yarn watch
 
@@ -111,6 +128,9 @@ else
 	truncate -s 0 nginx/logs/access.log
 endif
 	@echo Nginx logs cleared
+
+php-cs-fixer:
+	$(EXECAPI) vendor/bin/php-cs-fixer fix --allow-risky yes
 
 sync-dependencies-api:
 	@echo Syncing Api dependencies...
