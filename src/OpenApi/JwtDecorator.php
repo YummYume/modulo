@@ -19,15 +19,6 @@ final class JwtDecorator implements OpenApiFactoryInterface
         $openApi = ($this->decorated)($context);
         $schemas = $openApi->getComponents()->getSchemas();
 
-        $schemas['Token'] = new \ArrayObject([
-            'type' => 'object',
-            'properties' => [
-                'token' => [
-                    'type' => 'string',
-                    'readOnly' => true,
-                ],
-            ],
-        ]);
         $schemas['Credentials'] = new \ArrayObject([
             'type' => 'object',
             'properties' => [
@@ -41,27 +32,64 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 ],
             ],
         ]);
+        $schemas['InvalidCredentials'] = new \ArrayObject([
+            'type' => 'object',
+            'properties' => [
+                'message' => [
+                    'type' => 'string',
+                    'example' => 'Identifiants invalides.',
+                ],
+            ],
+        ]);
+        $schemas['MissingRefreshToken'] = new \ArrayObject([
+            'type' => 'object',
+            'properties' => [
+                'message' => [
+                    'type' => 'string',
+                    'example' => 'Missing JWT Refresh Token',
+                ],
+            ],
+        ]);
+        $schemas['InvalidateRefreshToken'] = new \ArrayObject([
+            'type' => 'object',
+            'properties' => [
+                'message' => [
+                    'type' => 'string',
+                    'example' => 'The supplied refresh_token has been invalidated.',
+                ],
+            ],
+        ]);
 
-        $pathItem = new Model\PathItem(
-            ref: 'JWT Token',
+        $jwtLogin = new Model\PathItem(
+            ref: 'JWT Login',
             post: new Model\Operation(
-                operationId: 'postCredentialsItem',
+                operationId: 'authenticate',
                 tags: ['Token'],
                 responses: [
                     '200' => [
-                        'description' => 'Get JWT token',
+                        'description' => 'Get a HttpOnly cookie containing the JWT to authenticate. Returns the user\'s API fields.',
                         'content' => [
                             'application/json' => [
                                 'schema' => [
-                                    '$ref' => '#/components/schemas/Token',
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '401' => [
+                        'description' => 'The credentials are invalid.',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/InvalidCredentials',
                                 ],
                             ],
                         ],
                     ],
                 ],
-                summary: 'Get JWT token to login.',
+                summary: 'Sets the JWT to authenticate the user as a HttpOnly cookie. Returns the user\'s API fields.',
                 requestBody: new Model\RequestBody(
-                    description: 'Generate new JWT Token',
+                    description: 'Generate a JWT to authenticate the user.',
                     content: new \ArrayObject([
                         'application/json' => [
                             'schema' => [
@@ -72,7 +100,78 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 ),
             ),
         );
-        $openApi->getPaths()->addPath('/api/auth-token', $pathItem);
+
+        $jwtRefresh = new Model\PathItem(
+            ref: 'JWT Refresh',
+            post: new Model\Operation(
+                operationId: 'refresh',
+                tags: ['Token'],
+                responses: [
+                    '200' => [
+                        'description' => 'Refreshes the user\'s JWT and JWT Refresh Token. Returns the user\'s api fields.',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '401' => [
+                        'description' => 'The JWT Refresh Token is missing or invalid.',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingRefreshToken',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                summary: 'Refreshes the user\'s JWT. The refresh token is returned as a HttpOnly cookie and is a one time use token. Returns the user\'s API fields. If the user is missing a JWT but has a valid Refresh Token, the JWT will be generated and set as a HttpOnly cookie.',
+                requestBody: new Model\RequestBody(
+                    description: 'Refresh the user\'s JWT. Requires the user\'s JWT Refresh Token cookie to be set.',
+                ),
+            ),
+        );
+
+        $jwtInvalidate = new Model\PathItem(
+            ref: 'JWT Invalidate',
+            post: new Model\Operation(
+                operationId: 'invalidate',
+                tags: ['Token'],
+                responses: [
+                    '200' => [
+                        'description' => 'Removes the user\'s HttpOnly JWT cookie and JWT Refresh Token cookie, and invalidates the JWT Refresh Token.',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/InvalidateRefreshToken',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '401' => [
+                        'description' => 'The JWT Refresh Token is missing or invalid.',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingRefreshToken',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                summary: 'Removes the user\'s HttpOnly JWT cookie and Token cookie, and invalidates the JWT Refresh Token. If the JWT Refresh Token is missing or invalid, the JWT cookie will still be removed.',
+                requestBody: new Model\RequestBody(
+                    description: 'Invalidate the user\'s JWT Refresh Token. Requires the user\'s JWT Refresh Token cookie to be set.',
+                ),
+            ),
+        );
+
+        $openApi->getPaths()->addPath('/api/auth-token', $jwtLogin);
+        $openApi->getPaths()->addPath('/api/refresh-token', $jwtRefresh);
+        $openApi->getPaths()->addPath('/api/invalidate-token', $jwtInvalidate);
 
         return $openApi;
     }
