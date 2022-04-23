@@ -24,9 +24,11 @@ services:
     networks:
       - modulo_network
     restart: always
+    stdin_open: true
     volumes:
       - "./api:/app/api:rw,cached"
       - "/app/api/vendor"
+      - "/app/api/node_modules"
     container_name: modulo-api
 
   db:
