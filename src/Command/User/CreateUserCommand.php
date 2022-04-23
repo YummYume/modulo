@@ -24,18 +24,6 @@ class CreateUserCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('firstName', InputArgument::REQUIRED, 'The first name.')
-            ->addArgument('lastName', InputArgument::REQUIRED, 'The last name.')
-            ->addArgument('genre', InputArgument::REQUIRED, 'The user genre (H/F).')
-            ->addArgument('uuid', InputArgument::REQUIRED, 'The member number (9 digits).')
-            ->addArgument('email', InputArgument::REQUIRED, 'The email address.')
-            ->addOption('admin', 'a', InputOption::VALUE_NONE, 'User is admin.')
-        ;
-    }
-
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $firstName */
@@ -52,7 +40,7 @@ class CreateUserCommand extends Command
 
         /** @var string $uuid */
         $email = $input->getArgument('email');
-        
+
         $isAdmin = (bool) $input->getOption('admin');
 
         if (empty($uuid) || empty($email)) {
@@ -80,5 +68,17 @@ class CreateUserCommand extends Command
         }
 
         return Command::SUCCESS;
+    }
+
+    protected function configure(): void
+    {
+        $this
+            ->addArgument('firstName', InputArgument::REQUIRED, 'The first name.')
+            ->addArgument('lastName', InputArgument::REQUIRED, 'The last name.')
+            ->addArgument('genre', InputArgument::REQUIRED, 'The user genre (H/F).')
+            ->addArgument('uuid', InputArgument::REQUIRED, 'The member number (9 digits).')
+            ->addArgument('email', InputArgument::REQUIRED, 'The email address.')
+            ->addOption('admin', 'a', InputOption::VALUE_NONE, 'User is admin.')
+        ;
     }
 }

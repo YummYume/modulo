@@ -8,13 +8,13 @@ use RangeException;
 
 class PasswordGenerator
 {
-    const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const specialChars = '@$?!#';
+    public const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const specialChars = '@$?!#';
 
     public function generate(int $length = 8): string
     {
         if ($length < 6 || $length > 15) {
-            throw new RangeException('Password length must lay between 6 and 15');
+            throw new RangeException('Password length must lay between 6 and 15.');
         }
 
         $pieces = [];
@@ -23,9 +23,9 @@ class PasswordGenerator
 
         try {
             for ($i = 0; $i < $length - 1; ++$i) {
-                $pieces [] = self::chars[random_int(0, $max)];
+                $pieces[] = self::chars[random_int(0, $max)];
             }
-            $pieces [] = self::specialChars[random_int(0, $maxSpecial)];
+            $pieces[] = self::specialChars[random_int(0, $maxSpecial)];
             shuffle($pieces);
         } catch (Exception $exception) {
             throw new LogicException();

@@ -36,3 +36,10 @@ services:
     App\EventListener\LogoutListener:
         tags:
             - { name: kernel.event_listener, event: 'Symfony\Component\Security\Http\Event\LogoutEvent', method: onLogout, priority: -100 }
+
+    App\EventListener\UserListener:
+        tags:
+            - name: "doctrine.event_listener"
+              event: "prePersist"
+            - name: "doctrine.event_listener"
+              event: "preUpdate"

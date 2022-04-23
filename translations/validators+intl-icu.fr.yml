@@ -1,0 +1,5 @@
+### Entity
+scope.unique: Cette scope existe déjà pour l'utilisateur {value}.
+
+### Commands
+command.dispatcher.invalid: Les données de la commande sony invalides pour l'attribut {attribute} ({message}).

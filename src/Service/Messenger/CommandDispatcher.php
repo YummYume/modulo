@@ -17,10 +17,9 @@ class CommandDispatcher
     public function __construct(
         private LoggerInterface $logger,
         private MessageBusInterface $messageBus,
-        private ValidatorInterface  $validator,
+        private ValidatorInterface $validator,
         private TranslatorInterface $translator
-    )
-    {
+    ) {
     }
 
     /**
@@ -33,16 +32,7 @@ class CommandDispatcher
         } catch (ValidationException $exception) {
             $violation = $exception->getConstraintViolationList()->get(0);
 
-            throw new InvalidCommandException(
-                $this->translator->trans(
-                    'Command data is invalid for attribute %attribute% (%message%)',
-                    [
-                        '%attribute%' => $violation->getPropertyPath(),
-                        '%message%' => $violation->getMessage(),
-                    ],
-                    'validator',
-                )
-            );
+            throw new InvalidCommandException($this->translator->trans('command.dispatcher.invalid', ['attribute' => $violation->getPropertyPath(), 'message' => $violation->getMessage()], 'validators'));
         }
 
         try {

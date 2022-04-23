@@ -2,16 +2,16 @@
 
 namespace App\Model\Mail;
 
-use App\Enum\RecipientTypeEnum;
+use App\Enum\RecipientType;
 use Symfony\Component\Mime\Address;
 
 class Recipient
 {
     private string $name;
     private string $email;
-    private RecipientTypeEnum $type;
+    private RecipientType $type;
 
-    public function __construct(string $name, string $email, RecipientTypeEnum $type)
+    public function __construct(string $name, string $email, RecipientType $type)
     {
         $this->name = $name;
         $this->email = $email;
@@ -28,7 +28,7 @@ class Recipient
         return $this->email;
     }
 
-    public function getType(): RecipientTypeEnum
+    public function getType(): RecipientType
     {
         return $this->type;
     }

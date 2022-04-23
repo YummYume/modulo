@@ -14,6 +14,7 @@ class LoginController extends AbstractController
     {
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
+
         if (null !== $error) {
             $this->addFlash('error', $error->getMessage());
         }

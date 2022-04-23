@@ -2,13 +2,13 @@
 
 namespace App\Service\Mailer;
 
-use App\Enum\RecipientTypeEnum;
+use App\Enum\RecipientType;
 use App\Exception\Mailer\MailException;
 use App\Model\Mail\MailAbstract;
 use Psr\Log\LoggerInterface;
-use Twig\Environment;
-use Throwable;
 use Symfony\Component\Mime\Email;
+use Throwable;
+use Twig\Environment;
 
 class MailBuilder
 {
@@ -36,7 +36,7 @@ class MailBuilder
                 $exception->getFile()
             ));
 
-           throw new MailException('Could not build mail', 0, $exception);
+            throw new MailException('Could not build mail', 0, $exception);
         }
 
         $finalMail = (new Email())
@@ -48,9 +48,9 @@ class MailBuilder
 
         foreach ($mail->getRecipients() as $recipient) {
             match ($recipient->getType()) {
-                RecipientTypeEnum::MAIN => $finalMail->to($recipient->toMimeAddress()),
-                RecipientTypeEnum::CARBON_COPY => $finalMail->addCc($recipient->toMimeAddress()),
-                RecipientTypeEnum::BLIND_CARBON_COPY => $finalMail->addBcc($recipient->toMimeAddress()),
+                RecipientType::MAIN => $finalMail->to($recipient->toMimeAddress()),
+                RecipientType::CARBON_COPY => $finalMail->addCc($recipient->toMimeAddress()),
+                RecipientType::BLIND_CARBON_COPY => $finalMail->addBcc($recipient->toMimeAddress()),
             };
         }
 

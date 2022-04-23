@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 use App\Entity\Structure;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use LogicException;
 
 class StructureFixture extends Fixture
 {
@@ -395,16 +394,22 @@ class StructureFixture extends Fixture
 
         $structures = [];
         foreach ($structuresData as $row) {
-            if (array_key_exists('parent', $row)) {
+            if (\array_key_exists('parent', $row)) {
                 $parent = $structures[$row['parent']] ?? null;
                 if (null === $parent) {
-                    throw new LogicException(sprintf('Unable to find structure with code %s', $row['parent']));
+                    throw new \LogicException(sprintf('Unable to find structure with code %s.', $row['parent']));
                 }
             } else {
                 $parent = null;
             }
-            $structure = new Structure($row['name'], $row['code'], $parent);
+
+            $structure = (new Structure())
+                ->setName($row['name'])
+                ->setCode($row['code'])
+                ->setParentStructure($parent)
+            ;
             $manager->persist($structure);
+
             $structures[$row['code']] = $structure;
             $this->addReference(sprintf('structure-%s', $row['code']), $structure);
         }

@@ -3,7 +3,7 @@
 namespace App\Model\Mail;
 
 use App\Entity\User;
-use App\Enum\RecipientTypeEnum;
+use App\Enum\RecipientType;
 
 abstract class MailAbstract
 {
@@ -24,7 +24,7 @@ abstract class MailAbstract
 
     public function getTemplate(): string
     {
-       return sprintf('mail/%s.html.twig', $this->getKey());
+        return sprintf('mail/%s.html.twig', $this->getKey());
     }
 
     public function getRecipients(): array
@@ -32,12 +32,12 @@ abstract class MailAbstract
         return $this->recipients;
     }
 
-    public function addRecipient(string $name, string $email, RecipientTypeEnum $type)
+    public function addRecipient(string $name, string $email, RecipientType $type)
     {
         $this->recipients[] = new Recipient($name, $email, $type);
     }
 
-    public function addUserRecipient(User $user, RecipientTypeEnum $type)
+    public function addUserRecipient(User $user, RecipientType $type)
     {
         $this->addRecipient($user->getFullName(), $user->getEmail(), $type);
     }
