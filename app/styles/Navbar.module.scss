@@ -1,0 +1,12 @@
+.initialState {
+  height: 75px;
+  transition: all 0.5s ease;
+}
+
+.reducedState {
+  height: 45px;
+
+  &:hover {
+    height: 75px;
+  }
+}

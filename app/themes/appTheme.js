@@ -7,7 +7,6 @@ export default createTheme({
         primary: {
             main: palette.primaryBlueMain,
             light: palette.primaryBlueLight,
-
             text: {
                 main: "#fff",
                 light: "#000"

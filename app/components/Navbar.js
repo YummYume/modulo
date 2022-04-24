@@ -7,15 +7,19 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Link from "next/link";
 import UserIcon from "@mui/icons-material/AccountCircle";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
 
 import { useUser } from "../hooks/useUser";
 import { useUserLogout } from "../hooks/useUserLogout";
+
+import styles from "../styles/Navbar.module.scss";
 
 export default function Navbar() {
     const { data: user } = useUser();
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
     const userMenuOpen = Boolean(userMenuAnchorEl);
     const logoutMutation = useUserLogout();
+    const trigger = useScrollTrigger();
 
     const handleUserMenuOpen = (event) => {
         setUserMenuAnchorEl(event.currentTarget);
@@ -71,7 +75,10 @@ export default function Navbar() {
 
     return (
         <AppBar color="primary">
-            <Toolbar className="d-flex justify-content-between">
+            <Toolbar
+                className={`d-flex justify-content-between align-items-center ${trigger ? styles.reducedState : styles.initialState}`}
+                classes={{ root: { "min-height": "0px" } }}
+            >
                 <Typography variant="h6">Modulo</Typography>
                 {rightSide}
             </Toolbar>
