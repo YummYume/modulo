@@ -70,11 +70,9 @@ export default function Navbar() {
     );
 
     return (
-        <AppBar position="static" color="primaryBlue">
-            <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Modulo
-                </Typography>
+        <AppBar color="primary">
+            <Toolbar className="d-flex justify-content-between">
+                <Typography variant="h6">Modulo</Typography>
                 {rightSide}
             </Toolbar>
         </AppBar>
