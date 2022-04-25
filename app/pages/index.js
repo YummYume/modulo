@@ -38,30 +38,32 @@ export default function Home() {
 
     return (
         <React.Fragment>
-            <form
-                onSubmit={handleSubmit}
-                className={`d-flex justify-content-center align-items-center w-100 container-fluid ${styles.background}`}
-            >
+            <form onSubmit={handleSubmit} className={`w-100 ${styles.background}`}>
                 <Box
-                    className="d-flex justify-content-between align-items-center text-center flex-column rounded p-4 shadow-lg"
-                    sx={{
-                        width: 400,
-                        height: 300,
-                        backgroundColor: "rgba(255, 255, 255, 0.9)"
-                    }}
+                    className="h-100 container-fluid d-flex justify-content-center align-items-center"
+                    sx={{ backgroundColor: "rgba(4, 38, 62, 0.25)" }}
                 >
-                    <h2>Connexion</h2>
-                    <TextField id="uuid" name="uuid" label="N° d'adhérent" variant="outlined" fullWidth />
-                    <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
-                    <LoadingButton
-                        loading={loginMutation.isLoading}
-                        type="submit"
-                        loadingPosition="end"
-                        variant="contained"
-                        endIcon={<LoginIcon />}
+                    <Box
+                        className="d-flex justify-content-between align-items-center text-center flex-column rounded p-4 shadow-lg"
+                        sx={{
+                            width: 400,
+                            height: 300,
+                            backgroundColor: "rgba(255, 255, 255, 0.9)"
+                        }}
                     >
-                        Connexion
-                    </LoadingButton>
+                        <h2>Connexion</h2>
+                        <TextField id="uuid" name="uuid" label="N° d'adhérent" variant="outlined" fullWidth />
+                        <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
+                        <LoadingButton
+                            loading={loginMutation.isLoading}
+                            type="submit"
+                            loadingPosition="end"
+                            variant="contained"
+                            endIcon={<LoginIcon />}
+                        >
+                            Connexion
+                        </LoadingButton>
+                    </Box>
                 </Box>
             </form>
             <AppAlert
