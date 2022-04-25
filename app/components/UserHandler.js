@@ -47,14 +47,6 @@ export default function UserHandler() {
         }
     }, []);
 
-    useEffect(() => {
-        if (!user.data && user.isError && router.pathname !== "/") {
-            router.push("/");
-        } else if (user.data && !user.isError && router.pathname === "/") {
-            router.push("/roles");
-        }
-    }, [user, router]);
-
     return (
         <React.Fragment>
             {/* <AppAlert message="Problème de connexion au serveur, vous risquez d'être déconnecté." severity="error" open={displayConnectionFailure} />

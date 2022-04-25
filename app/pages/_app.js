@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
 import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
@@ -13,40 +13,32 @@ import theme from "../themes/appTheme";
 
 import "../styles/globals.scss";
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            cacheTime: 1000 * 60
-        }
-    }
-});
-
 function App({ Component, pageProps }) {
-    useEffect(() => {
-        if (window !== undefined) {
-            persistQueryClient({
-                queryClient,
-                persistor: createWebStoragePersistor({
-                    storage: window.localStorage,
-                    key: "react-query-persist"
-                })
-            });
-        }
-    }, []);
+    const [queryClient] = useState(
+        new QueryClient({
+            defaultOptions: {
+                queries: {
+                    cacheTime: 1000 * 60
+                }
+            }
+        })
+    );
 
     return (
         <ThemeProvider theme={theme}>
             <QueryClientProvider client={queryClient}>
-                <Head>
-                    <title>Modulo</title>
-                    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-                </Head>
-                <UserHandler />
-                <Layout>
-                    <Component {...pageProps} />
-                    <ScrollToTop />
-                </Layout>
-                <ReactQueryDevtools initialIsOpen={false} />
+                <Hydrate state={pageProps.dehydratedState}>
+                    <Head>
+                        <title>Modulo</title>
+                        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                    </Head>
+                    <UserHandler />
+                    <Layout>
+                        <Component {...pageProps} />
+                        <ScrollToTop />
+                    </Layout>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </Hydrate>
             </QueryClientProvider>
         </ThemeProvider>
     );

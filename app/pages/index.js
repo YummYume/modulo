@@ -14,12 +14,15 @@ import { toastAlert } from "../mixins/toastAlert";
 import styles from "../styles/Index.module.scss";
 
 export default function Home() {
-    const theme = useTheme();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const { data: user } = useUser();
+    const [isInvalidating, setIsInvalidating] = React.useState(false);
     const loginMutation = useMutation((credentials) => login(credentials.uuid, credentials.password), {
         onSuccess: async () => {
+            setIsInvalidating(true);
             await queryClient.invalidateQueries("user");
+            setIsInvalidating(false);
 
             router.push("/roles");
         },
