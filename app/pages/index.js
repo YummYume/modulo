@@ -45,14 +45,24 @@ export default function Home() {
                     sx={{ backgroundColor: "rgba(4, 38, 62, 0.25)" }}
                 >
                     <Box
-                        className="d-flex justify-content-between align-items-center text-center flex-column rounded p-4 shadow-lg"
+                        className="d-flex justify-content-between align-items-center text-center flex-column p-4 shadow-lg"
                         sx={{
                             width: 550,
                             height: 350,
-                            backgroundColor: "rgba(255, 255, 255, 0.9)"
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            border: "solid 2px #04263e",
+                            borderRadius: "10px"
                         }}
                     >
-                        <Typography variant="h4">Connexion</Typography>
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                color: "#04263e",
+                                fontWeight: 500
+                            }}
+                        >
+                            Connexion
+                        </Typography>
                         <TextField id="uuid" name="uuid" label="N° d'adhérent" variant="outlined" fullWidth />
                         <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
                         <LoadingButton
