@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
-import palette from "../styles/palette.module.scss";
+import palette from "../styles/Palette.module.scss";
 
 export default createTheme({
     palette: {
