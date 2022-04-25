@@ -6,6 +6,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import { useMutation, useQueryClient } from "react-query";
 import { useRouter } from "next/router";
 import { useTheme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 
 import { login } from "../api/user";
 import AppAlert from "../components/AppAlert";
@@ -46,12 +47,12 @@ export default function Home() {
                     <Box
                         className="d-flex justify-content-between align-items-center text-center flex-column rounded p-4 shadow-lg"
                         sx={{
-                            width: 400,
-                            height: 300,
+                            width: 550,
+                            height: 350,
                             backgroundColor: "rgba(255, 255, 255, 0.9)"
                         }}
                     >
-                        <h2>Connexion</h2>
+                        <Typography variant="h4">Connexion</Typography>
                         <TextField id="uuid" name="uuid" label="N° d'adhérent" variant="outlined" fullWidth />
                         <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
                         <LoadingButton
