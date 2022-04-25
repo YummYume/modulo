@@ -19,7 +19,7 @@ export default function Navbar() {
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
     const userMenuOpen = Boolean(userMenuAnchorEl);
     const logoutMutation = useUserLogout();
-    const trigger = useScrollTrigger();
+    const trigger = useScrollTrigger({ disableHysteresis: true });
 
     const handleUserMenuOpen = (event) => {
         setUserMenuAnchorEl(event.currentTarget);
