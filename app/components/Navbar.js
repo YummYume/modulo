@@ -56,17 +56,17 @@ export default function Navbar() {
                         onClose={handleUserMenuClose}
                     >
                         <MenuItem>
-                            <Typography variant="h6">{user.data.fullName}</Typography>
+                            <Typography variant="body1">{user.data.fullName}</Typography>
                         </MenuItem>
                         <MenuItem onClick={handleLogout}>
-                            <Typography variant="h6">Déconnexion</Typography>
+                            <Typography variant="body1">Déconnexion</Typography>
                         </MenuItem>
                     </Menu>
                 </Box>
             ) : (
                 <Link href="/">
                     <a>
-                        <Typography variant="h6">Connexion</Typography>
+                        <Typography variant="body1">Connexion</Typography>
                     </a>
                 </Link>
             )}

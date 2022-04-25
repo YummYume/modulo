@@ -1,5 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
+import Box from "@mui/material/Box";
 
 import { getRoles } from "../api/roles";
 import { useUser } from "../hooks/useUser";
@@ -12,7 +13,7 @@ export default function Roles() {
     });
 
     return (
-        <div>
+        <Box sx={{ paddingTop: "100px" }}>
             <h1>Roles</h1>
             {isLoading && <p>Chargement...</p>}
             {isError && <p>Erreur: {error.message}</p>}
@@ -23,6 +24,6 @@ export default function Roles() {
                     ))}
                 </ul>
             )}
-        </div>
+        </Box>
     );
 }
