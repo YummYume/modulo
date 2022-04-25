@@ -19,6 +19,7 @@ body {
   position: relative;
   min-height: 100vh;
   background-color: $primary-blue-light;
+  scroll-behavior: smooth;
 }
 
 a {

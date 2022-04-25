@@ -8,6 +8,7 @@ import Head from "next/head";
 
 import Layout from "../components/Layout";
 import UserHandler from "../components/UserHandler";
+import ScrollToTop from "../components/ScrollToTop";
 import theme from "../themes/appTheme";
 
 import "../styles/globals.scss";
@@ -43,6 +44,7 @@ function App({ Component, pageProps }) {
                 <UserHandler />
                 <Layout>
                     <Component {...pageProps} />
+                    <ScrollToTop />
                 </Layout>
                 <ReactQueryDevtools initialIsOpen={false} />
             </QueryClientProvider>
