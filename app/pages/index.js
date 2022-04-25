@@ -45,8 +45,8 @@ export default function Home() {
                 <Box
                     className="d-flex justify-content-between align-items-center text-center flex-column rounded p-4 shadow-lg"
                     sx={{
-                        width: 400,
-                        height: 300,
+                        width: 550,
+                        height: 350,
                         backgroundColor: "rgba(255, 255, 255, 0.9)"
                     }}
                 >
