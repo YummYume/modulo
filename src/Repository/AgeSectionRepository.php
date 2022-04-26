@@ -19,32 +19,27 @@ class AgeSectionRepository extends ServiceEntityRepository
         parent::__construct($registry, AgeSection::class);
     }
 
-    // /**
-    //  * @return AgeSection[] Returns an array of AgeSection objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function add(AgeSection $entity, bool $flush = true): void
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->_em->persist($entity);
+        if ($flush) {
+            $this->_em->flush();
+        }
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?AgeSection
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(AgeSection $entity, bool $flush = true): void
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->_em->remove($entity);
+        if ($flush) {
+            $this->_em->flush();
+        }
     }
-    */
 }

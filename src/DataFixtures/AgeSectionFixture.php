@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class AgeSectionFixture extends Fixture
 {
-    const SUPPORT_ROLE_REF = 'age-section-Support';
+    public const SUPPORT_ROLE_REF = 'age-section-Support';
 
     public function load(ObjectManager $manager): void
     {
@@ -52,8 +52,13 @@ class AgeSectionFixture extends Fixture
         ];
 
         foreach ($ageSectionsData as $row) {
-            $ageSection = new AgeSection($row['name'], $row['code'], $row['color']);
+            $ageSection = (new AgeSection())
+                ->setName($row['name'])
+                ->setCode($row['code'])
+                ->setColor($row['color'])
+            ;
             $manager->persist($ageSection);
+
             $this->addReference($row['ref'] ?? sprintf('age-section-%s', $row['code']), $ageSection);
         }
 

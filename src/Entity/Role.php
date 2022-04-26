@@ -3,7 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Traits\BlameableTrait;
+use App\Entity\Traits\TimestampableTrait;
 use App\Repository\RoleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 
@@ -11,32 +15,41 @@ use JetBrains\PhpStorm\Pure;
 #[ApiResource]
 class Role
 {
+    use BlameableTrait;
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 100)]
-    private string $name;
+    private ?string $name;
 
     #[ORM\Column(type: 'string', length: 10)]
-    private string $code;
+    private ?string $code;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $feminineName = null;
 
     #[ORM\ManyToOne(targetEntity: AgeSection::class)]
-    private AgeSection $ageSection;
+    private ?AgeSection $ageSection;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    private $icon;
+    private ?string $icon;
 
-    #[Pure] public function __construct(string $name, string $code, AgeSection $ageSection, ?string $feminineName = null)
+    #[ORM\OneToMany(mappedBy: 'role', targetEntity: Scope::class, orphanRemoval: true)]
+    private Collection $scopes;
+
+    #[Pure]
+    public function __construct()
     {
-        $this->name = $name;
-        $this->code = $code;
-        $this->feminineName = $feminineName;
-        $this->ageSection = $ageSection;
+        $this->scopes = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?? '';
     }
 
     public function getId(): ?int
@@ -44,24 +57,24 @@ class Role
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
 
-    public function setCode(string $code): self
+    public function setCode(?string $code): self
     {
         $this->code = $code;
 
@@ -80,12 +93,12 @@ class Role
         return $this;
     }
 
-    public function getAgeSection(): AgeSection
+    public function getAgeSection(): ?AgeSection
     {
         return $this->ageSection;
     }
 
-    public function setAgeSection(AgeSection $ageSection): self
+    public function setAgeSection(?AgeSection $ageSection): self
     {
         $this->ageSection = $ageSection;
 
@@ -100,6 +113,36 @@ class Role
     public function setIcon(?string $icon): self
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Scope>
+     */
+    public function getScopes(): Collection
+    {
+        return $this->scopes;
+    }
+
+    public function addScope(Scope $scope): self
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes[] = $scope;
+            $scope->setRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeScope(Scope $scope): self
+    {
+        if ($this->scopes->removeElement($scope)) {
+            // set the owning side to null (unless already changed)
+            if ($scope->getRole() === $this) {
+                $scope->setRole(null);
+            }
+        }
 
         return $this;
     }

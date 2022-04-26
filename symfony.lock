@@ -13,6 +13,18 @@
             "src/Entity/.gitignore"
         ]
     },
+    "behat/transliterator": {
+        "version": "v1.5.0"
+    },
+    "composer/pcre": {
+        "version": "3.0.0"
+    },
+    "composer/semver": {
+        "version": "3.3.2"
+    },
+    "composer/xdebug-handler": {
+        "version": "3.0.3"
+    },
     "doctrine/annotations": {
         "version": "1.13",
         "recipe": {
@@ -118,14 +130,32 @@
     "egulias/email-validator": {
         "version": "3.1.2"
     },
+    "fakerphp/faker": {
+        "version": "v1.19.0"
+    },
     "fig/link-util": {
         "version": "1.2.0"
+    },
+    "friendsofphp/php-cs-fixer": {
+        "version": "3.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "be2103eb4a20942e28a6dd87736669b757132435"
+        },
+        "files": [
+            ".php-cs-fixer.dist.php"
+        ]
     },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
-    "fzaninotto/faker": {
-        "version": "v1.5.0"
+    "gedmo/doctrine-extensions": {
+        "version": "v3.6.0"
+    },
+    "gesdinet/jwt-refresh-token-bundle": {
+        "version": "v1.1.1"
     },
     "laminas/laminas-code": {
         "version": "4.5.1"
@@ -169,6 +199,9 @@
     "nikic/php-parser": {
         "version": "v4.13.2"
     },
+    "php-cs-fixer/diff": {
+        "version": "v2.0.2"
+    },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
     },
@@ -195,6 +228,21 @@
     },
     "psr/log": {
         "version": "3.0.0"
+    },
+    "stella-maris/clock": {
+        "version": "0.1.4"
+    },
+    "stof/doctrine-extensions-bundle": {
+        "version": "1.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.2",
+            "ref": "e805aba9eff5372e2d149a9ff56566769e22819d"
+        },
+        "files": [
+            "config/packages/stof_doctrine_extensions.yaml"
+        ]
     },
     "symfony/asset": {
         "version": "v6.0.3"
@@ -385,6 +433,9 @@
     },
     "symfony/polyfill-uuid": {
         "version": "v1.24.0"
+    },
+    "symfony/process": {
+        "version": "v6.0.7"
     },
     "symfony/property-access": {
         "version": "v6.0.3"

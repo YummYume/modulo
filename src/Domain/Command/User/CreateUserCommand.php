@@ -47,8 +47,7 @@ class CreateUserCommand
         string $genre = null,
         string $password = null,
         bool $admin = false,
-    )
-    {
+    ) {
         $this->uuid = $uuid;
         $this->email = $email;
         $this->firstName = $firstName;
@@ -111,7 +110,7 @@ class CreateUserCommand
         return $this->genre;
     }
 
-    public function setGenre(?string $genre): CreateUserCommand
+    public function setGenre(?string $genre): self
     {
         $this->genre = $genre;
 

@@ -8,4 +8,10 @@ kernel:
 
 authentication_token:
     path: /api/auth-token
-    methods: ['POST']
+    methods: ["POST"]
+
+api_refresh_token:
+    path: /api/refresh-token
+
+api_token_invalidate:
+    path: /api/invalidate-token

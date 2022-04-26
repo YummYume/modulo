@@ -19,32 +19,27 @@ class RoleRepository extends ServiceEntityRepository
         parent::__construct($registry, Role::class);
     }
 
-    // /**
-    //  * @return Role[] Returns an array of Role objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function add(Role $entity, bool $flush = true): void
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->_em->persist($entity);
+        if ($flush) {
+            $this->_em->flush();
+        }
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Role
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(Role $entity, bool $flush = true): void
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->_em->remove($entity);
+        if ($flush) {
+            $this->_em->flush();
+        }
     }
-    */
 }

@@ -3,16 +3,16 @@
 namespace App\Mail\User;
 
 use App\Entity\User;
-use App\Enum\RecipientTypeEnum;
+use App\Enum\RecipientType;
 use App\Model\Mail\MailAbstract;
 
 class NewAccountMail extends MailAbstract
 {
-    const KEY = 'user/new-account';
+    public const KEY = 'user/new-account';
 
     public function __construct(private User $user, private string $password)
     {
-        $this->addUserRecipient($user, RecipientTypeEnum::MAIN);
+        $this->addUserRecipient($user, RecipientType::MAIN);
     }
 
     public function getTemplateParameters(): array

@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  todo
+    <h1>Bienvenue sur Modulo!</h1>
+    {% if is_granted(constant('App\\Enum\\StaticRole::ROLE_ADMIN').name) %}
+        <a href="{{ path('admin') }}">Accéder à l'administration</a>
+    {% endif %}
 {% endblock %}
