@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import AppAlert from "./AppAlert";
+// import AppAlert from "./AppAlert";
 import { useUser } from "../hooks/useUser";
 import { useUserLogout } from "../hooks/useUserLogout";
 
@@ -57,12 +57,12 @@ export default function UserHandler() {
 
     return (
         <React.Fragment>
-            <AppAlert message="Problème de connexion au serveur, vous risquez d'être déconnecté." severity="error" open={displayConnectionFailure} />
+            {/* <AppAlert message="Problème de connexion au serveur, vous risquez d'être déconnecté." severity="error" open={displayConnectionFailure} />
             <AppAlert
                 message="Problème de connexion internet. Vos changements ne seront pris en compte qu'après récupération de la connexion."
                 severity="warning"
                 open={!isOnline}
-            />
+            /> */}
         </React.Fragment>
     );
 }
