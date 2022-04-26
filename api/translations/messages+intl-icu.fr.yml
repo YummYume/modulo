@@ -10,6 +10,7 @@ common.updated_by: Mis à jour par
 ### Views
 view.login.title: Connexion à {app_name}
 view.admin.dashboard: Tableau de bord
+
 view.admin.scope: Scopes
 view.scope.index: Scopes
 view.scope.create: Créer une scope
@@ -17,6 +18,14 @@ view.scope.edit: Modifier une scope
 view.scope.detail: Détails d'une scope
 view.scope.single: une scope
 view.scope.plural: des scopes
+
+view.admin.category: Catégories
+view.category.index: Catégories
+view.category.create: Créer une catégorie
+view.category.edit: Modifier une catégorie
+view.category.detail: Détails d'une catégorie
+view.category.single: une catégorie
+view.category.plural: des catégorie
 
 ### Entity
 user.email: Adresse mail
@@ -33,3 +42,7 @@ scope.active: Actif
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
 The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
 The presented password is invalid.: Le mot de passe est invalide.
+
+### Category
+category.name: Nom
+category.description: Description
