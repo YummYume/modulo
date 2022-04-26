@@ -13,9 +13,14 @@ export default function Roles({ userData }) {
         enabled: (user && user.data) !== false
     });
 
+    console.log(userData);
+
     const test = async () => {
-        const res = await fetch(`https://modulo.local/api/refresh-token`);
-        console.log(res);
+        const res = await fetch(`https://modulo.local:443/api/roles`, {
+            credentials: "include"
+        });
+        const data = await res.json();
+        console.log(data);
     };
 
     useEffect(() => {
@@ -42,13 +47,15 @@ export async function getServerSideProps(context) {
     const queryClient = new QueryClient();
 
     await queryClient.prefetchQuery("user", refresh);
+    await queryClient.prefetchQuery("roles", getRoles);
 
-    // const res = await fetch(`https://modulo.local/api/refresh-token`);
+    // const res = await getRoles();
     // const data = await res.json();
 
     return {
         props: {
             dehydratedState: dehydrate(queryClient)
+            // userData: data
         }
     };
 }

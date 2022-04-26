@@ -1,9 +1,0 @@
-{
-    "version": 3,
-    "mappings": "AAAA,AAAA,WAAW,CAAC;EACV,gBAAgB,EAAE,oCAAoC;EACtD,eAAe,EAAE,KAAK;EACtB,mBAAmB,EAAE,MAAM;CAC5B",
-    "sources": [
-        "Index.module.scss"
-    ],
-    "names": [],
-    "file": "Index.module.css"
-}
