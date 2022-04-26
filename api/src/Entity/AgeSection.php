@@ -31,6 +31,11 @@ class AgeSection
     #[ORM\Column(type: 'string', length: 50)]
     private string $color;
 
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
