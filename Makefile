@@ -171,3 +171,12 @@ sync-dependencies:
 	make sync-dependencies-app
 	make sync-dependencies-yarn-api
 	@echo Dependencies synced!
+
+# PRODUCTION
+update-prod:
+	cd api && \
+	composer require symfony/requirements-checker && \
+	composer.phar install --no-dev --optimize-autoloader && \
+	yarn install --production --no-progress && \
+	yarn build && \
+	APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
