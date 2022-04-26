@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -9,7 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
 import { login } from "../api/user";
-import AppAlert from "../components/AppAlert";
+import { toastAlert } from "../mixins/toastAlert";
 
 import styles from "../styles/Index.module.scss";
 
@@ -22,6 +22,10 @@ export default function Home() {
             await queryClient.invalidateQueries("user");
 
             router.push("/roles");
+        },
+
+        onError: async () => {
+            toastAlert("error", "Une erreur est survenue.");
         }
     });
 
@@ -50,15 +54,13 @@ export default function Home() {
                             width: 550,
                             height: 350,
                             backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            border: "solid 2px #04263e",
-                            borderRadius: "10px"
+                            borderRadius: "0.5rem"
                         }}
                     >
                         <Typography
                             variant="h4"
                             sx={{
-                                color: "#04263e",
-                                fontWeight: 500
+                                color: theme.palette.primary.main
                             }}
                         >
                             Connexion
@@ -77,17 +79,6 @@ export default function Home() {
                     </Box>
                 </Box>
             </form>
-            <AppAlert
-                message={
-                    loginMutation.error
-                        ? loginMutation.error.response
-                            ? loginMutation.error.response.data.message
-                            : "Une erreur est survenue."
-                        : "Une erreur est survenue."
-                }
-                severity={"error"}
-                open={loginMutation.isError}
-            />
         </React.Fragment>
     );
 }

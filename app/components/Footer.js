@@ -12,7 +12,8 @@ export default function Footer() {
             sx={{
                 height: "100px",
                 backgroundColor: theme.palette.primary.main,
-                color: theme.palette.primary.text.main
+                color: theme.palette.primary.text.main,
+                boxShadow: "0 0 25px #000"
             }}
             component="footer"
         >

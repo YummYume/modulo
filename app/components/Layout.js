@@ -1,5 +1,6 @@
 import React from "react";
 import Box from "@mui/material/Box";
+import { ToastContainer } from "react-toastify";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -12,6 +13,7 @@ export default function Layout({ children }) {
             <Navbar />
             <main className="d-flex flex-grow-1">{children}</main>
             <Footer />
+            <ToastContainer />
         </Box>
     );
 }
