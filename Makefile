@@ -179,4 +179,5 @@ update-prod:
 	composer install --no-dev --optimize-autoloader && \
 	yarn install --production --no-progress && \
 	yarn build && \
+	php bin/console assets:install && \
 	APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
