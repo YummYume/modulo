@@ -7,11 +7,19 @@ kernel:
     type: annotation
 
 authentication_token:
-    path: /api/auth-token
+    path: /auth-token
     methods: ["POST"]
+    host: api.%host_domain%
 
 api_refresh_token:
-    path: /api/refresh-token
+    path: /refresh-token
+    host: api.%host_domain%
 
 api_token_invalidate:
-    path: /api/invalidate-token
+    path: /invalidate-token
+    host: api.%host_domain%
+
+swagger_ui:
+    path: /docs
+    host: api.%host_domain%
+    controller: api_platform.swagger.action.ui

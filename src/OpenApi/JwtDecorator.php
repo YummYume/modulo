@@ -169,9 +169,9 @@ final class JwtDecorator implements OpenApiFactoryInterface
             ),
         );
 
-        $openApi->getPaths()->addPath('/api/auth-token', $jwtLogin);
-        $openApi->getPaths()->addPath('/api/refresh-token', $jwtRefresh);
-        $openApi->getPaths()->addPath('/api/invalidate-token', $jwtInvalidate);
+        $openApi->getPaths()->addPath('/auth-token', $jwtLogin);
+        $openApi->getPaths()->addPath('/refresh-token', $jwtRefresh);
+        $openApi->getPaths()->addPath('/invalidate-token', $jwtInvalidate);
 
         return $openApi;
     }

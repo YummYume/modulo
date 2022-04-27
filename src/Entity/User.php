@@ -221,7 +221,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'fullName' => $this->getFullName(),
             'gender' => $this->gender?->value,
             'roles' => $this->getRoles(),
-            'scopes' => array_map(static fn (Scope $scope): string => '/api/scopes/'.$scope->getId(), $this->getScopes()->toArray()),
+            'scopes' => array_map(static fn (Scope $scope): string => '/scopes/'.$scope->getId(), $this->getScopes()->toArray()),
         ];
     }
 

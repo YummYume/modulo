@@ -19,7 +19,7 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[Route('/admin', name: 'admin')]
+    #[Route('/', name: 'admin', host: 'admin.%host_domain%')]
     public function index(): Response
     {
         return $this->render('admin/dashboard.html.twig');

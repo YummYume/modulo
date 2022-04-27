@@ -16,7 +16,8 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         api:
-            pattern: ^/api/
+            host: api.%host_domain%
+            pattern: ^/
             stateless: true
             lazy: true
             provider: app_user_provider
@@ -40,6 +41,7 @@ security:
             logout:
                 path: api_token_invalidate
         main:
+            host: admin.%host_domain%
             pattern: ^/
             provider: app_user_provider
             entry_point: form_login
@@ -64,11 +66,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
-        - { path: ^/api/auth-token, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/docs, roles: PUBLIC_ACCESS, host: "api.%host_domain%" }
+        - { path: ^/auth-token, roles: IS_AUTHENTICATED_ANONYMOUSLY, host: "api.%host_domain%" }
+        - { path: ^/login, roles: PUBLIC_ACCESS, host: "admin.%host_domain%" }
+        - { path: ^/, roles: ROLE_ADMIN, host: "admin.%host_domain%" }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY, host: "admin.%host_domain%" }
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
