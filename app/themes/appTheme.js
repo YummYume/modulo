@@ -1,14 +1,16 @@
 import { createTheme } from "@mui/material/styles";
 
+import palette from "../styles/Palette.module.scss";
+
 export default createTheme({
     palette: {
-        primaryBlue: {
-            main: "#00384F",
-            contrastText: "#FFFFFF"
-        },
-        secondaryBlue: {
-            main: "#DEE8E8",
-            contrastText: "#FFFFFF"
+        primary: {
+            main: palette.primaryBlueMain,
+            light: palette.primaryBlueLight,
+            text: {
+                main: "#fff",
+                light: "#000"
+            }
         }
     }
 });

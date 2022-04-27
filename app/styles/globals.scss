@@ -1,34 +1,32 @@
+@import "~bootstrap/scss/bootstrap";
+@import "~react-toastify/dist/ReactToastify.css";
+
 @import "@fontsource/roboto/300.css";
 @import "@fontsource/roboto/400.css";
 @import "@fontsource/roboto/500.css";
 @import "@fontsource/roboto/700.css";
 
-@import "_variables";
+@import "variables";
 
-html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+    sans-serif;
 }
 
 .app {
-  position: relative;
   min-height: 100vh;
-  background-color: $secondary_blue;
+  background-color: $primary-blue-light;
+  scroll-behavior: smooth;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-  transition: 1s;
+  transition: 0.15s;
 
   &:hover {
-    transition: 1s;
-    text-shadow: 0 0 10px $white;
+    transition: 0.15s;
+    text-shadow: 0 0 2px $white;
+    color: inherit;
   }
-}
-
-* {
-  box-sizing: border-box;
 }

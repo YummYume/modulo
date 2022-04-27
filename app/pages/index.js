@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
 import { useMutation, useQueryClient } from "react-query";
 import { useRouter } from "next/router";
+import { useTheme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 
 import { login } from "../api/user";
-import AppAlert from "../components/AppAlert";
+import { toastAlert } from "../mixins/toastAlert";
+
+import styles from "../styles/Index.module.scss";
 
 export default function Home() {
+    const theme = useTheme();
     const router = useRouter();
     const queryClient = useQueryClient();
     const loginMutation = useMutation((credentials) => login(credentials.uuid, credentials.password), {
@@ -17,6 +22,10 @@ export default function Home() {
             await queryClient.invalidateQueries("user");
 
             router.push("/roles");
+        },
+
+        onError: async () => {
+            toastAlert("error", "Une erreur est survenue.");
         }
     });
 
@@ -34,45 +43,42 @@ export default function Home() {
 
     return (
         <React.Fragment>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className={`w-100 ${styles.background}`}>
                 <Box
-                    sx={{
-                        width: 400,
-                        height: 300,
-                        left: "50%",
-                        top: "50%",
-                        transform: "translate(-50%, -50%)",
-                        position: "absolute",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textAlign: "center",
-                        borderRadius: "4px",
-                        boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.25)",
-                        padding: "1rem",
-                        justifyContent: "space-between"
-                    }}
+                    className="h-100 container-fluid d-flex justify-content-center align-items-center"
+                    sx={{ backgroundColor: "rgba(4, 38, 62, 0.25)" }}
                 >
-                    <h1>Connexion</h1>
-                    <TextField id="uuid" name="uuid" label="N° d'adhérent" variant="outlined" fullWidth />
-                    <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
-                    <LoadingButton loading={loginMutation.isLoading} type="submit" loadingPosition="end" variant="contained" endIcon={<LoginIcon />}>
-                        Connexion
-                    </LoadingButton>
+                    <Box
+                        className="d-flex justify-content-between align-items-center text-center flex-column p-4 shadow-lg"
+                        sx={{
+                            width: 550,
+                            height: 350,
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            borderRadius: "0.5rem"
+                        }}
+                    >
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                color: theme.palette.primary.main
+                            }}
+                        >
+                            Connexion
+                        </Typography>
+                        <TextField id="uuid" name="uuid" label="N° d'adhérent" variant="outlined" fullWidth />
+                        <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
+                        <LoadingButton
+                            loading={loginMutation.isLoading}
+                            type="submit"
+                            loadingPosition="end"
+                            variant="contained"
+                            endIcon={<LoginIcon />}
+                        >
+                            Connexion
+                        </LoadingButton>
+                    </Box>
                 </Box>
             </form>
-            <AppAlert
-                message={
-                    loginMutation.error
-                        ? loginMutation.error.response
-                            ? loginMutation.error.response.data.message
-                            : "Une erreur est survenue."
-                        : "Une erreur est survenue."
-                }
-                severity={"error"}
-                open={loginMutation.isError}
-            />
         </React.Fragment>
     );
 }

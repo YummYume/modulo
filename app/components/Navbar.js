@@ -7,15 +7,19 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Link from "next/link";
 import UserIcon from "@mui/icons-material/AccountCircle";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
 
 import { useUser } from "../hooks/useUser";
 import { useUserLogout } from "../hooks/useUserLogout";
+
+import styles from "../styles/Navbar.module.scss";
 
 export default function Navbar() {
     const { data: user } = useUser();
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
     const userMenuOpen = Boolean(userMenuAnchorEl);
     const logoutMutation = useUserLogout();
+    const trigger = useScrollTrigger({ disableHysteresis: true });
 
     const handleUserMenuOpen = (event) => {
         setUserMenuAnchorEl(event.currentTarget);
@@ -52,17 +56,17 @@ export default function Navbar() {
                         onClose={handleUserMenuClose}
                     >
                         <MenuItem>
-                            <Typography variant="h6">{user.data.fullName}</Typography>
+                            <Typography variant="body1">{user.data.fullName}</Typography>
                         </MenuItem>
                         <MenuItem onClick={handleLogout}>
-                            <Typography variant="h6">Déconnexion</Typography>
+                            <Typography variant="body1">Déconnexion</Typography>
                         </MenuItem>
                     </Menu>
                 </Box>
             ) : (
                 <Link href="/">
                     <a>
-                        <Typography variant="h6">Connexion</Typography>
+                        <Typography variant="body1">Connexion</Typography>
                     </a>
                 </Link>
             )}
@@ -70,11 +74,12 @@ export default function Navbar() {
     );
 
     return (
-        <AppBar position="static" color="primaryBlue">
-            <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Modulo
-                </Typography>
+        <AppBar color="primary">
+            <Toolbar
+                className={`d-flex justify-content-between align-items-center ${trigger ? styles.reducedState : styles.initialState}`}
+                classes={{ root: { "min-height": "0px" } }}
+            >
+                <Typography variant="h6">Modulo</Typography>
                 {rightSide}
             </Toolbar>
         </AppBar>
