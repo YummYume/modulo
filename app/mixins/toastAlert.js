@@ -11,9 +11,6 @@ export const toastAlert = (type, message, options) => {
         draggable: true,
         progress: undefined,
         theme: "colored",
-        style: {
-            marginTop: "75px"
-        },
         ...options
     };
 

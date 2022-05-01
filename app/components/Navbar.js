@@ -8,6 +8,10 @@ import Box from "@mui/material/Box";
 import Link from "next/link";
 import UserIcon from "@mui/icons-material/AccountCircle";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
+import CircularProgress from "@mui/material/CircularProgress";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AvatarIcon from "@mui/icons-material/AccountCircle";
 
 import { useUser } from "../hooks/useUser";
 import { useUserLogout } from "../hooks/useUserLogout";
@@ -18,7 +22,7 @@ export default function Navbar() {
     const { data: user } = useUser();
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
     const userMenuOpen = Boolean(userMenuAnchorEl);
-    const logoutMutation = useUserLogout();
+    const logoutMutation = useUserLogout(null, null, () => setUserMenuAnchorEl(null));
     const trigger = useScrollTrigger({ disableHysteresis: true });
 
     const handleUserMenuOpen = (event) => {
@@ -26,17 +30,16 @@ export default function Navbar() {
     };
 
     const handleUserMenuClose = () => {
-        setUserMenuAnchorEl(null);
+        !logoutMutation.isLoading && setUserMenuAnchorEl(null);
     };
 
     const handleLogout = () => {
-        setUserMenuAnchorEl(null);
         logoutMutation.mutate();
     };
 
     const rightSide = (
         <Box>
-            {user && user.data ? (
+            {user ? (
                 <Box>
                     <UserIcon
                         id="user-icon"
@@ -55,11 +58,25 @@ export default function Navbar() {
                         open={userMenuOpen}
                         onClose={handleUserMenuClose}
                     >
-                        <MenuItem>
-                            <Typography variant="body1">{user.data.fullName}</Typography>
+                        <MenuItem disabled={logoutMutation.isLoading}>
+                            <ListItemIcon>
+                                <AvatarIcon fontSize="small" />
+                            </ListItemIcon>
+                            <Typography variant="body1">{user.fullName}</Typography>
                         </MenuItem>
-                        <MenuItem onClick={handleLogout}>
-                            <Typography variant="body1">Déconnexion</Typography>
+                        <MenuItem onClick={handleLogout} disabled={logoutMutation.isLoading}>
+                            <ListItemIcon>
+                                <LogoutIcon fontSize="small" />
+                            </ListItemIcon>
+                            <Typography variant="body1">
+                                Déconnexion{" "}
+                                {logoutMutation.isLoading && (
+                                    <CircularProgress
+                                        size={16}
+                                        sx={{ position: "absolute", right: 0, top: "50%", marginTop: "-8px", marginRight: 1 }}
+                                    />
+                                )}
+                            </Typography>
                         </MenuItem>
                     </Menu>
                 </Box>

@@ -1,31 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
-import { useMutation, useQueryClient } from "react-query";
+import { dehydrate, QueryClient, useMutation, useQueryClient } from "react-query";
 import { useRouter } from "next/router";
-import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material";
 
-import { login } from "../api/user";
+import { getCurrentUserFromServer, login } from "../api/user";
+import { useUser } from "../hooks/useUser";
 import { toastAlert } from "../mixins/toastAlert";
 
 import styles from "../styles/Index.module.scss";
 
 export default function Home() {
-    const theme = useTheme();
     const router = useRouter();
+    const theme = useTheme();
     const queryClient = useQueryClient();
+    const { data: user } = useUser();
     const loginMutation = useMutation((credentials) => login(credentials.uuid, credentials.password), {
-        onSuccess: async () => {
-            await queryClient.invalidateQueries("user");
+        onSuccess: ({ data }) => {
+            queryClient.setQueryData("user", data);
 
             router.push("/roles");
         },
-
-        onError: async () => {
-            toastAlert("error", "Une erreur est survenue.");
+        onError: (error) => {
+            toastAlert("error", 401 === error.response?.data?.code ? "Identifiants invalides." : "Une erreur est survenue.");
         }
     });
 
@@ -40,6 +41,12 @@ export default function Home() {
 
         loginMutation.mutate({ uuid, password });
     };
+
+    useEffect(() => {
+        if (user) {
+            toastAlert("info", "Vous êtes déjà connecté.");
+        }
+    }, []);
 
     return (
         <React.Fragment>
@@ -69,6 +76,7 @@ export default function Home() {
                         <TextField id="password" name="password" label="Mot de passe" variant="outlined" type="password" fullWidth />
                         <LoadingButton
                             loading={loginMutation.isLoading}
+                            disabled={Boolean(user)}
                             type="submit"
                             loadingPosition="end"
                             variant="contained"
@@ -81,4 +89,16 @@ export default function Home() {
             </form>
         </React.Fragment>
     );
+}
+
+export async function getServerSideProps({ req }) {
+    const queryClient = new QueryClient();
+
+    await queryClient.prefetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
+
+    return {
+        props: {
+            dehydratedState: dehydrate(queryClient)
+        }
+    };
 }

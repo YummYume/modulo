@@ -5,3 +5,13 @@ export const getRoles = async () => {
 
     return response.data;
 };
+
+export const getRolesFromServer = async (cookie = null) => {
+    const response = await axiosApiInstance().get("/roles", {
+        headers: {
+            Cookie: cookie
+        }
+    });
+
+    return response.data;
+};

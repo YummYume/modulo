@@ -180,4 +180,7 @@ update-prod:
 	yarn install --production --no-progress && \
 	yarn build && \
 	php bin/console assets:install && \
-	APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
+	APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear && \
+	cd ../app && \
+	yarn install --production --no-progress && \
+	yarn build

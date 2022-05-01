@@ -14,7 +14,9 @@ services:
       - api
       - db
     networks:
-      - modulo_network
+      modulo_network:
+        aliases:
+          - "api.modulo.local"
     container_name: modulo-nginx
 
   api:

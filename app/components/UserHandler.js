@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useQuery } from "react-query";
 
-// import AppAlert from "./AppAlert";
+import { refresh } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { useUserLogout } from "../hooks/useUserLogout";
+import { toastAlert } from "../mixins/toastAlert";
 
 export default function UserHandler() {
     const router = useRouter();
@@ -15,7 +17,7 @@ export default function UserHandler() {
         setDisplayConnectionFailure(false);
     };
     const onQueryFailure = () => {
-        if (router.pathname !== "/" && user.data) {
+        if (router.pathname !== "/" && Boolean(user)) {
             setRefetchAttempts(refetchAttempts + 1);
             setDisplayConnectionFailure(true);
         } else {
@@ -23,15 +25,36 @@ export default function UserHandler() {
             setDisplayConnectionFailure(false);
         }
 
-        if (refetchAttempts >= 4) {
+        if (refetchAttempts >= 2) {
             logoutMutation.mutate();
         }
     };
-    const user = useUser(onQuerySuccess, onQueryFailure);
+    const { data: user } = useUser(onQuerySuccess, onQueryFailure);
     const logoutMutation = useUserLogout();
+    const refreshUser = useQuery("refresh", refresh, {
+        refetchOnWindowFocus: false,
+        refetchInterval: 90000,
+        retry: 2,
+        refetchIntervalInBackground: true,
+        enabled: Boolean(user && isOnline)
+    });
 
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const handleOnline = () => {
+        if (!isOnline) {
+            toastAlert("success", "De nouveau en ligne.");
+            setIsOnline(true);
+        }
+    };
+    const handleOffline = () => {
+        if (isOnline) {
+            toastAlert(
+                "warning",
+                "Problème de connexion internet. Vos changements ne seront pris en compte qu'après récupération de la connexion.",
+                { autoClose: false }
+            );
+            setIsOnline(false);
+        }
+    };
 
     useEffect(() => {
         if (navigator !== undefined && window !== undefined) {
@@ -48,21 +71,10 @@ export default function UserHandler() {
     }, []);
 
     useEffect(() => {
-        if (!user.data && user.isError && router.pathname !== "/") {
-            router.push("/");
-        } else if (user.data && !user.isError && router.pathname === "/") {
-            router.push("/roles");
+        if (isOnline && displayConnectionFailure) {
+            toastAlert("error", "Problème de connexion au serveur, vous risquez d'être déconnecté.", { autoClose: false });
         }
-    }, [user, router]);
+    }, [isOnline, displayConnectionFailure]);
 
-    return (
-        <React.Fragment>
-            {/* <AppAlert message="Problème de connexion au serveur, vous risquez d'être déconnecté." severity="error" open={displayConnectionFailure} />
-            <AppAlert
-                message="Problème de connexion internet. Vos changements ne seront pris en compte qu'après récupération de la connexion."
-                severity="warning"
-                open={!isOnline}
-            /> */}
-        </React.Fragment>
-    );
+    return <React.Fragment />;
 }

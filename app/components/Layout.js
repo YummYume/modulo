@@ -13,7 +13,7 @@ export default function Layout({ children }) {
             <Navbar />
             <main className="d-flex flex-grow-1">{children}</main>
             <Footer />
-            <ToastContainer />
+            <ToastContainer style={{ top: "5rem" }} />
         </Box>
     );
 }
