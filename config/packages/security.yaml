@@ -67,8 +67,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/docs, roles: PUBLIC_ACCESS, host: "%host_domain_api%" }
-        - { path: ^/auth-token, roles: IS_AUTHENTICATED_ANONYMOUSLY, host: "%host_domain_api%" }
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, host: "%host_domain_admin%" }
+        - { path: ^/auth-token, roles: PUBLIC_ACCESS, host: "%host_domain_api%" }
+        - { path: ^/login, roles: PUBLIC_ACCESS, host: "%host_domain_admin%" }
         - { path: ^/, roles: ROLE_ADMIN, host: "%host_domain_admin%" }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 

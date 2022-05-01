@@ -31,3 +31,5 @@ scope.active: Actif
 
 ### Security
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
+The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
+The presented password is invalid.: Le mot de passe est invalide.
