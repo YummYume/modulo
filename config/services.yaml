@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     host_domain: "%env(HOST_DOMAIN)%"
+    host_domain_api: "api.%env(HOST_DOMAIN)%"
+    host_domain_admin: "admin.%env(HOST_DOMAIN)%"
 
 services:
     # default configuration for services in *this* file
