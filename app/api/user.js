@@ -20,3 +20,24 @@ export const logout = async () => {
 
     return response;
 };
+
+export const getCurrentUser = async () => {
+    const response = await axiosApiInstance().get("/me", {
+        headers: {
+            Accept: "application/json"
+        }
+    });
+
+    return response.data;
+};
+
+export const getCurrentUserFromServer = async (cookie = null) => {
+    const response = await axiosApiInstance().get("/me", {
+        headers: {
+            Accept: "application/json",
+            Cookie: cookie
+        }
+    });
+
+    return response.data;
+};

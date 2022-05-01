@@ -39,7 +39,7 @@ export default function Navbar() {
 
     const rightSide = (
         <Box>
-            {user && user.data ? (
+            {user ? (
                 <Box>
                     <UserIcon
                         id="user-icon"
@@ -62,7 +62,7 @@ export default function Navbar() {
                             <ListItemIcon>
                                 <AvatarIcon fontSize="small" />
                             </ListItemIcon>
-                            <Typography variant="body1">{user.data.fullName}</Typography>
+                            <Typography variant="body1">{user.fullName}</Typography>
                         </MenuItem>
                         <MenuItem onClick={handleLogout} disabled={logoutMutation.isLoading}>
                             <ListItemIcon>

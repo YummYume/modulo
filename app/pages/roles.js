@@ -1,37 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import Box from "@mui/material/Box";
 
-import { getRoles } from "../api/roles";
-import { useUser } from "../hooks/useUser";
-import { refresh } from "../api/user";
+import { getRoles, getRolesFromServer } from "../api/roles";
+import { toastAlert } from "../mixins/toastAlert";
+import { getCurrentUserFromServer } from "../api/user";
 
-export default function Roles({ userData }) {
-    const { data: user } = useUser();
-    const { isLoading, isError, data, error } = useQuery("roles", getRoles, {
-        refetchInterval: 10000,
-        enabled: (user && user.data) !== false
+export default function Roles() {
+    const { isLoading, data } = useQuery("roles", getRoles, {
+        refetchInterval: 30000,
+        onError: () => {
+            toastAlert("error", "Impossible de récupérer les rôles.");
+        }
     });
-
-    console.log(userData);
-
-    const test = async () => {
-        const res = await fetch(`https://modulo.local:443/api/roles`, {
-            credentials: "include"
-        });
-        const data = await res.json();
-        console.log(data);
-    };
-
-    useEffect(() => {
-        test();
-    }, []);
 
     return (
         <Box sx={{ paddingTop: "100px" }}>
             <h1>Roles</h1>
             {isLoading && <p>Chargement...</p>}
-            {isError && <p>Erreur: {error.message}</p>}
             {data && (
                 <ul>
                     {data["hydra:member"].map((role) => (
@@ -43,19 +29,25 @@ export default function Roles({ userData }) {
     );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps({ req }) {
     const queryClient = new QueryClient();
 
-    await queryClient.prefetchQuery("user", refresh);
-    await queryClient.prefetchQuery("roles", getRoles);
-
-    // const res = await getRoles();
-    // const data = await res.json();
+    try {
+        await queryClient.fetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
+    } catch (error) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: "/"
+            },
+            props: {}
+        };
+    }
+    await queryClient.prefetchQuery("roles", () => getRolesFromServer(req.headers.cookie));
 
     return {
         props: {
             dehydratedState: dehydrate(queryClient)
-            // userData: data
         }
     };
 }
