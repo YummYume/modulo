@@ -8,3 +8,4 @@ gesdinet_jwt_refresh_token:
         same_site: lax
         http_only: true
         secure: true
+        domain: ".%host_domain%"

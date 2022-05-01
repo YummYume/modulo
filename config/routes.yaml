@@ -9,17 +9,17 @@ kernel:
 authentication_token:
     path: /auth-token
     methods: ["POST"]
-    host: api.%host_domain%
+    host: "%host_domain_api%"
 
 api_refresh_token:
     path: /refresh-token
-    host: api.%host_domain%
+    host: "%host_domain_api%"
 
 api_token_invalidate:
     path: /invalidate-token
-    host: api.%host_domain%
+    host: "%host_domain_api%"
 
 swagger_ui:
-    path: /docs
-    host: api.%host_domain%
     controller: api_platform.swagger.action.ui
+    path: /docs
+    host: "%host_domain_api%"

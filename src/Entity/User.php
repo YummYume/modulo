@@ -21,7 +21,43 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
-    normalizationContext: ['groups' => ['get']]
+    normalizationContext: ['groups' => ['get']],
+    itemOperations: [
+        'get',
+        'put',
+        'delete',
+        'me' => [
+            'method' => 'GET',
+            'path' => '/me',
+            'defaults' => ['id' => 0],
+            'openapi_context' => [
+                'summary' => 'Get the current user.',
+                'description' => 'Get the current user.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The current user\'s API fields.',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '401' => [
+                        'description' => 'The JWT is missing or invalid.',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

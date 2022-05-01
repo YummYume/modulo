@@ -10,6 +10,8 @@ lexik_jwt_authentication:
         BEARER:
             httpOnly: true
             samesite: lax
+            secure: true
+            domain: ".%host_domain%"
 
     token_extractors:
         authorization_header:

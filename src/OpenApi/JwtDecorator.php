@@ -41,6 +41,15 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 ],
             ],
         ]);
+        $schemas['MissingJWT'] = new \ArrayObject([
+            'type' => 'object',
+            'properties' => [
+                'message' => [
+                    'type' => 'string',
+                    'example' => 'JWT Token not found',
+                ],
+            ],
+        ]);
         $schemas['MissingRefreshToken'] = new \ArrayObject([
             'type' => 'object',
             'properties' => [
