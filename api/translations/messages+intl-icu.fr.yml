@@ -27,6 +27,14 @@ view.category.detail: Détails d'une catégorie
 view.category.single: une catégorie
 view.category.plural: des catégorie
 
+view.admin.role: Rôles
+view.role.index: Rôles
+view.role.create: Créer un rôle
+view.role.edit: Modifier un rôle
+view.role.detail: Détails d'un rôle
+view.role.single: un rôle
+view.role.plural: des rôle
+
 ### Entity
 user.email: Adresse mail
 user.uuid: N° d'adhérent
@@ -38,11 +46,19 @@ scope.structure: Structure
 scope.role: Rôle
 scope.active: Actif
 
+### Category
+category.name: Nom
+category.description: Description
+
+### Role
+role.name: Nom
+role.feminine_name: Nom féminin
+role.code: Code
+role.age_section: Section d'âge
+role.icon: Icône
+role.categories: Catégories d'événement autorisées
+
 ### Security
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
 The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
 The presented password is invalid.: Le mot de passe est invalide.
-
-### Category
-category.name: Nom
-category.description: Description
