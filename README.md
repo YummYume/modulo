@@ -2,7 +2,7 @@
 The Modulo project.
 
 ## How to install
-- Clone the project using `git clone --recurse-submodules git@github.com:YummYume/modulo.git`
+- Clone the project using `git clone git@github.com:YummYume/modulo.git`
 - Copy the `.env` file in the root folder and name it `.env.local`, override any needed variable (**!!if you change the db username and/or password, you also need to change the configuration for the mariadb connection in api/.env!!**)
 - Copy the `docker-compose-dev.yml.dist` in the root folder and name it `docker-compose-dev.yml`, override any needed configuration
 - Run `make start`
@@ -50,18 +50,6 @@ The Modulo project.
 
 ## Install a new dependency
 **This is important** : To install a `yarn` or `composer` package, `ssh` into the container (`make ssh-app` or `make ssh-api`) and install it there, then run `make sync-dependencies` (or any `sync-dependencies` command to sync only the required container)
-
-## The API Submodule
-**If you didn't clone with the `--recurse-submodules` option :**
-- Run `git submodule update --init` in the project's root folder
-
-**To make a change in the API :**
-- Go into the API folder and create and/or checkout to a branch
-- Make your changes and push
-- Go back to the project's root folder and run `git add api`, then commit and push
-
-**To get the latest version of the API submodule :**
-- Run `git submodule update` in the project's root folder
 
 ## Extra
 - **Nginx** logs are available in **nginx/logs**
