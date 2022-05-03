@@ -41,10 +41,14 @@ class Role
     #[ORM\OneToMany(mappedBy: 'role', targetEntity: Scope::class, orphanRemoval: true)]
     private Collection $scopes;
 
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'roles')]
+    private $categories;
+
     #[Pure]
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -102,7 +106,7 @@ class Role
     {
         $this->ageSection = $ageSection;
 
-        return $this;
+        return $this->catégorie;
     }
 
     public function getIcon(): ?string
@@ -143,6 +147,30 @@ class Role
                 $scope->setRole(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        $this->categories->removeElement($category);
 
         return $this;
     }
