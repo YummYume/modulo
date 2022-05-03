@@ -41,6 +41,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('view.admin.scope', 'fas fa-list', Scope::class);
         yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list', Category::class);
         yield MenuItem::linkToCrud('view.admin.role', 'fas fa-list', Role::class);
+        yield MenuItem::linkToCrud('view.admin.user', 'fas fa-list', User::class);
     }
 
     public function configureUserMenu(UserInterface|User $user): UserMenu

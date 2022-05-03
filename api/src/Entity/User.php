@@ -16,8 +16,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[UniqueEntity(fields: ['uuid'], message: 'There is already an account with this uuid')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['uuid'], message: 'user.uuid.unique')]
+#[UniqueEntity(fields: ['email'], message: 'user.email.unique')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
@@ -59,6 +59,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ],
     ]
 )]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use BlameableTrait;
