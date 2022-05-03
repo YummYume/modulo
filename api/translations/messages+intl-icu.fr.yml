@@ -1,0 +1,35 @@
+### Common
+common.app_name: Modulo
+common.login: Connexion
+common.logout: Déconnexion
+common.created_at: Créé le
+common.updated_at: Mis à jour le
+common.created_by: Créé par
+common.updated_by: Mis à jour par
+
+### Views
+view.login.title: Connexion à {app_name}
+view.admin.dashboard: Tableau de bord
+view.admin.scope: Scopes
+view.scope.index: Scopes
+view.scope.create: Créer une scope
+view.scope.edit: Modifier une scope
+view.scope.detail: Détails d'une scope
+view.scope.single: une scope
+view.scope.plural: des scopes
+
+### Entity
+user.email: Adresse mail
+user.uuid: N° d'adhérent
+user.password: Mot de passe
+
+### Scope
+scope.user: Utilisateur
+scope.structure: Structure
+scope.role: Rôle
+scope.active: Actif
+
+### Security
+Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
+The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
+The presented password is invalid.: Le mot de passe est invalide.

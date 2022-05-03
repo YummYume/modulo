@@ -1,0 +1,25 @@
+controllers:
+    resource: ../src/Controller/
+    type: annotation
+
+kernel:
+    resource: ../src/Kernel.php
+    type: annotation
+
+authentication_token:
+    path: /auth-token
+    methods: ["POST"]
+    host: "%host_domain_api%"
+
+api_refresh_token:
+    path: /refresh-token
+    host: "%host_domain_api%"
+
+api_token_invalidate:
+    path: /invalidate-token
+    host: "%host_domain_api%"
+
+swagger_ui:
+    controller: api_platform.swagger.action.ui
+    path: /docs
+    host: "%host_domain_api%"

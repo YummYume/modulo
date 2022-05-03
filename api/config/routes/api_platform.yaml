@@ -1,0 +1,4 @@
+api_platform:
+    resource: .
+    type: api_platform
+    host: "%host_domain_api%"
