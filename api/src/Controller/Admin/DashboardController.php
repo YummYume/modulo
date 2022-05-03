@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
-use App\Entity\Role;
 use App\Entity\Scope;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -40,7 +39,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('view.admin.dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('view.admin.scope', 'fas fa-list', Scope::class);
         yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list', Category::class);
-        yield MenuItem::linkToCrud('view.admin.role', 'fas fa-list', Role::class);
     }
 
     public function configureUserMenu(UserInterface|User $user): UserMenu
