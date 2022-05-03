@@ -32,9 +32,9 @@ class RoleCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name', 'role.name'),
-            TextField::new('feminineName', 'role.feminineName'),
+            TextField::new('feminineName', 'role.feminine_name'),
             TextField::new('code', 'role.code'),
-            AssociationField::new('ageSection', 'role.ageSection'),
+            AssociationField::new('ageSection', 'role.age_section'),
             AssociationField::new('categories', 'role.categories'),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->onlyOnIndex(),

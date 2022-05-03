@@ -46,19 +46,19 @@ scope.structure: Structure
 scope.role: Rôle
 scope.active: Actif
 
-### Security
-Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
-The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
-The presented password is invalid.: Le mot de passe est invalide.
-
 ### Category
 category.name: Nom
 category.description: Description
 
 ### Role
 role.name: Nom
-role.feminineName: Nom féminin
+role.feminine_name: Nom féminin
 role.code: Code
-role.ageSection: Section d'âge
+role.age_section: Section d'âge
 role.icon: Icône
 role.categories: Catégories d'événement autorisées
+
+### Security
+Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
+The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
+The presented password is invalid.: Le mot de passe est invalide.

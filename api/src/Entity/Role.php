@@ -42,7 +42,7 @@ class Role
     private Collection $scopes;
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'roles')]
-    private $categories;
+    private Collection $categories;
 
     #[Pure]
     public function __construct()
@@ -106,7 +106,7 @@ class Role
     {
         $this->ageSection = $ageSection;
 
-        return $this->catégorie;
+        return $this;
     }
 
     public function getIcon(): ?string

@@ -29,7 +29,7 @@ class Category
     private ?string $description;
 
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'categories')]
-    private $roles;
+    private Collection $roles;
 
     public function __construct()
     {
