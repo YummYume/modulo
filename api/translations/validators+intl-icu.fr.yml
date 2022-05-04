@@ -12,6 +12,8 @@ user.password.min_length: Le mot de passe doit contenir au moins {limit} caract√
 user.password.max_length: Le mot de passe ne doit pas contenir plus de {limit} caract√®res.
 user.password.invalid: Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule et un chiffre.
 user.password.compromised: Ce mot de passe est compromis. Veuillez en choisir un autre.
+user.password.not_blank: Veuillez saisir un mot de passe.
+user.password.mismatch: Les mots de passe ne correspondent pas.
 
 ### Commands
 command.dispatcher.invalid: The command's attribute "{attribute}" is invalid ({message}).
