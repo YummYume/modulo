@@ -7,7 +7,6 @@ use App\Enum\Gender;
 use App\Enum\StaticRole;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -51,17 +50,10 @@ class UserCrudController extends AbstractCrudController
                 ->setChoices(StaticRole::toArray(true))
                 ->allowMultipleChoices()
                 ->onlyOnForms(),
-            ArrayField::new('roles', 'user.roles')
+            ChoiceField::new('roles', 'user.roles')
                 ->onlyOnIndex()
-                ->formatValue(function (string $roles) {
-                    $rolesArray = explode(',', $roles);
-
-                    foreach ($rolesArray as $role) {
-                        $role = $this->translator->trans('role.'.$role);
-                    }
-
-                    return implode(',', $rolesArray);
-                }),
+                ->setChoices(StaticRole::toArray(true))
+                ->allowMultipleChoices(),
             TextField::new('firstName', 'user.first_name'),
             TextField::new('lastName', 'user.last_name'),
             ChoiceField::new('gender', 'user.gender')

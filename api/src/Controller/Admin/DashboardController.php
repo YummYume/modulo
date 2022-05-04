@@ -38,10 +38,10 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('view.admin.dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('view.admin.scope', 'fas fa-list', Scope::class);
-        yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list', Category::class);
-        yield MenuItem::linkToCrud('view.admin.role', 'fas fa-list', Role::class);
-        yield MenuItem::linkToCrud('view.admin.user', 'fas fa-list', User::class);
+        yield MenuItem::linkToCrud('view.admin.scope', 'fas fa-users-cog', Scope::class);
+        yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list-ul', Category::class);
+        yield MenuItem::linkToCrud('view.admin.role', 'fas fa-user-tag', Role::class);
+        yield MenuItem::linkToCrud('view.admin.user', 'fas fa-users', User::class);
     }
 
     public function configureUserMenu(UserInterface|User $user): UserMenu

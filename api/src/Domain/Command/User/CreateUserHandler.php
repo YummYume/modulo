@@ -3,21 +3,21 @@
 namespace App\Domain\Command\User;
 
 use App\Entity\User;
+use App\Enum\Gender;
+use App\Enum\StaticRole;
 use App\Exception\Mailer\MailException;
 use App\Mail\User\NewAccountMail;
+use App\Repository\UserRepository;
 use App\Service\Mailer\Mailer;
-use App\Service\User\PasswordGenerator;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class CreateUserHandler implements MessageHandlerInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private UserPasswordHasherInterface $userPasswordHasher,
-        private PasswordGenerator $passwordGenerator,
-        private Mailer $mailer
+        private Mailer $mailer,
+        private UserRepository $userRepository
     ) {
     }
 
@@ -26,16 +26,18 @@ class CreateUserHandler implements MessageHandlerInterface
      */
     public function __invoke(CreateUserCommand $command): void
     {
-        $user = new User($command->getUuid(), $command->getEmail(), $command->getFirstName(), $command->getLastName(), $command->getGenre());
-        $password = $command->getPassword() ?: $this->passwordGenerator->generate();
-        $user->setPassword($this->userPasswordHasher->hashPassword($user, $password));
-        if ($command->isAdmin()) {
-            $user->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
-        }
+        $user = (new User())
+            ->setUuid($command->getUuid())
+            ->setEmail($command->getEmail())
+            ->setFirstName($command->getFirstName())
+            ->setLastName($command->getLastName())
+            ->setGender(Gender::tryFrom($command->getGender()) ?? Gender::OTHER)
+            ->setPlainPassword($command->getPassword())
+            ->setRoles($command->isAdmin() ? [StaticRole::ROLE_USER->name, StaticRole::ROLE_ADMIN->name] : [StaticRole::ROLE_USER->name])
+        ;
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->userRepository->add($user);
 
-        $this->mailer->sendMail(new NewAccountMail($user, $password));
+        $this->mailer->sendMail(new NewAccountMail($user, $command->getPassword()));
     }
 }

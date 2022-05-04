@@ -1,4 +1,5 @@
 ### Common
+
 common.app_name: Modulo
 common.login: Connexion
 common.logout: Déconnexion
@@ -8,6 +9,7 @@ common.created_by: Créé par
 common.updated_by: Mis à jour par
 
 ### Views
+
 view.login.title: Connexion à {app_name}
 view.admin.dashboard: Tableau de bord
 
@@ -74,13 +76,17 @@ role.age_section: Section d'âge
 role.icon: Icône
 role.categories: Catégories d'événement autorisées
 
-
 ### Enums
 
 # Gender
 male: Homme
 female: Femme
 other: Autre
+
+# StaticRole
+role_user: Utilisateur
+role_admin: Administrateur
+role_super_admin: Super Administrateur
 
 ### Security
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.

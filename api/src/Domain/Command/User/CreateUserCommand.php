@@ -2,60 +2,33 @@
 
 namespace App\Domain\Command\User;
 
+use App\Enum\Gender;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateUserCommand
 {
-    /**
-     * @Assert\Regex(pattern="/^[0-9]{9}$/", message="Invalid member number")
-     */
-    private ?string $uuid;
+    #[Assert\Regex(pattern: '/^[0-9]{9}$/', message: 'create_user_command.uuid.invalid')]
+    private ?string $uuid = null;
 
-    /**
-     * @Assert\Email()
-     */
-    private ?string $email;
+    #[Assert\Email(message: 'create_user_command.email.invalid')]
+    private ?string $email = null;
 
-    /**
-     * @Assert\NotBlank()
-     */
-    private ?string $firstName;
+    #[Assert\NotBlank(message: 'create_user_command.first_name.not_blank')]
+    private ?string $firstName = null;
 
-    /**
-     * @Assert\NotBlank()
-     */
-    private ?string $lastName;
+    #[Assert\NotBlank(message: 'create_user_command.last_name.not_blank')]
+    private ?string $lastName = null;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Choice({"H", "F"})
-     */
-    private ?string $genre;
+    #[Assert\NotBlank(message: 'create_user_command.gender.not_blank')]
+    #[Assert\Choice(callback: 'getAllowedGenders', message: 'create_user_command.gender.choice')]
+    private ?string $gender = null;
 
-    /**
-     * @Assert\Length(min=6, minMessage="Your password should be at least {{ limit }} characters")
-     */
-    private ?string $password;
+    #[Assert\Length(min: 8, max: 50, minMessage: 'create_user_command.password.min_length', maxMessage: 'create_user_command.password.max_length')]
+    #[Assert\Regex(pattern: '/^[^\s](?=.*[a-z])(?=.*[A-Z])(?=.*\d).+[^\s]$/', message: 'create_user_command.password.invalid')]
+    #[Assert\NotCompromisedPassword(message: 'create_user_command.password.compromised')]
+    private ?string $password = null;
 
     private bool $admin = false;
-
-    public function __construct(
-        string $uuid = null,
-        string $email = null,
-        string $firstName = null,
-        string $lastName = null,
-        string $genre = null,
-        string $password = null,
-        bool $admin = false,
-    ) {
-        $this->uuid = $uuid;
-        $this->email = $email;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->genre = $genre;
-        $this->password = $password;
-        $this->admin = $admin;
-    }
 
     public function getUuid(): ?string
     {
@@ -105,14 +78,14 @@ class CreateUserCommand
         return $this;
     }
 
-    public function getGenre(): ?string
+    public function getGender(): ?string
     {
-        return $this->genre;
+        return $this->gender;
     }
 
-    public function setGenre(?string $genre): self
+    public function setGender(?string $gender): self
     {
-        $this->genre = $genre;
+        $this->gender = $gender;
 
         return $this;
     }
@@ -139,5 +112,10 @@ class CreateUserCommand
         $this->admin = $admin;
 
         return $this;
+    }
+
+    public static function getAllowedGenders(): array
+    {
+        return array_map(static fn (Gender $gender) => $gender->value, Gender::cases());
     }
 }

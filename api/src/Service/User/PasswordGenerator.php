@@ -2,35 +2,45 @@
 
 namespace App\Service\User;
 
-use Exception;
-use LogicException;
-use RangeException;
-
 class PasswordGenerator
 {
-    public const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const digits = '0123456789';
+    public const letters = 'abcdefghijklmnopqrstuvwxyz';
+    public const upperLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     public const specialChars = '@$?!#';
 
     public function generate(int $length = 8): string
     {
-        if ($length < 6 || $length > 15) {
-            throw new RangeException('Password length must lay between 6 and 15.');
+        if ($length < 8 || $length > 20) {
+            throw new \RangeException('Password length must lay between 8 and 20.');
         }
 
         $pieces = [];
-        $max = mb_strlen(self::chars, '8bit') - 1;
-        $maxSpecial = mb_strlen(self::specialChars, '8bit') - 1;
 
         try {
-            for ($i = 0; $i < $length - 1; ++$i) {
-                $pieces[] = self::chars[random_int(0, $max)];
+            foreach (range(0, $length) as $i) {
+                $progress = ($i * 100) / $length;
+
+                if ($progress < 25) {
+                    $pieces[] = $this->getRandomChar(self::digits);
+                } elseif ($progress < 50) {
+                    $pieces[] = $this->getRandomChar(self::letters);
+                } elseif ($progress < 75) {
+                    $pieces[] = $this->getRandomChar(self::upperLetters);
+                } else {
+                    $pieces[] = $this->getRandomChar(self::specialChars);
+                }
             }
-            $pieces[] = self::specialChars[random_int(0, $maxSpecial)];
             shuffle($pieces);
-        } catch (Exception $exception) {
-            throw new LogicException();
+        } catch (\Exception $exception) {
+            throw new \LogicException();
         }
 
         return implode('', $pieces);
+    }
+
+    private function getRandomChar(string $charSet): string
+    {
+        return $charSet[random_int(0, mb_strlen($charSet, '8bit') - 1)];
     }
 }

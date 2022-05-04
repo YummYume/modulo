@@ -1,5 +1,28 @@
 ### Entity
+# Scope
 scope.unique: Cette scope existe déjà pour l'utilisateur {value}.
 
+# User
+user.uuid.invalid: Le numéro d'adhérent doit être composé de 9 chiffres.
+user.uuid.unique: Cet identifiant existe déjà.
+user.email.unique: Cet email existe déjà.
+user.email.not_blank: Veuillez saisir une adresse mail.
+user.email.invalid: Veuillez saisir une adresse mail valide.
+user.password.min_length: Le mot de passe doit contenir au moins {limit} caractères.
+user.password.max_length: Le mot de passe ne doit pas contenir plus de {limit} caractères.
+user.password.invalid: Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule et un chiffre.
+user.password.compromised: Ce mot de passe est compromis. Veuillez en choisir un autre.
+
 ### Commands
-command.dispatcher.invalid: Les données de la commande sony invalides pour l'attribut {attribute} ({message}).
+command.dispatcher.invalid: The command's attribute "{attribute}" is invalid ({message}).
+
+create_user_command.uuid.invalid: The uuid must contain 9 digits.
+create_user_command.email.invalid: The email must be a valid email.
+create_user_command.first_name.not_blank: The first name must not be blank.
+create_user_command.last_name.not_blank: The last name must not be blank.
+create_user_command.gender.not_blank: The gender must not be blank.
+create_user_command.gender.choice: Available choices for gender are {choices}.
+create_user_command.password.min_length: The password must contain at least {limit} characters.
+create_user_command.password.max_length: The password must contain at most {limit} characters.
+create_user_command.password.invalid: The password must contain at least one lowercase letter, one uppercase letter and one digit.
+create_user_command.password.compromised: This password is compromised. Please choose another one.
