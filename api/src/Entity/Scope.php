@@ -8,6 +8,7 @@ use App\Entity\Traits\TimestampableTrait;
 use App\Repository\ScopeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ScopeRepository::class)]
 #[ApiResource]
@@ -20,6 +21,7 @@ class Scope
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['get:me'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'scopes')]
@@ -28,13 +30,16 @@ class Scope
 
     #[ORM\ManyToOne(targetEntity: Structure::class, inversedBy: 'scopes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['get:me'])]
     private ?Structure $structure;
 
     #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'scopes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['get:me'])]
     private ?Role $role;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups(['get:me'])]
     private bool $active = true;
 
     public function __toString()

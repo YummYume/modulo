@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
-    normalizationContext: ['groups' => ['get']],
+    normalizationContext: ['groups' => ['get', 'get:me']],
     itemOperations: [
         'get',
         'put',
@@ -71,18 +71,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 96, unique: true)]
-    #[Groups(['get'])]
+    #[Groups(['get', 'get:me'])]
     #[Assert\Regex(pattern: '/^[0-9]{9}$/', message: 'user.uuid.invalid')]
     private ?string $uuid;
 
     #[ORM\Column(type: 'string', length: 200, unique: true)]
-    #[Groups(['get'])]
+    #[Groups(['get', 'get:me'])]
     #[Assert\NotBlank(allowNull: false, message: 'user.email.not_blank')]
     #[Assert\Email(message: 'user.email.invalid')]
     private ?string $email;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['get'])]
+    #[Groups(['get', 'get:me'])]
     private array $roles = [];
 
     #[Assert\Length(min: 8, max: 50, minMessage: 'user.password.min_length', maxMessage: 'user.password.max_length')]
@@ -94,19 +94,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password;
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['get'])]
+    #[Groups(['get', 'get:me'])]
     private ?string $firstName;
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['get'])]
+    #[Groups(['get', 'get:me'])]
     private ?string $lastName;
 
     #[ORM\Column(type: 'string', nullable: false, enumType: Gender::class)]
-    #[Groups(['get'])]
+    #[Groups(['get', 'get:me'])]
     private ?Gender $gender;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Scope::class, orphanRemoval: true)]
-    #[Groups(['get'])]
+    #[Groups(['get', 'get:me'])]
     private Collection $scopes;
 
     public function __construct()
