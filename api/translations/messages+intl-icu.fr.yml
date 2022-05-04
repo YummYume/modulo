@@ -1,4 +1,5 @@
 ### Common
+
 common.app_name: Modulo
 common.login: Connexion
 common.logout: Déconnexion
@@ -8,6 +9,7 @@ common.created_by: Créé par
 common.updated_by: Mis à jour par
 
 ### Views
+
 view.login.title: Connexion à {app_name}
 view.admin.dashboard: Tableau de bord
 
@@ -33,30 +35,58 @@ view.role.create: Créer un rôle
 view.role.edit: Modifier un rôle
 view.role.detail: Détails d'un rôle
 view.role.single: un rôle
-view.role.plural: des rôle
+view.role.plural: des rôles
 
-### Entity
+view.admin.user: Utilisateurs
+view.user.index: Utilisateurs
+view.user.create: Créer un utilisateur
+view.user.edit: Modifier un utilisateur
+view.user.detail: Détails d'un utilisateur
+view.user.single: un utilisateur
+view.user.plural: des utilisateurs
+
+### Entities
+
+# User
 user.email: Adresse mail
 user.uuid: N° d'adhérent
 user.password: Mot de passe
+user.password_repeat: Répéter le mot de passe
+user.gender: Genre
+user.first_name: Prénom
+user.last_name: Nom
+user.roles: Rôles
+user.scopes: Scopes
 
-### Scope
+# Scope
 scope.user: Utilisateur
 scope.structure: Structure
 scope.role: Rôle
 scope.active: Actif
 
-### Category
+# Category
 category.name: Nom
 category.description: Description
 
-### Role
+# Role
 role.name: Nom
 role.feminine_name: Nom féminin
 role.code: Code
 role.age_section: Section d'âge
 role.icon: Icône
 role.categories: Catégories d'événement autorisées
+
+### Enums
+
+# Gender
+male: Homme
+female: Femme
+other: Autre
+
+# StaticRole
+role_user: Utilisateur
+role_admin: Administrateur
+role_super_admin: Super Administrateur
 
 ### Security
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.

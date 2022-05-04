@@ -37,6 +37,11 @@ class Scope
     #[ORM\Column(type: 'boolean')]
     private bool $active = true;
 
+    public function __toString()
+    {
+        return $this->structure.' - '.$this->role;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

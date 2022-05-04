@@ -15,9 +15,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: ['uuid'], message: 'There is already an account with this uuid')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['uuid'], message: 'user.uuid.unique')]
+#[UniqueEntity(fields: ['email'], message: 'user.email.unique')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
@@ -71,16 +72,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 96, unique: true)]
     #[Groups(['get'])]
+    #[Assert\Regex(pattern: '/^[0-9]{9}$/', message: 'user.uuid.invalid')]
     private ?string $uuid;
 
     #[ORM\Column(type: 'string', length: 200, unique: true)]
     #[Groups(['get'])]
+    #[Assert\NotBlank(allowNull: false, message: 'user.email.not_blank')]
+    #[Assert\Email(message: 'user.email.invalid')]
     private ?string $email;
 
     #[ORM\Column(type: 'json')]
     #[Groups(['get'])]
     private array $roles = [];
 
+    #[Assert\Length(min: 8, max: 50, minMessage: 'user.password.min_length', maxMessage: 'user.password.max_length')]
+    #[Assert\Regex(pattern: '/^[^\s](?=.*[a-z])(?=.*[A-Z])(?=.*\d).+[^\s]$/', message: 'user.password.invalid')]
+    #[Assert\NotCompromisedPassword(message: 'user.password.compromised')]
     private ?string $plainPassword = null;
 
     #[ORM\Column(type: 'string')]

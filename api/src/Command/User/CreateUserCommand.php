@@ -4,13 +4,14 @@ namespace App\Command\User;
 
 use App\Domain\Command\User\CreateUserCommand as CreateUserDomainCommand;
 use App\Service\Messenger\CommandDispatcher;
+use App\Service\User\PasswordGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:user:create',
@@ -19,46 +20,47 @@ use Throwable;
 )]
 class CreateUserCommand extends Command
 {
-    public function __construct(private CommandDispatcher $messageDispatcher)
+    public function __construct(private CommandDispatcher $messageDispatcher, private PasswordGenerator $passwordGenerator)
     {
         parent::__construct();
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var string $firstName */
-        $firstName = $input->getArgument('firstName');
-
-        /** @var string $lastName */
-        $lastName = $input->getArgument('lastName');
-
-        /** @var string $egrne */
-        $genre = $input->getArgument('genre');
-
-        /** @var string $uuid */
-        $uuid = $input->getArgument('uuid');
-
-        /** @var string $uuid */
-        $email = $input->getArgument('email');
-
+        $io = new SymfonyStyle($input, $output);
+        $firstName = (string) $input->getArgument('firstName');
+        $lastName = (string) $input->getArgument('lastName');
+        $gender = (string) $input->getArgument('gender');
+        $uuid = (string) $input->getArgument('uuid');
+        $email = (string) $input->getArgument('email');
+        $password = (string) $input->getArgument('password');
         $isAdmin = (bool) $input->getOption('admin');
 
-        if (empty($uuid) || empty($email)) {
-            $output->writeLn('<fg=red;>uuid and email options are mandatory.</>');
+        if (empty($password)) {
+            $password = $this->passwordGenerator->generate(10);
         }
 
-        $output->writeln(sprintf(
-            'Creating use with uuid = %s, email = %s%s',
+        $io->info(sprintf(
+            'Creating user with uuid %s and email %s%s',
             $uuid,
             $email,
             $isAdmin ? ' (admin)' : ''
         ));
 
         try {
-            $this->messageDispatcher->dispatch(new CreateUserDomainCommand($uuid, $email, $firstName, $lastName, $genre, null, true));
-        } catch (Throwable $exception) {
-            $output->writeLn(sprintf(
-                '<fg=red;>failed creating user : %s at line %u in %s.</>',
+            $createUserDomainCommand = (new CreateUserDomainCommand())
+                ->setUuid($uuid)
+                ->setEmail($email)
+                ->setFirstName($firstName)
+                ->setLastName($lastName)
+                ->setGender($gender)
+                ->setPassword($password)
+                ->setIsAdmin($isAdmin)
+            ;
+            $this->messageDispatcher->dispatch($createUserDomainCommand);
+        } catch (\Throwable $exception) {
+            $io->error(sprintf(
+                'Failed creating user : %s at line %u in %s.',
                 $exception->getMessage(),
                 $exception->getLine(),
                 $exception->getFile(),
@@ -67,18 +69,25 @@ class CreateUserCommand extends Command
             return Command::FAILURE;
         }
 
+        $io->success(sprintf(
+            'User %s created with password %s',
+            $uuid,
+            $password
+        ));
+
         return Command::SUCCESS;
     }
 
     protected function configure(): void
     {
         $this
-            ->addArgument('firstName', InputArgument::REQUIRED, 'The first name.')
-            ->addArgument('lastName', InputArgument::REQUIRED, 'The last name.')
-            ->addArgument('genre', InputArgument::REQUIRED, 'The user genre (H/F).')
-            ->addArgument('uuid', InputArgument::REQUIRED, 'The member number (9 digits).')
-            ->addArgument('email', InputArgument::REQUIRED, 'The email address.')
-            ->addOption('admin', 'a', InputOption::VALUE_NONE, 'User is admin.')
+            ->addArgument('firstName', InputArgument::REQUIRED, 'The user\'s first name.')
+            ->addArgument('lastName', InputArgument::REQUIRED, 'The user\'s last name.')
+            ->addArgument('gender', InputArgument::REQUIRED, 'The user\'s gender.')
+            ->addArgument('uuid', InputArgument::REQUIRED, 'The user\'s uuid (9 digits).')
+            ->addArgument('email', InputArgument::REQUIRED, 'The user\'s email address.')
+            ->addArgument('password', InputArgument::OPTIONAL, 'The user\'s password.')
+            ->addOption('admin', 'a', InputOption::VALUE_NONE, 'Grants admin privileges to the user.')
         ;
     }
 }
