@@ -10,16 +10,13 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import { useQueryClient } from "react-query";
 import { useCookies } from "react-cookie";
 
 export default function UserScopeModal({ user, open, handleClose }) {
-    const queryClient = useQueryClient();
     const [cookies, setCookie] = useCookies(["current_scope"]);
 
-    const handleScopeSelection = async (scope) => {
-        setCookie("current_scope", scope);
-        await queryClient.invalidateQueries("user");
+    const handleScopeSelection = (scope) => {
+        setCookie("current_scope", scope.id);
     };
 
     return (

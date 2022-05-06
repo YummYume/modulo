@@ -12,7 +12,8 @@ export const useUser = (onQuerySuccess, onQueryFailure, onQuerySettled) => {
         refetchOnWindowFocus: false,
         select: (data) => {
             const scopes = data.scopes.filter((scope) => scope.active);
-            const currentScope = cookies.current_scope ?? scopes[0];
+            const cookieScope = parseInt(cookies.current_scope, 10);
+            const currentScope = scopes.find((scope) => cookieScope === scope.id) ?? scopes[0];
 
             return { ...data, scopes, currentScope: currentScope ?? null };
         },
