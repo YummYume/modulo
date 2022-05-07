@@ -16,7 +16,12 @@ export default function UserScopeModal({ user, open, handleClose }) {
     const [cookies, setCookie] = useCookies(["current_scope"]);
 
     const handleScopeSelection = (scope) => {
-        setCookie("current_scope", scope.id);
+        setCookie("current_scope", scope.id, {
+            path: "/",
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            sameSite: "lax",
+            secure: true
+        });
     };
 
     return (
