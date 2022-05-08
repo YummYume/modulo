@@ -27,17 +27,19 @@ export default function UserHandler() {
         onSuccess: () => {
             setUserFailure(false);
 
-            if (toast.isActive(userStatusToast.current)) {
-                toast.update(userStatusToast.current, {
-                    render: "Reconnexion réussie.",
-                    type: toast.TYPE.SUCCESS,
-                    autoClose: 5000,
-                    isLoading: false,
-                    closeButton: true,
-                    closeOnClick: true,
-                    draggable: true,
-                    transition: Flip
-                });
+            if (userFailure) {
+                if (toast.isActive(userStatusToast.current)) {
+                    toast.update(userStatusToast.current, {
+                        render: "Reconnexion réussie.",
+                        type: toast.TYPE.SUCCESS,
+                        autoClose: 5000,
+                        isLoading: false,
+                        closeButton: true,
+                        closeOnClick: true,
+                        draggable: true,
+                        transition: Flip
+                    });
+                }
             }
         },
         onError: () => {
@@ -62,12 +64,18 @@ export default function UserHandler() {
 
     useEffect(() => {
         if (Boolean(user && isOnline && userFailure)) {
-            if (!toast.isActive(userStatusToast.current)) {
-                userStatusToast.current = toast.loading("Problème de connexion au serveur. Tentative de reconnexion...");
-            }
+            if ("true" === cookies.remember_me) {
+                if (!toast.isActive(userStatusToast.current)) {
+                    userStatusToast.current = toast.loading("Problème de connexion au serveur. Tentative de reconnexion...");
+                }
 
-            if (!refreshUser.isFetching && "true" === cookies.remember_me) {
-                refreshUser.refetch();
+                if (!refreshUser.isFetching) {
+                    refreshUser.refetch();
+                }
+            } else {
+                toast.error("Votre session a expirée. Veuillez vous reconnecter.", { autoClose: false });
+
+                logoutMutation.mutate();
             }
         } else if (toast.isActive(userStatusToast.current) && !userFailure) {
             toast.dismiss(userStatusToast.current);

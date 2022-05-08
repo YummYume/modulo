@@ -53,6 +53,7 @@ export default function Home() {
         } else {
             removeCookie("remember_me", {
                 path: "/",
+                maxAge: 60 * 60 * 24 * 365,
                 sameSite: "strict",
                 secure: true
             });
@@ -63,7 +64,7 @@ export default function Home() {
 
     useEffect(() => {
         if (user) {
-            toast.info("info", "Vous êtes déjà connecté.");
+            toast.info("Vous êtes déjà connecté.");
         }
     }, []);
 
@@ -114,7 +115,13 @@ export default function Home() {
                                 <FormGroup>
                                     <FormControlLabel
                                         control={
-                                            <Switch id="rememberMe" name="rememberMe" value={values.rememberMe} onChange={handleChange} />
+                                            <Switch
+                                                id="rememberMe"
+                                                name="rememberMe"
+                                                value={values.rememberMe}
+                                                onChange={handleChange}
+                                                checked={values.rememberMe}
+                                            />
                                         }
                                         label="Rester connecté"
                                     />
