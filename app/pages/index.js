@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
+import Switch from "@mui/material/Switch";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
@@ -8,11 +11,12 @@ import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material";
 import * as yup from "yup";
-import { Formik, Field, Form } from "formik";
+import { Formik, Form } from "formik";
+import { toast } from "react-toastify";
+import { useCookies } from "react-cookie";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
-import { toastAlert } from "../mixins/toastAlert";
 import { useUserLogin } from "../hooks/useUserLogin";
 
 import styles from "../styles/Index.module.scss";
@@ -22,31 +26,50 @@ export default function Home() {
     const theme = useTheme();
     const queryClient = useQueryClient();
     const { data: user } = useUser();
+    const [cookies, setCookie, removeCookie] = useCookies(["remember_me"]);
     const onLoginSuccess = ({ data }) => {
         queryClient.setQueryData("user", data);
 
         router.push("/roles");
     };
     const onLoginError = (error) => {
-        toastAlert("error", 401 === error.response?.data?.code ? "Identifiants invalides." : "Une erreur est survenue.");
+        toast.error(401 === error.response?.data?.code ? "Identifiants invalides." : "Une erreur est survenue.");
     };
     const loginMutation = useUserLogin(onLoginSuccess, onLoginError);
-    const initialValues = { uuid: "", password: "" };
+    const initialValues = { uuid: "", password: "", rememberMe: "true" === cookies.remember_me };
     const validationSchema = yup.object({
         uuid: yup.string().required("Veuillez saisir votre numéro d'adhérent."),
-        password: yup.string().required("Veuillez saisir votre mot de passe.")
+        password: yup.string().required("Veuillez saisir votre mot de passe."),
+        rememberMe: yup.boolean()
     });
-    const handleSubmit = async (values) => loginMutation.mutate(values);
+    const handleSubmit = async (values) => {
+        if (values.rememberMe) {
+            setCookie("remember_me", true, {
+                path: "/",
+                maxAge: 60 * 60 * 24 * 365, // 1 year
+                sameSite: "strict",
+                secure: true
+            });
+        } else {
+            removeCookie("remember_me", {
+                path: "/",
+                sameSite: "strict",
+                secure: true
+            });
+        }
+
+        loginMutation.mutate(values);
+    };
 
     useEffect(() => {
         if (user) {
-            toastAlert("info", "Vous êtes déjà connecté.");
+            toast.info("info", "Vous êtes déjà connecté.");
         }
     }, []);
 
     return (
         <React.Fragment>
-            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit} enableReinitialize={true}>
                 {({ submitCount, isSubmitting, values, errors, handleChange }) => (
                     <Form className={`w-100 ${styles.background}`}>
                         <Box
@@ -88,6 +111,14 @@ export default function Home() {
                                     error={submitCount > 0 && !!errors.password}
                                     helperText={submitCount > 0 && errors.password}
                                 />
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch id="rememberMe" name="rememberMe" value={values.rememberMe} onChange={handleChange} />
+                                        }
+                                        label="Rester connecté"
+                                    />
+                                </FormGroup>
                                 <LoadingButton
                                     loading={isSubmitting || loginMutation.isLoading}
                                     disabled={Boolean(user || !values.uuid || !values.password)}

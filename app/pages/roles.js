@@ -1,16 +1,16 @@
 import React from "react";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import Box from "@mui/material/Box";
+import { toast } from "react-toastify";
 
 import { getRoles, getRolesFromServer } from "../api/roles";
-import { toastAlert } from "../mixins/toastAlert";
 import { getCurrentUserFromServer } from "../api/user";
 
 export default function Roles() {
     const { isLoading, data } = useQuery("roles", getRoles, {
         refetchInterval: 30000,
         onError: () => {
-            toastAlert("error", "Impossible de récupérer les rôles.");
+            toast.error("Impossible de récupérer les rôles.");
         }
     });
 

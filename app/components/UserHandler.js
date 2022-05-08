@@ -1,80 +1,119 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useEffect, useState, useRef } from "react";
+import { useCookies } from "react-cookie";
 import { useQuery } from "react-query";
+import { toast, Flip } from "react-toastify";
 
 import { refresh } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { useUserLogout } from "../hooks/useUserLogout";
-import { toastAlert } from "../mixins/toastAlert";
 
 export default function UserHandler() {
-    const router = useRouter();
+    const internetStatusToast = useRef(null);
+    const userStatusToast = useRef(null);
     const [isOnline, setIsOnline] = useState(true);
-    const [displayConnectionFailure, setDisplayConnectionFailure] = useState(false);
-    const [refetchAttempts, setRefetchAttempts] = useState(0);
-    const onQuerySuccess = () => {
-        setRefetchAttempts(0);
-        setDisplayConnectionFailure(false);
-    };
-    const onQueryFailure = () => {
-        if (router.pathname !== "/" && Boolean(user)) {
-            setRefetchAttempts(refetchAttempts + 1);
-            setDisplayConnectionFailure(true);
-        } else {
-            setRefetchAttempts(0);
-            setDisplayConnectionFailure(false);
-        }
-
-        if (refetchAttempts >= 2) {
-            logoutMutation.mutate();
-        }
-    };
-    const { data: user } = useUser(onQuerySuccess, onQueryFailure);
+    const [userFailure, setUserFailure] = useState(false);
     const logoutMutation = useUserLogout();
+    const [cookies] = useCookies(["remember_me"]);
+    const { data: user } = useUser(
+        () => setUserFailure(false),
+        () => setUserFailure(true)
+    );
     const refreshUser = useQuery("refresh", refresh, {
         refetchOnWindowFocus: false,
-        refetchInterval: 90000,
-        retry: 2,
+        refetchInterval: 60000 * 25, // 25 minutes
+        retry: 4,
         refetchIntervalInBackground: true,
-        enabled: Boolean(user && isOnline)
+        enabled: Boolean(user && isOnline && "true" === cookies.remember_me),
+        onSuccess: () => {
+            setUserFailure(false);
+
+            if (toast.isActive(userStatusToast.current)) {
+                toast.update(userStatusToast.current, {
+                    render: "Reconnexion réussie.",
+                    type: toast.TYPE.SUCCESS,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            }
+        },
+        onError: () => {
+            if (userFailure) {
+                if (toast.isActive(userStatusToast.current)) {
+                    toast.update(userStatusToast.current, {
+                        render: "La reconnexion a échouée.",
+                        type: toast.TYPE.ERROR,
+                        autoClose: false,
+                        isLoading: false,
+                        closeButton: true,
+                        closeOnClick: true,
+                        draggable: true,
+                        transition: Flip
+                    });
+                }
+
+                logoutMutation.mutate();
+            }
+        }
     });
 
-    const handleOnline = () => {
-        if (!isOnline) {
-            toastAlert("success", "De nouveau en ligne.");
-            setIsOnline(true);
+    useEffect(() => {
+        if (Boolean(user && isOnline && userFailure)) {
+            if (!toast.isActive(userStatusToast.current)) {
+                userStatusToast.current = toast.loading("Problème de connexion au serveur. Tentative de reconnexion...");
+            }
+
+            if (!refreshUser.isFetching && "true" === cookies.remember_me) {
+                refreshUser.refetch();
+            }
+        } else if (toast.isActive(userStatusToast.current) && !userFailure) {
+            toast.dismiss(userStatusToast.current);
         }
-    };
-    const handleOffline = () => {
+    }, [userFailure]);
+
+    useEffect(() => {
         if (isOnline) {
-            toastAlert(
-                "warning",
-                "Problème de connexion internet. Vos changements ne seront pris en compte qu'après récupération de la connexion.",
-                { autoClose: false }
-            );
-            setIsOnline(false);
+            if (toast.isActive(internetStatusToast.current)) {
+                toast.update(internetStatusToast.current, {
+                    type: toast.TYPE.INFO,
+                    render: "De nouveau en ligne.",
+                    autoClose: 5000,
+                    transition: Flip
+                });
+            } else if (!!internetStatusToast.current) {
+                internetStatusToast.current = toast.info("De nouveau en ligne.", { autoClose: 5000 });
+            }
+        } else {
+            const renderMessage =
+                "Problème de connexion internet. Vos changements ne seront pris en compte qu'après récupération de la connexion.";
+
+            if (toast.isActive(internetStatusToast.current)) {
+                toast.update(internetStatusToast.current, {
+                    type: toast.TYPE.WARNING,
+                    render: renderMessage,
+                    autoClose: true,
+                    transition: Flip
+                });
+            } else {
+                internetStatusToast.current = toast.warning(renderMessage, { autoClose: false });
+            }
         }
-    };
+    }, [isOnline]);
 
     useEffect(() => {
         if (navigator !== undefined && window !== undefined) {
-            navigator.onLine ? handleOnline() : handleOffline();
-
-            window.addEventListener("online", handleOnline);
-            window.addEventListener("offline", handleOffline);
+            window.addEventListener("online", () => setIsOnline(true));
+            window.addEventListener("offline", () => setIsOnline(false));
 
             return () => {
-                window.removeEventListener("online", handleOnline);
-                window.removeEventListener("offline", handleOffline);
+                window.removeEventListener("online", () => setIsOnline(true));
+                window.removeEventListener("offline", () => setIsOnline(false));
             };
         }
     }, []);
-
-    useEffect(() => {
-        if (isOnline && displayConnectionFailure) {
-            toastAlert("error", "Problème de connexion au serveur, vous risquez d'être déconnecté.", { autoClose: false });
-        }
-    }, [isOnline, displayConnectionFailure]);
 
     return <React.Fragment />;
 }

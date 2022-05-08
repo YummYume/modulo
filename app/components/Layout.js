@@ -14,7 +14,17 @@ export default function Layout({ children }) {
             <Navbar />
             <main className="d-flex flex-grow-1">{children}</main>
             <Footer />
-            <ToastContainer style={{ top: "5rem" }} />
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                closeOnClick={true}
+                pauseOnHover={true}
+                draggable={true}
+                progress={undefined}
+                theme="colored"
+                style={{ top: "5rem" }}
+            />
             <CookieConsent
                 location="bottom"
                 buttonText="Je comprends"

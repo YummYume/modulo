@@ -264,7 +264,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'fullName' => $this->getFullName(),
             'gender' => $this->gender?->value,
             'roles' => $this->getRoles(),
-            'scopes' => array_map(static fn (Scope $scope): string => '/scopes/'.$scope->getId(), $this->getScopes()->toArray()),
+            'scopes' => array_map(static function (Scope $scope): array {
+                return [
+                    'id' => $scope->getId(),
+                    'active' => $scope->isActive(),
+                    'role' => [
+                        'name' => $scope->getRole()->getName(),
+                    ],
+                    'structure' => [
+                        'name' => $scope->getStructure()->getName(),
+                    ],
+                ];
+            }, $this->getScopes()->toArray()),
         ];
     }
 
