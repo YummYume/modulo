@@ -10,7 +10,6 @@ import { useTheme } from "@mui/material";
 import * as yup from "yup";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
-import { useCookies } from "react-cookie";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";

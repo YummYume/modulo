@@ -132,6 +132,9 @@ endif
 php-cs-fixer:
 	$(EXECAPI) vendor/bin/php-cs-fixer fix --allow-risky yes
 
+lint:
+	$(EXECAPP) yarn lint
+
 sync-dependencies-api:
 	@echo Syncing Api dependencies...
 ifeq ($(OS)$(SHELL),Windows_NTsh.exe)

@@ -43,6 +43,7 @@ The Modulo project.
 - `make cc` : clears cache for the api container
 - `make cl` : clears the nginx logs (the nginx container must be STOPPED to run this command)
 - `make php-cs-fixer` : runs php-cs fixer for the src folder of the api
+- `make lint` : runs `yarn lint` for the app folder
 - `make sync-dependencies-api` : syncs the `vendor` api folder with the host
 - `make sync-dependencies-app` : syncs the `node_modules` app folder with the host
 - `make sync-dependencies-yarn-api` : syncs the `node_modules` api folder with the host
@@ -59,5 +60,11 @@ The Modulo project.
 - If a command does not work, use `make perm` and make sure you are running your cmd as an administrator
 
 ## Formatters
-- **JS** : Prettier (using `.prettierrc` config file)
+- **JS** : Prettier (using `.prettierrc` config file) and Eslint (using `.eslintrc.json` config file)<br>
+  In case the VScode extension doesn't work properly and throws errors like `Parsing error : Cannot find module 'next/babel'`, add the following in your `settings.json` file :<br>
+  ```
+  "eslint.workingDirectories": [
+    "./app"
+  ]
+  ```
 - **PHP** : PHP-CS-Fixer (using `api/.php-cs-fixer.php` config file)

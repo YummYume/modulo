@@ -11,21 +11,23 @@ export default function Custom404() {
                 404 <br />
                 Page Non Trouvée 😢
             </Typography>
-            <Link href="/">
-                <Slide direction="up" in={true} timeout={{ enter: 1000 }} mountOnEnter unmountOnExit>
-                    <Button
-                        size="large"
-                        sx={{
-                            "&:hover": {
-                                background: "none"
-                            }
-                        }}
-                        startIcon={<ArrowBackIcon />}
-                    >
-                        Retour à l'accueil
-                    </Button>
-                </Slide>
-            </Link>
+            <Slide direction="up" in={true} timeout={{ enter: 1000 }} mountOnEnter unmountOnExit>
+                <Link href="/">
+                    <a>
+                        <Button
+                            size="large"
+                            sx={{
+                                "&:hover": {
+                                    background: "none"
+                                }
+                            }}
+                            startIcon={<ArrowBackIcon />}
+                        >
+                            {"Retour à l'accueil"}
+                        </Button>
+                    </a>
+                </Link>
+            </Slide>
         </div>
     );
 }
