@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 #[ApiResource]
@@ -24,6 +25,7 @@ class Role
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 100)]
+    #[Groups(['get:me'])]
     private ?string $name;
 
     #[ORM\Column(type: 'string', length: 10)]

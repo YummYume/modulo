@@ -11,6 +11,42 @@
 body {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
     sans-serif;
+
+  &::-webkit-scrollbar {
+    background-color: $primary-blue-main;
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $primary-blue-main;
+    box-shadow: inset 0 0 6px rgba(4, 38, 62, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(4, 38, 62, 0.3);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary-blue-light;
+    box-shadow: inset 0 0 6px rgba(4, 38, 62, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(4, 38, 62, 0.3);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: $primary-blue-main;
+  }
+
+  &::-webkit-scrollbar-button:vertical:start:increment,
+  &::-webkit-scrollbar-button:vertical:end:decrement,
+  &::-webkit-scrollbar-button:horizontal:start:increment,
+  &::-webkit-scrollbar-button:horizontal:end:decrement,
+  &::-webkit-resizer,
+  &::-webkit-scrollbar-track-piece {
+    display: none;
+  }
+
+  // firefox | doesn't work
+  scrollbar-width: 10px;
+  scrollbar-color: $primary-blue-main $primary-blue-light;
 }
 
 .app {
