@@ -25,7 +25,7 @@ export default function Home() {
     const onLoginSuccess = ({ data }) => {
         queryClient.setQueryData("user", data);
 
-        router.push("/roles");
+        router.push("/connected-home");
     };
     const onLoginError = (error) => {
         toast.error(401 === error.response?.data?.code ? "Identifiants invalides." : "Une erreur est survenue.");
