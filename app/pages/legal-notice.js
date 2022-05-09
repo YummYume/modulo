@@ -92,7 +92,7 @@ export default function LegalNotice() {
                     <Typography variant="h2" className="mb-4">
                         Date de la dernière mise à jour
                     </Typography>
-                    <Typography variant="bosy1">
+                    <Typography variant="body1">
                         La dernière mise à jour de ces mentions légales, politique de confidentialité et conditions d’utilisation sont en
                         date du 08/05/2022.
                     </Typography>
