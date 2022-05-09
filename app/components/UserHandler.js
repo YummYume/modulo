@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useCookies } from "react-cookie";
 import { useQuery } from "react-query";
 import { toast, Flip } from "react-toastify";
 
@@ -13,17 +12,16 @@ export default function UserHandler() {
     const [isOnline, setIsOnline] = useState(true);
     const [userFailure, setUserFailure] = useState(false);
     const logoutMutation = useUserLogout();
-    const [cookies] = useCookies(["remember_me"]);
     const { data: user } = useUser(
         () => setUserFailure(false),
         () => setUserFailure(true)
     );
     const refreshUser = useQuery("refresh", refresh, {
         refetchOnWindowFocus: false,
-        refetchInterval: 60000 * 25, // 25 minutes
+        refetchInterval: 60000 * 30, // 30 minutes
         retry: 4,
         refetchIntervalInBackground: true,
-        enabled: Boolean(user && isOnline && "true" === cookies.remember_me),
+        enabled: Boolean(user && isOnline),
         onSuccess: () => {
             setUserFailure(false);
 
@@ -64,18 +62,12 @@ export default function UserHandler() {
 
     useEffect(() => {
         if (Boolean(user && isOnline && userFailure)) {
-            if ("true" === cookies.remember_me) {
-                if (!toast.isActive(userStatusToast.current)) {
-                    userStatusToast.current = toast.loading("Problème de connexion au serveur. Tentative de reconnexion...");
-                }
+            if (!toast.isActive(userStatusToast.current)) {
+                userStatusToast.current = toast.loading("Problème de connexion au serveur. Tentative de reconnexion...");
+            }
 
-                if (!refreshUser.isFetching) {
-                    refreshUser.refetch();
-                }
-            } else {
-                toast.error("Votre session a expirée. Veuillez vous reconnecter.", { autoClose: false });
-
-                logoutMutation.mutate();
+            if (!refreshUser.isFetching) {
+                refreshUser.refetch();
             }
         } else if (toast.isActive(userStatusToast.current) && !userFailure) {
             toast.dismiss(userStatusToast.current);
