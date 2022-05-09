@@ -2,10 +2,6 @@ import Typography from "@mui/material/Typography";
 import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 
-import Button from "@mui/material/Button";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Link from "next/link";
-
 export default function About() {
     return (
         <Box
@@ -18,7 +14,7 @@ export default function About() {
             }}
         >
             <Typography variant="h1" className="text-center mb-5">
-                à propos
+                À propos
             </Typography>
             <Slide direction="up" in={true} timeout={{ enter: 1000 }} mountOnEnter unmountOnExit>
                 <Box>

@@ -2,11 +2,7 @@ import Typography from "@mui/material/Typography";
 import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 
-import Button from "@mui/material/Button";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Link from "next/link";
-
-export default function About() {
+export default function Help() {
     return (
         <Box
             className="d-flex flex-column w-100"

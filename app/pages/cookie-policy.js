@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 
-export default function cookiesManagement() {
+export default function CookiePolicy() {
     return (
         <Box
             className="d-flex flex-column w-100"
@@ -19,7 +19,7 @@ export default function cookiesManagement() {
             <Slide direction="up" in={true} timeout={{ enter: 1000 }} mountOnEnter unmountOnExit>
                 <Box>
                     <Typography variant="h2" className="mb-4">
-                        A propos des cookies
+                        À propos des cookies
                     </Typography>
                     <Typography variant="body1" className="mb-5">
                         Nous utilisons différents cookies sur le site pour améliorer l’interactivité du site et nos services.
