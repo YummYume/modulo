@@ -25,7 +25,7 @@ export default function Home() {
     const onLoginSuccess = ({ data }) => {
         queryClient.setQueryData("user", data);
 
-        router.push("/roles");
+        router.push("/connected-home");
     };
     const onLoginError = (error) => {
         let message = "Une erreur est survenue.";
