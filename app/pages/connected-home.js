@@ -1,9 +1,9 @@
 import React from "react";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 import { getCurrentUserFromServer } from "../api/user";
-import { Typography } from "@mui/material";
 
 export default function connectedHome() {
     return (
