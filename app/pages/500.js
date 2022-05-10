@@ -13,7 +13,7 @@ export default function Custom500() {
             </Typography>
             <Slide direction="up" in={true} timeout={{ enter: 1000 }} mountOnEnter unmountOnExit>
                 <div>
-                    <Link href="/">
+                    <Link href="/home">
                         <a>
                             <Button
                                 size="large"

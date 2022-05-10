@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 
 import { getCurrentUserFromServer } from "../api/user";
 
-export default function connectedHome() {
+export default function home() {
     return (
         <Box className="d-flex w-100 justify-content-center" sx={{ paddingTop: "100px" }}>
             <Typography variant="h1" className="text-center">

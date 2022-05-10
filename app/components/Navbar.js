@@ -8,6 +8,7 @@ import { useUser } from "../hooks/useUser";
 import UserMenu from "./UserMenu";
 
 import styles from "../styles/Navbar.module.scss";
+import Link from "next/link";
 
 export default function Navbar() {
     const { data: user } = useUser();
@@ -19,7 +20,11 @@ export default function Navbar() {
                 className={`d-flex justify-content-between align-items-center ${trigger ? styles.reducedState : styles.initialState}`}
                 classes={{ root: { "min-height": "0px" } }}
             >
-                <Typography variant="h6">Modulo</Typography>
+                <Link href="/home">
+                    <a>
+                        <Typography variant="h6">Modulo</Typography>
+                    </a>
+                </Link>
                 <UserMenu user={user} />
             </Toolbar>
         </AppBar>
