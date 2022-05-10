@@ -46,11 +46,15 @@ class Role
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'roles')]
     private Collection $categories;
 
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'invitedRoles')]
+    private Collection $defaultCategories;
+
     #[Pure]
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->defaultCategories = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -173,6 +177,33 @@ class Role
     public function removeCategory(Category $category): self
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getDefaultCategories(): Collection
+    {
+        return $this->defaultCategories;
+    }
+
+    public function addDefaultCategory(Category $defaultCategory): self
+    {
+        if (!$this->defaultCategories->contains($defaultCategory)) {
+            $this->defaultCategories[] = $defaultCategory;
+            $defaultCategory->addInvitedRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDefaultCategory(Category $defaultCategory): self
+    {
+        if ($this->defaultCategories->removeElement($defaultCategory)) {
+            $defaultCategory->removeInvitedRole($this);
+        }
 
         return $this;
     }

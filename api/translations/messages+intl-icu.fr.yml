@@ -67,6 +67,7 @@ scope.active: Actif
 # Category
 category.name: Nom
 category.description: Description
+category.invitedRoles: Rôles invités par défault
 
 # Role
 role.name: Nom

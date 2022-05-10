@@ -31,9 +31,13 @@ class Category
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'categories')]
     private Collection $roles;
 
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'defaultCategories')]
+    private Collection $invitedRoles;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->invitedRoles = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -93,6 +97,30 @@ class Category
         if ($this->roles->removeElement($role)) {
             $role->removeCategory($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getInvitedRoles(): Collection
+    {
+        return $this->invitedRoles;
+    }
+
+    public function addInvitedRole(Role $invitedRole): self
+    {
+        if (!$this->invitedRoles->contains($invitedRole)) {
+            $this->invitedRoles[] = $invitedRole;
+        }
+
+        return $this;
+    }
+
+    public function removeInvitedRole(Role $invitedRole): self
+    {
+        $this->invitedRoles->removeElement($invitedRole);
 
         return $this;
     }
