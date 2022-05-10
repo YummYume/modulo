@@ -16,7 +16,6 @@ final class JWTUserChecker implements UserCheckerInterface
         }
 
         if (0 >= $user->getScopes()->count()) {
-            // the message passed to this exception is meant to be displayed to the user
             throw new AccessDeniedException('Ce compte ne possède aucune scope. Impossible de procéder à l\'authentification.');
         }
     }

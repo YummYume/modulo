@@ -2,6 +2,7 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
+import Link from "next/link";
 
 export default function Footer() {
     const theme = useTheme();
@@ -18,7 +19,21 @@ export default function Footer() {
             component="footer"
         >
             <Typography variant="body1">
-                <a href="#">Aide</a> - <a href="#">Mentions légales</a> - <a href="#">Gestion des cookies</a> - <a href="#">À propos</a>
+                <Link href="/help">
+                    <a>Aide</a>
+                </Link>{" "}
+                -{" "}
+                <Link href="/legal-notice">
+                    <a>Mentions légales</a>
+                </Link>{" "}
+                -{" "}
+                <Link href="/cookie-policy">
+                    <a>Gestion des cookies</a>
+                </Link>{" "}
+                -{" "}
+                <Link href="/about">
+                    <a>À propos</a>
+                </Link>
             </Typography>
         </Box>
     );

@@ -25,10 +25,18 @@ export default function Home() {
     const onLoginSuccess = ({ data }) => {
         queryClient.setQueryData("user", data);
 
-        router.push("/roles");
+        router.push("/home");
     };
     const onLoginError = (error) => {
-        toast.error(401 === error.response?.data?.code ? "Identifiants invalides." : "Une erreur est survenue.");
+        let message = "Une erreur est survenue.";
+
+        if (401 === error.response.status) {
+            message = "Identifiants invalides.";
+        } else if (403 === error.response.status) {
+            message = "Votre compte n'est pas configuré pour pouvoir vous connecter. Veuillez contacter le service Modulo.";
+        }
+
+        toast.error(message);
     };
     const loginMutation = useUserLogin(onLoginSuccess, onLoginError);
     const initialValues = { uuid: "", password: "" };
