@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Category;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -32,6 +33,7 @@ class CategoryCrudController extends AbstractCrudController
         return [
             TextField::new('name', 'category.name'),
             TextField::new('description', 'category.description'),
+            AssociationField::new('invitedRoles', 'category.invitedRoles'),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'common.updated_at')
