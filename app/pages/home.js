@@ -1,11 +1,11 @@
 import React from "react";
-import { dehydrate, QueryClient, useQuery } from "react-query";
+import { dehydrate, QueryClient } from "react-query";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import { getCurrentUserFromServer } from "../api/user";
 
-export default function home() {
+export default function Home() {
     return (
         <Box className="d-flex w-100 justify-content-center" sx={{ paddingTop: "100px" }}>
             <Typography variant="h1" className="text-center">

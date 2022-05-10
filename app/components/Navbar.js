@@ -3,12 +3,12 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
+import Link from "next/link";
 
 import { useUser } from "../hooks/useUser";
 import UserMenu from "./UserMenu";
 
 import styles from "../styles/Navbar.module.scss";
-import Link from "next/link";
 
 export default function Navbar() {
     const { data: user } = useUser();
