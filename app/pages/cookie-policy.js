@@ -1,3 +1,4 @@
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
@@ -7,10 +8,7 @@ export default function CookiePolicy() {
         <Box
             className="d-flex flex-column w-100"
             sx={{
-                paddingTop: "100px",
-                paddingLeft: "200px",
-                paddingRight: "200px",
-                paddingBottom: "100px"
+                padding: "100px 80px 60px"
             }}
         >
             <Typography variant="h1" className="text-center mb-5">
@@ -146,7 +144,7 @@ export default function CookiePolicy() {
                     <Typography variant="h3" className="mb-4">
                         3.4. Google Chrome
                     </Typography>
-                    <Typography variant="body1" className="mb-5">
+                    <Typography variant="body1">
                         <ul>
                             <li>Cliquez sur l’icône du menu « Outils ».</li>
                             <li>Sélectionnez « Options ».</li>

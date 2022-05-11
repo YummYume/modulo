@@ -105,8 +105,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['get', 'get:me'])]
     private ?Gender $gender;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Scope::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Scope::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['get', 'get:me'])]
+    #[Assert\Valid()]
+    #[Assert\Unique(message: 'user.scopes.unique', normalizer: 'trim')]
     private Collection $scopes;
 
     public function __construct()
@@ -275,7 +277,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                         'name' => $scope->getStructure()->getName(),
                     ],
                 ];
-            }, $this->getScopes()->toArray()),
+            }, $this->getActiveScopes()->toArray()),
         ];
     }
 
@@ -307,5 +309,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Scope>
+     */
+    public function getActiveScopes(): Collection
+    {
+        return $this->scopes->filter(static fn (Scope $scope) => $scope->isActive());
+    }
+
+    /**
+     * @return Collection<int, Scope>
+     */
+    public function getInavtiveScopes(): Collection
+    {
+        return $this->scopes->filter(static fn (Scope $scope) => !$scope->isActive());
     }
 }
