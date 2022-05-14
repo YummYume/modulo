@@ -4,7 +4,7 @@ namespace App\Enum;
 
 use App\Enum\Traits\UtilsTrait;
 
-enum Fonctionnality: string
+enum Feature: string
 {
     use UtilsTrait;
 

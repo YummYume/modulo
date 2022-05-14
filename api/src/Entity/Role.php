@@ -49,6 +49,9 @@ class Role
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'invitedRoles')]
     private Collection $defaultCategories;
 
+    #[ORM\Column(type: 'json')]
+    private ?array $Features = [];
+
     #[Pure]
     public function __construct()
     {
@@ -204,6 +207,16 @@ class Role
         if ($this->defaultCategories->removeElement($defaultCategory)) {
             $defaultCategory->removeInvitedRole($this);
         }
+    }
+
+    public function getFeatures(): ?array
+    {
+        return $this->Features;
+    }
+
+    public function setFeatures(array $Features): self
+    {
+        $this->Features = $Features;
 
         return $this;
     }
