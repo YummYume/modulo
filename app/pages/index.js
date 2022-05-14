@@ -10,6 +10,7 @@ import { useTheme } from "@mui/material";
 import * as yup from "yup";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
+import Cookies from "cookies";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -46,12 +47,6 @@ export default function Home() {
     });
     const handleSubmit = async (values) => loginMutation.mutate(values);
 
-    useEffect(() => {
-        if (user) {
-            toast.info("Vous êtes déjà connecté.");
-        }
-    }, []);
-
     return (
         <React.Fragment>
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit} enableReinitialize={true}>
@@ -59,7 +54,7 @@ export default function Home() {
                     <Form className={`w-100 ${styles.background}`}>
                         <Box
                             className="h-100 container-fluid d-flex justify-content-center align-items-center"
-                            sx={{ backgroundColor: "rgba(4, 38, 62, 0.25)" }}
+                            sx={{ backgroundColor: "rgba(4, 38, 62, 0.25)", marginBottom: "100px" }}
                         >
                             <Box
                                 className="d-flex justify-content-between align-items-center text-center flex-column p-4 shadow-lg"
@@ -117,8 +112,31 @@ export default function Home() {
 
 export async function getServerSideProps({ req }) {
     const queryClient = new QueryClient();
+    const cookies = new Cookies(req);
+    let allowUser = false;
+    let user = null;
 
-    await queryClient.prefetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
+    try {
+        allowUser = "true" === cookies.get("login_allow_user");
+
+        Cookies.set("login_allow_user");
+    } catch (e) {
+        allowUser = false;
+    }
+
+    try {
+        user = await queryClient.fetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
+    } catch (e) {}
+
+    if (user && !allowUser) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: "/home"
+            },
+            props: {}
+        };
+    }
 
     return {
         props: {

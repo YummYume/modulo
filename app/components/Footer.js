@@ -18,19 +18,19 @@ export default function Footer() {
             }}
             component="footer"
         >
-            <Typography variant="body1">
+            <Typography variant="body1" className="text-center" sx={{ padding: "0 10px" }}>
                 <Link href="/help">
                     <a>Aide</a>
-                </Link>{" "}
-                -{" "}
+                </Link>
+                {" - "}
                 <Link href="/legal-notice">
                     <a>Mentions légales</a>
-                </Link>{" "}
-                -{" "}
+                </Link>
+                {" - "}
                 <Link href="/cookie-policy">
                     <a>Gestion des cookies</a>
-                </Link>{" "}
-                -{" "}
+                </Link>
+                {" - "}
                 <Link href="/about">
                     <a>À propos</a>
                 </Link>

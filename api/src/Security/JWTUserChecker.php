@@ -2,7 +2,7 @@
 
 namespace App\Security;
 
-use App\Entity\User as AppUser;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,7 +11,7 @@ final class JWTUserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void
     {
-        if (!$user instanceof AppUser) {
+        if (!$user instanceof User) {
             return;
         }
 

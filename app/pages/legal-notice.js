@@ -5,12 +5,7 @@ import Box from "@mui/material/Box";
 
 export default function LegalNotice() {
     return (
-        <Box
-            className="d-flex flex-column w-100"
-            sx={{
-                padding: "100px 80px 60px"
-            }}
-        >
+        <Box className="container-fluid w-100">
             <Typography variant="h1" className="text-center mb-5">
                 Mentions Légales
             </Typography>

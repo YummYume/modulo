@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
 import { useMutation, useQueryClient } from "react-query";
 
 import { logout } from "../api/user";
@@ -6,28 +7,43 @@ import { logout } from "../api/user";
 export const useUserLogout = (onMutationSuccess, onMutationFailure, onMutationSettled) => {
     const queryClient = useQueryClient();
     const router = useRouter();
+    const [cookies, setCookie] = useCookies(["login_allow_user"]);
 
     return useMutation(() => logout(), {
         onMutate: async () => {
             await queryClient.cancelQueries("user", { exact: true });
         },
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             onMutationSuccess && onMutationSuccess(data);
 
-            queryClient.setQueryData("user", null);
+            setCookie("login_allow_user", true, {
+                path: "/",
+                maxAge: 60,
+                sameSite: "strict",
+                secure: true
+            });
 
-            "/" !== router.pathname && router.push("/");
+            "/" !== router.pathname && (await router.push("/"));
+
+            queryClient.setQueryData("user", null);
         },
-        onError: (error) => {
+        onError: async (error) => {
             onMutationFailure && onMutationFailure(error);
 
             if (400 === error.response.status) {
-                queryClient.setQueryData("user", null);
+                setCookie("login_allow_user", true, {
+                    path: "/",
+                    maxAge: 60,
+                    sameSite: "strict",
+                    secure: true
+                });
 
-                "/" !== router.pathname && router.push("/");
+                "/" !== router.pathname && (await router.push("/"));
+
+                queryClient.setQueryData("user", null);
             }
         },
-        onSettled: (data) => {
+        onSettled: async (data) => {
             onMutationSettled && onMutationSettled(data);
         }
     });

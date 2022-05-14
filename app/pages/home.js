@@ -7,13 +7,8 @@ import { getCurrentUserFromServer } from "../api/user";
 
 export default function Home() {
     return (
-        <Box
-            className="d-flex w-100 justify-content-center"
-            sx={{
-                padding: "100px 80px 60px"
-            }}
-        >
-            <Typography variant="h1" className="text-center">
+        <Box className="container-fluid w-100">
+            <Typography variant="h1" className="text-center text-break">
                 Accueil Connecté
             </Typography>
         </Box>

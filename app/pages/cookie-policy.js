@@ -6,9 +6,9 @@ import Box from "@mui/material/Box";
 export default function CookiePolicy() {
     return (
         <Box
-            className="d-flex flex-column w-100"
+            className="container-fluid w-100"
             sx={{
-                padding: "100px 80px 60px"
+                padding: "100px 0"
             }}
         >
             <Typography variant="h1" className="text-center mb-5">
@@ -41,17 +41,19 @@ export default function CookiePolicy() {
                         enregistrées dans des fichiers « Cookies » déposés sur votre ordinateur, tablette numérique ou smartphone.
                         <br />
                         <br />
-                        <ul>
-                            <li>
-                                D’afficher, lors de votre première visite, le bandeau signalant la présence de cookies et la faculté que
-                                vous avez de les accepter ou de les refuser.
-                            </li>
-                            <li>
-                                D’établir des mesures statistiques de fréquentation et d’utilisation du site en vue d’adapter le site aux
-                                demandes de ses visiteurs : nombre de visites sur le «www.journal-officiel.gouv.fr» et de ses rubriques,
-                                nombre de pages vues, les pages visitées.
-                            </li>
-                        </ul>
+                    </Typography>
+                    <ul>
+                        <li>
+                            D’afficher, lors de votre première visite, le bandeau signalant la présence de cookies et la faculté que vous
+                            avez de les accepter ou de les refuser.
+                        </li>
+                        <li>
+                            D’établir des mesures statistiques de fréquentation et d’utilisation du site en vue d’adapter le site aux
+                            demandes de ses visiteurs : nombre de visites sur le «www.journal-officiel.gouv.fr» et de ses rubriques, nombre
+                            de pages vues, les pages visitées.
+                        </li>
+                    </ul>
+                    <Typography variant="body1" className="mb-5">
                         <br />
                         <br />2 types de cookies sont déposés sur le site journal officiel :
                     </Typography>
@@ -67,10 +69,12 @@ export default function CookiePolicy() {
                     </Typography>
                     <Typography variant="body1" className="mb-5">
                         À savoir : <br />
-                        <ul>
-                            <li>Les données collectées ne sont pas recoupées avec d’autres traitements</li>
-                            <li>Le cookie ne permet pas de suivre la navigation de l’internaute sur d’autres sites.</li>
-                        </ul>
+                    </Typography>
+                    <ul>
+                        <li>Les données collectées ne sont pas recoupées avec d’autres traitements</li>
+                        <li>Le cookie ne permet pas de suivre la navigation de l’internaute sur d’autres sites.</li>
+                    </ul>
+                    <Typography variant="body1" className="mb-5">
                         Vous pouvez paramétrer votre navigateur afin qu’il vous signale la présence de cookies et vous propose de les
                         accepter ou non. Vous pouvez accepter ou refuser les cookies au cas par cas ou bien les refuser une fois pour
                         toutes. Il est rappelé que ce paramétrage est susceptible de modifier vos conditions d’accès aux services du site
@@ -92,67 +96,69 @@ export default function CookiePolicy() {
                     <Typography variant="h3" className="mb-4">
                         3.1. Internet Explorer
                     </Typography>
+
+                    <ul>
+                        <li>Dans Internet Explorer, cliquez sur le bouton « Outils », puis sur « Options Internet ».</li>
+                        <li>Sous l’onglet « Général », sous « Historique de navigation », cliquez sur « Paramètres ».</li>
+                        <li>Cliquez sur le bouton « Afficher les fichiers ».</li>
+                        <li>
+                            Cliquez sur l’en-tête de colonne « Nom » pour trier tous les fichiers dans l’ordre alphabétique, puis parcourez
+                            la liste jusqu’à ce que vous trouviez des fichiers commençant par le préfixe « Cookie » (tous les cookies
+                            possèdent ce préfixe et contiennent habituellement le nom du site Web qui a créé le cookie).
+                        </li>
+                        <li>Sélectionnez-le ou les cookies comprenant le nom « moodulo-scout.fr » et supprimez-les.</li>
+                        <li>
+                            Fermez la fenêtre qui contient la liste des fichiers, puis cliquez deux fois sur OK pour retourner dans Internet
+                            Explorer.
+                        </li>
+                    </ul>
                     <Typography variant="body1" className="mb-5">
-                        <ul>
-                            <li>Dans Internet Explorer, cliquez sur le bouton « Outils », puis sur « Options Internet ».</li>
-                            <li>Sous l’onglet « Général », sous « Historique de navigation », cliquez sur « Paramètres ».</li>
-                            <li>Cliquez sur le bouton « Afficher les fichiers ».</li>
-                            <li>
-                                Cliquez sur l’en-tête de colonne « Nom » pour trier tous les fichiers dans l’ordre alphabétique, puis
-                                parcourez la liste jusqu’à ce que vous trouviez des fichiers commençant par le préfixe « Cookie » (tous les
-                                cookies possèdent ce préfixe et contiennent habituellement le nom du site Web qui a créé le cookie).
-                            </li>
-                            <li>Sélectionnez-le ou les cookies comprenant le nom « moodulo-scout.fr » et supprimez-les.</li>
-                            <li>
-                                Fermez la fenêtre qui contient la liste des fichiers, puis cliquez deux fois sur OK pour retourner dans
-                                Internet Explorer.
-                            </li>
-                        </ul>
                         <br />
                         Précisions, actualisation : consultez la page d’aide d’Internet Explorer.
                     </Typography>
                     <Typography variant="h3" className="mb-4">
                         3.2. Firefox
                     </Typography>
+
+                    <ul>
+                        <li>Allez dans l’onglet « Outils » du navigateur, puis sélectionnez le menu « Options ».</li>
+                        <li>Dans la fenêtre qui s’affiche, choisissez « Vie privée » et cliquez sur « Affichez les cookies ».</li>
+                        <li>Dans la fenêtre qui s’affiche, choisissez « Vie privée » et cliquez sur « Affichez les cookies ».</li>
+                        <li>Repérez les fichiers qui contiennent le nom « modulo-scout.fr ». Sélectionnez-les et supprimez-les.</li>
+                    </ul>
                     <Typography variant="body1" className="mb-5">
-                        <ul>
-                            <li>Allez dans l’onglet « Outils » du navigateur, puis sélectionnez le menu « Options ».</li>
-                            <li>Dans la fenêtre qui s’affiche, choisissez « Vie privée » et cliquez sur « Affichez les cookies ».</li>
-                            <li>Dans la fenêtre qui s’affiche, choisissez « Vie privée » et cliquez sur « Affichez les cookies ».</li>
-                            <li>Repérez les fichiers qui contiennent le nom « modulo-scout.fr ». Sélectionnez-les et supprimez-les.</li>
-                        </ul>
                         <br />
                         Précisions, actualisation : consultez la page d’aide de Firefox.
                     </Typography>
                     <Typography variant="h3" className="mb-4">
                         3.3. Safari
                     </Typography>
-                    <Typography variant="body1" className="mb-5">
-                        <ul>
-                            <li>Dans votre navigateur, choisissez le menu « Édition » Préférences ».</li>
-                            <li>Cliquez sur « Sécurité ».</li>
-                            <li>Cliquez sur « Afficher les cookies ».</li>
-                            <li>
-                                Sélectionnez les cookies qui contiennent le nom « modulo-scout.fr » et cliquez sur « Effacer » ou sur « Tout
-                                effacer ».
-                            </li>
-                            <li>Après avoir supprimé les cookies, cliquez sur « Terminé ».</li>
-                            <br />
-                            Précisions, actualisation : consultez la page d’aide de Safari.
-                        </ul>
-                    </Typography>
+
+                    <ul>
+                        <li>Dans votre navigateur, choisissez le menu « Édition » Préférences ».</li>
+                        <li>Cliquez sur « Sécurité ».</li>
+                        <li>Cliquez sur « Afficher les cookies ».</li>
+                        <li>
+                            Sélectionnez les cookies qui contiennent le nom « modulo-scout.fr » et cliquez sur « Effacer » ou sur « Tout
+                            effacer ».
+                        </li>
+                        <li>Après avoir supprimé les cookies, cliquez sur « Terminé ».</li>
+                        <br />
+                        Précisions, actualisation : consultez la page d’aide de Safari.
+                    </ul>
+
                     <Typography variant="h3" className="mb-4">
                         3.4. Google Chrome
                     </Typography>
+                    <ul>
+                        <li>Cliquez sur l’icône du menu « Outils ».</li>
+                        <li>Sélectionnez « Options ».</li>
+                        <li>Cliquez sur l’onglet « Options avancées » et accédez à la section « Confidentialité ».</li>
+                        <li>Cliquez sur le bouton « Afficher les cookies ».</li>
+                        <li>Repérez les fichiers qui contiennent le nom « modulo-scout.fr ». Sélectionnez-les et supprimez-les.</li>
+                        <li>Cliquez sur « Fermer » pour revenir à votre navigateur.</li>
+                    </ul>
                     <Typography variant="body1">
-                        <ul>
-                            <li>Cliquez sur l’icône du menu « Outils ».</li>
-                            <li>Sélectionnez « Options ».</li>
-                            <li>Cliquez sur l’onglet « Options avancées » et accédez à la section « Confidentialité ».</li>
-                            <li>Cliquez sur le bouton « Afficher les cookies ».</li>
-                            <li>Repérez les fichiers qui contiennent le nom « modulo-scout.fr ». Sélectionnez-les et supprimez-les.</li>
-                            <li>Cliquez sur « Fermer » pour revenir à votre navigateur.</li>
-                        </ul>
                         <br />
                         Précisions, actualisation : consultez la page d’aide de Chrome.
                     </Typography>
