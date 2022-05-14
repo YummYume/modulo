@@ -14,6 +14,7 @@ user.password.invalid: Le mot de passe doit contenir au moins une lettre minuscu
 user.password.compromised: Ce mot de passe est compromis. Veuillez en choisir un autre.
 user.password.not_blank: Veuillez saisir un mot de passe.
 user.password.mismatch: Les mots de passe ne correspondent pas.
+user.scopes.unique: Les nouvelles scopes ajoutées doivent être uniques.
 
 ### Commands
 command.dispatcher.invalid: The command's attribute "{attribute}" is invalid ({message}).

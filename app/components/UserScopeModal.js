@@ -44,12 +44,11 @@ export default function UserScopeModal({ user, open, handleClose }) {
                         transform: "translate(-50%, -50%)",
                         width: "35rem",
                         maxWidth: "90%",
-                        height: "40%",
+                        minHeight: "40%",
                         bgcolor: "primary.main",
                         borderColor: "primary.light",
                         color: "primary.text.main"
                     }}
-
                     className="p-4 border border-light rounded"
                 >
                     <Typography id="user-scopes-title" variant="h4" component="h2" className="text-center">
@@ -61,7 +60,7 @@ export default function UserScopeModal({ user, open, handleClose }) {
                                 <ListItemButton>
                                     {user.currentScope?.id === scope.id && (
                                         <ListItemIcon>
-                                            <CheckIcon sx={{ color: "primary.text.main" }}/>
+                                            <CheckIcon sx={{ color: "primary.text.main" }} />
                                         </ListItemIcon>
                                     )}
                                     <ListItemText primary={`${scope.role.name} - ${scope.structure.name}`} />

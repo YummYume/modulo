@@ -8,6 +8,14 @@ common.updated_at: Mis à jour le
 common.created_by: Créé par
 common.updated_by: Mis à jour par
 
+### Flashes
+
+flash.create.success: Création de {name} avec succès.
+flash.update.success: Mise à jour de {name} avec succès.
+flash.delete.success: Suppression de {name} avec succès.
+flash.form.invalid: Le formulaire contient des erreurs. Veuillez vérifier votre saisie.
+flash.user.warning.scopes: L'utilisateur {name} ne possède aucune scope active. La connexion ne sera pas possible.
+
 ### Views
 
 view.login.title: Connexion à {app_name}
@@ -52,6 +60,8 @@ user.email: Adresse mail
 user.uuid: N° d'adhérent
 user.password: Mot de passe
 user.password_repeat: Répéter le mot de passe
+user.new_password: Nouveau mot de passe
+user.new_password_repeat: Répéter le nouveau mot de passe
 user.gender: Genre
 user.first_name: Prénom
 user.last_name: Nom

@@ -5,10 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use App\Enum\Gender;
 use App\Enum\StaticRole;
+use App\Form\Admin\UserScopeFormType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -77,7 +79,6 @@ class UserCrudController extends AbstractCrudController
                 ->setFormType(EnumType::class)
                 ->setFormTypeOption('class', Gender::class)
                 ->setFormTypeOption('choice_label', fn (Gender $gender) => $gender->value),
-            AssociationField::new('scopes', 'user.scopes'),
             TextField::new('plainPassword', 'user.password')
                 ->setFormType(RepeatedType::class)
                 ->setFormTypeOptions([
@@ -106,15 +107,24 @@ class UserCrudController extends AbstractCrudController
                     'options' => ['attr' => ['class' => 'password-field']],
                     'required' => false,
                     'first_options' => [
-                        'label' => 'user.password',
+                        'label' => 'user.new_password',
                         'row_attr' => ['class' => 'password-field col-md-6'],
                     ],
                     'second_options' => [
-                        'label' => 'user.password_repeat',
+                        'label' => 'user.new_password_repeat',
                         'row_attr' => ['class' => 'password-field col-md-6'],
                     ],
                 ])
                 ->onlyWhenUpdating(),
+            AssociationField::new('scopes', 'user.scopes')
+                ->onlyOnIndex(),
+            CollectionField::new('scopes', 'user.scopes')
+                ->allowAdd()
+                ->allowDelete()
+                ->setEntryType(UserScopeFormType::class)
+                ->renderExpanded()
+                ->setFormTypeOption('error_bubbling', false)
+                ->onlyOnForms(),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'common.updated_at')

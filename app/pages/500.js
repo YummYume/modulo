@@ -1,8 +1,10 @@
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Slide from "@mui/material/Slide";
-import Button from "@mui/material/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Link from "next/link";
+
+import HoverButton from "../components/HoverButton";
 
 export default function Custom500() {
     return (
@@ -15,17 +17,13 @@ export default function Custom500() {
                 <div>
                     <Link href="/home">
                         <a>
-                            <Button
-                                size="large"
-                                sx={{
-                                    "&:hover": {
-                                        background: "none"
-                                    }
+                            <HoverButton
+                                buttonProps={{
+                                    startIcon: <ArrowBackIcon />
                                 }}
-                                startIcon={<ArrowBackIcon />}
                             >
                                 {"Retour à l'accueil"}
-                            </Button>
+                            </HoverButton>
                         </a>
                     </Link>
                 </div>

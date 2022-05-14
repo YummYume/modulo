@@ -1,18 +1,11 @@
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 
 export default function About() {
     return (
-        <Box
-            className="d-flex flex-column w-100"
-            sx={{
-                paddingTop: "100px",
-                paddingLeft: "200px",
-                paddingRight: "200px",
-                paddingBottom: "100px"
-            }}
-        >
+        <Box className="container-fluid w-100">
             <Typography variant="h1" className="text-center mb-5">
                 À propos
             </Typography>
