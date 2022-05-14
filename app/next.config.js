@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-/** @type {import('next-sitemap').IConfig} */
 
 const securityHeaders = [
     {
@@ -26,8 +25,6 @@ const securityHeaders = [
 
 const nextConfig = {
     reactStrictMode: true,
-    siteUrl: process.env.SITE_URL,
-    generateRobotsTxt: true,
 
     i18n: {
         locales: ["fr-FR"],
