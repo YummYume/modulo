@@ -49,13 +49,6 @@ body {
   scrollbar-color: $primary-blue-main $primary-blue-light;
 }
 
-.app {
-  min-height: 100vh;
-  padding-top: 75px;
-  background-color: $primary-blue-light;
-  scroll-behavior: smooth;
-}
-
 a {
   color: inherit;
   text-decoration: none;

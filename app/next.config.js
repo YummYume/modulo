@@ -1,14 +1,56 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
+/** @type {import('next-sitemap').IConfig} */
 
-  webpackDevMiddleware: config => {
-    config.watchOptions = {
-      poll: 1000,
-      aggregateTimeout: 300,
+const securityHeaders = [
+    {
+        key: "X-DNS-Prefetch-Control",
+        value: "on"
+    },
+    {
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload"
+    },
+    {
+        key: "X-XSS-Protection",
+        value: "1; mode=block"
+    },
+    {
+        key: "X-Frame-Options",
+        value: "DENY"
+    },
+    {
+        key: "Referrer-Policy",
+        value: "origin-when-cross-origin"
     }
-    return config
-  }
-}
+];
 
-module.exports = nextConfig
+const nextConfig = {
+    reactStrictMode: true,
+    siteUrl: process.env.SITE_URL,
+    generateRobotsTxt: true,
+
+    i18n: {
+        locales: ["fr-FR"],
+        defaultLocale: "fr-FR"
+    },
+
+    async headers() {
+        return [
+            {
+                source: "/(.*)",
+                headers: securityHeaders
+            }
+        ];
+    },
+
+    webpackDevMiddleware: (config) => {
+        config.watchOptions = {
+            poll: 1000,
+            aggregateTimeout: 300
+        };
+
+        return config;
+    }
+};
+
+module.exports = nextConfig;

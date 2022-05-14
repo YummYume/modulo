@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' NODE_TLS_REJECT_UNAUTHORIZED='0' next dev -p 3001 & local-ssl-proxy --source 3000 --target 3001",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint"
   },
@@ -26,6 +27,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^6.3.3",
     "next": "12.1.0",
+    "next-sitemap": "^2.5.20",
     "nextjs-progressbar": "^0.0.14",
     "react": "17.0.2",
     "react-cookie": "^4.1.1",

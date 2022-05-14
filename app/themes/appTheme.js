@@ -11,6 +11,11 @@ export default createTheme({
                 main: "#fff",
                 light: "#000"
             }
+        },
+        box: {
+            index: {
+                backgroundLogin: "gba(255, 255, 255, 0.9)"
+            }
         }
     }
 });

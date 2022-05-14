@@ -1,17 +1,25 @@
 import React from "react";
 import { dehydrate, QueryClient } from "react-query";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Head from "next/head";
 
 import { getCurrentUserFromServer } from "../api/user";
 
 export default function Home() {
     return (
-        <Box className="container-fluid w-100">
-            <Typography variant="h1" className="text-center text-break">
-                Accueil Connecté
-            </Typography>
-        </Box>
+        <React.Fragment>
+            <Head>
+                <title>Modulo | Accueil</title>
+                <meta name="description" content="Accueil de l'application Modulo." />
+            </Head>
+            <div className="container-fluid w-100">
+                <h1>
+                    <Typography variant="h2" className="text-center text-break my-2">
+                        Accueil Connecté
+                    </Typography>
+                </h1>
+            </div>
+        </React.Fragment>
     );
 }
 

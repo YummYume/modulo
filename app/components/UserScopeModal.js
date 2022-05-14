@@ -37,19 +37,16 @@ export default function UserScopeModal({ user, open, handleClose }) {
         >
             <Fade in={open}>
                 <Box
-                    sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "35rem",
-                        maxWidth: "90%",
-                        minHeight: "40%",
-                        bgcolor: "primary.main",
-                        borderColor: "primary.light",
-                        color: "primary.text.main"
-                    }}
+                    position="absolute"
+                    top="50%"
+                    left="50%"
+                    width="35rem"
+                    maxWidth="90%"
+                    minHeight="40%"
+                    bgcolor="primary.main"
+                    color="primary.text.main"
                     className="p-4 border border-light rounded"
+                    sx={{ transform: "translate(-50%, -50%)" }}
                 >
                     <Typography id="user-scopes-title" variant="h4" component="h2" className="text-center">
                         Je choisis ma fonction

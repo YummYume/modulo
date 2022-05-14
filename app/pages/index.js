@@ -11,12 +11,13 @@ import * as yup from "yup";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
 import Cookies from "cookies";
+import Head from "next/head";
+import Image from "next/image";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { useUserLogin } from "../hooks/useUserLogin";
-
-import styles from "../styles/Index.module.scss";
+import backgroundImage from "../public/images/scout-bg.jpg";
 
 export default function Home() {
     const router = useRouter();
@@ -49,25 +50,42 @@ export default function Home() {
 
     return (
         <React.Fragment>
+            <Head>
+                <title>Modulo | Connexion</title>
+                <meta name="description" content="Connexion à l'application Modulo." />
+            </Head>
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit} enableReinitialize={true}>
                 {({ submitCount, isSubmitting, values, errors, handleChange }) => (
-                    <Form className={`w-100 ${styles.background}`}>
+                    <Form className="w-100 position-relative">
+                        <Image
+                            src={backgroundImage}
+                            alt="Image de fond contenant des scouts avançant en fille indienne."
+                            layout="fill"
+                            placeholder="blur"
+                            objectFit="cover"
+                        />
                         <Box
                             className="h-100 container-fluid d-flex justify-content-center align-items-center"
-                            sx={{ backgroundColor: "rgba(4, 38, 62, 0.25)", marginBottom: "100px" }}
+                            sx={{
+                                backgroundColor: "rgba(4, 38, 62, 0.25)",
+                                position: "relative",
+                                zIndex: "1"
+                            }}
                         >
                             <Box
                                 className="d-flex justify-content-between align-items-center text-center flex-column p-4 shadow-lg"
+                                width="550px"
+                                height="350px"
+                                borderRadius="0.5rem"
                                 sx={{
-                                    width: 550,
-                                    height: 350,
-                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                    borderRadius: "0.5rem"
+                                    backgroundColor: "rgba(255, 255, 255, 0.9)"
                                 }}
                             >
-                                <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
-                                    Connexion
-                                </Typography>
+                                <h1>
+                                    <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
+                                        Connexion
+                                    </Typography>
+                                </h1>
                                 <TextField
                                     id="uuid"
                                     name="uuid"
