@@ -61,6 +61,7 @@ export default function Home() {
                             layout="fill"
                             placeholder="blur"
                             objectFit="cover"
+                            priority={true}
                         />
                         <Box
                             className="h-100 container-fluid d-flex justify-content-center align-items-center"
