@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 #[ApiResource]
@@ -50,7 +51,8 @@ class Role
     private Collection $defaultCategories;
 
     #[ORM\Column(type: 'json')]
-    private ?array $Features = [];
+    #[Assert\Choice(choices: ['EVENT_CRUD', 'EDIT_THIRD_PARTY_EVENT'], message: 'Choose valid features.', multiple: true)]
+    private array $features = [];
 
     #[Pure]
     public function __construct()
@@ -207,16 +209,18 @@ class Role
         if ($this->defaultCategories->removeElement($defaultCategory)) {
             $defaultCategory->removeInvitedRole($this);
         }
+
+        return $this;
     }
 
-    public function getFeatures(): ?array
+    public function getFeatures(): array
     {
-        return $this->Features;
+        return $this->features;
     }
 
-    public function setFeatures(array $Features): self
+    public function setFeatures(array $features): self
     {
-        $this->Features = $Features;
+        $this->features = $features;
 
         return $this;
     }
