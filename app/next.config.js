@@ -1,45 +1,17 @@
 /** @type {import('next').NextConfig} */
 
-const securityHeaders = [
-    {
-        key: "X-DNS-Prefetch-Control",
-        value: "on"
-    },
-    {
-        key: "Strict-Transport-Security",
-        value: "max-age=63072000; includeSubDomains; preload"
-    },
-    {
-        key: "X-XSS-Protection",
-        value: "1; mode=block"
-    },
-    {
-        key: "X-Frame-Options",
-        value: "DENY"
-    },
-    {
-        key: "Referrer-Policy",
-        value: "origin-when-cross-origin"
-    }
-];
+const { createSecureHeaders } = require("next-secure-headers");
+const withNextBundleAnalyzer = require("@next/bundle-analyzer")({ enabled: "true" === process.env.ANALYZE });
 
 const nextConfig = {
     reactStrictMode: true,
-
     i18n: {
         locales: ["fr-FR"],
         defaultLocale: "fr-FR"
     },
-
     async headers() {
-        return [
-            {
-                source: "/(.*)",
-                headers: securityHeaders
-            }
-        ];
+        return [{ source: "/(.*)", headers: createSecureHeaders() }];
     },
-
     webpackDevMiddleware: (config) => {
         config.watchOptions = {
             poll: 1000,
@@ -50,4 +22,4 @@ const nextConfig = {
     }
 };
 
-module.exports = nextConfig;
+module.exports = withNextBundleAnalyzer(nextConfig);

@@ -135,6 +135,9 @@ php-cs-fixer:
 lint:
 	$(EXECAPP) yarn lint
 
+analyze:
+	$(EXECAPP) yarn analyze
+
 sync-dependencies-api:
 	@echo Syncing Api dependencies...
 ifeq ($(OS)$(SHELL),Windows_NTsh.exe)

@@ -13,11 +13,9 @@ export default function Home() {
                 <meta name="description" content="Accueil de l'application Modulo." />
             </Head>
             <div className="container-fluid w-100">
-                <h1>
-                    <Typography variant="h2" className="text-center text-break my-2">
-                        Accueil Connecté
-                    </Typography>
-                </h1>
+                <Typography variant="h2" component="h1" className="text-center text-break my-2">
+                    Accueil Connecté
+                </Typography>
             </div>
         </React.Fragment>
     );

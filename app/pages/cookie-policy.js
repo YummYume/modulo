@@ -11,11 +11,9 @@ export default function CookiePolicy() {
                 <meta name="description" content="Qu'est-ce qu'un cookie? Comment les utilisons-nous? Les réponses ici." />
             </Head>
             <div className="container-fluid w-100 my-3">
-                <h1>
-                    <Typography variant="h1" className="text-center mb-5">
-                        Gestion des cookies
-                    </Typography>
-                </h1>
+                <Typography variant="h1" className="text-center mb-5">
+                    Gestion des cookies
+                </Typography>
                 <Slide direction="up" in={true} timeout={{ enter: 1000 }} mountOnEnter unmountOnExit>
                     <div>
                         <Typography variant="h2" className="mb-4">

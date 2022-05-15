@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -6,7 +6,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import { dehydrate, QueryClient, useQueryClient } from "react-query";
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material";
 import * as yup from "yup";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
@@ -21,7 +20,6 @@ import backgroundImage from "../public/images/scout-bg.jpg";
 
 export default function Home() {
     const router = useRouter();
-    const theme = useTheme();
     const queryClient = useQueryClient();
     const { data: user } = useUser();
     const onLoginSuccess = ({ data }) => {
@@ -66,10 +64,9 @@ export default function Home() {
                         />
                         <Box
                             className="h-100 container-fluid d-flex justify-content-center align-items-center"
+                            position="relative"
                             sx={{
-                                backgroundColor: "rgba(4, 38, 62, 0.25)",
-                                position: "relative",
-                                zIndex: "1"
+                                backgroundColor: "rgba(4, 38, 62, 0.25)"
                             }}
                         >
                             <Box
@@ -81,11 +78,9 @@ export default function Home() {
                                     backgroundColor: "rgba(255, 255, 255, 0.9)"
                                 }}
                             >
-                                <h1>
-                                    <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
-                                        Connexion
-                                    </Typography>
-                                </h1>
+                                <Typography variant="h4" component="h1" color="primary.main">
+                                    Connexion
+                                </Typography>
                                 <TextField
                                     id="uuid"
                                     name="uuid"

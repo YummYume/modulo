@@ -15,12 +15,10 @@ export default function Custom500() {
                 <meta name="description" content="Une erreur serveur est survenue." />
             </Head>
             <div className="d-flex flex-column justify-content-center align-items-center w-100">
-                <h1>
-                    <Typography variant="h1" className="text-center mb-5" sx={{ textShadow: "12px 12px 12px rgb(150,150,150)" }}>
-                        500 <br />
-                        Une erreur est survenue 😢
-                    </Typography>
-                </h1>
+                <Typography variant="h1" className="text-center mb-5" sx={{ textShadow: "12px 12px 12px rgb(150,150,150)" }}>
+                    500 <br />
+                    Une erreur est survenue 😢
+                </Typography>
                 <Slide direction="up" in={true} timeout={{ enter: 1000 }} mountOnEnter unmountOnExit>
                     <div>
                         <Link href="/home">

@@ -2,15 +2,21 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import CookieConsent from "react-cookie-consent";
 import Link from "next/link";
+import NextNProgress from "nextjs-progressbar";
+import { useTheme } from "@mui/material/styles";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import ScrollToTop from "../components/ScrollToTop";
 
 import styles from "../styles/Layout.module.scss";
 
 export default function Layout({ children }) {
+    const theme = useTheme();
+
     return (
         <div className={`d-flex flex-column justify-content-between ${styles.app}`}>
+            <NextNProgress color={theme.palette.primary.light} options={{ showSpinner: false }} />
             <Navbar />
             <main className="d-flex flex-grow-1">{children}</main>
             <Footer />
@@ -43,6 +49,7 @@ export default function Layout({ children }) {
                     <a>En savoir plus</a>
                 </Link>
             </CookieConsent>
+            <ScrollToTop />
         </div>
     );
 }
