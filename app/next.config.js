@@ -5,6 +5,7 @@ const withNextBundleAnalyzer = require("@next/bundle-analyzer")({ enabled: "true
 
 const srcSubDomain = "development" === process.env.NODE_ENV ? "'*.modulo.local'" : "'*.modulo-scout.fr'";
 const imageSubDomains = "development" === process.env.NODE_ENV ? "*.modulo.local" : "*.modulo-scout.fr";
+const scriptSrcs = "development" === process.env.NODE_ENV ? ["'self'", "'unsafe-eval'"] : ["'self'"];
 
 const nextConfig = {
     reactStrictMode: true,
@@ -30,7 +31,7 @@ const nextConfig = {
                         directives: {
                             defaultSrc: ["'self'"],
                             childSrc: ["'self'"],
-                            scriptSrc: ["'self'"],
+                            scriptSrc: scriptSrcs,
                             styleSrc: ["'self'", "'unsafe-inline'"],
                             connectSrc: ["'self"],
                             imgSrc: ["'self'", "data:", "blob:", srcSubDomain],
