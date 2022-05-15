@@ -3,7 +3,7 @@
 const { createSecureHeaders } = require("next-secure-headers");
 const withNextBundleAnalyzer = require("@next/bundle-analyzer")({ enabled: "true" === process.env.ANALYZE });
 
-const srcSubDomain = "development" === process.env.NODE_ENV ? "'*.modulo.local'" : "'*.modulo-scout.fr'";
+const srcSubDomain = "development" === process.env.NODE_ENV ? "*.modulo.local" : "*.modulo-scout.fr";
 const imageSubDomains = "development" === process.env.NODE_ENV ? "*.modulo.local" : "*.modulo-scout.fr";
 const scriptSrcs = "development" === process.env.NODE_ENV ? ["'self'", "'unsafe-eval'"] : ["'self'"];
 
@@ -33,7 +33,7 @@ const nextConfig = {
                             childSrc: ["'self'"],
                             scriptSrc: scriptSrcs,
                             styleSrc: ["'self'", "'unsafe-inline'"],
-                            connectSrc: ["'self"],
+                            connectSrc: ["'self'", srcSubDomain],
                             imgSrc: ["'self'", "data:", "blob:", srcSubDomain],
                             fontSrc: ["'self'", "data:", "blob:", srcSubDomain]
                         }
