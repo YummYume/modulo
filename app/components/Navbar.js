@@ -15,7 +15,7 @@ export default function Navbar() {
     const trigger = useScrollTrigger({ disableHysteresis: true });
 
     return (
-        <AppBar color="primary">
+        <AppBar color="primary" sx={{ zIndex: 1000 }}>
             <Toolbar
                 className={`d-flex justify-content-between align-items-center ${trigger ? styles.reducedState : styles.initialState}`}
                 classes={{ root: { "min-height": "0px" } }}

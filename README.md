@@ -44,6 +44,7 @@ The Modulo project.
 - `make cl` : clears the nginx logs (the nginx container must be STOPPED to run this command)
 - `make php-cs-fixer` : runs php-cs fixer for the src folder of the api
 - `make lint` : runs `yarn lint` for the app folder
+- `make analyze` : runs `yarn analyze` for the app folder (reports are under `app/.next/analyze`)
 - `make sync-dependencies-api` : syncs the `vendor` api folder with the host
 - `make sync-dependencies-app` : syncs the `node_modules` app folder with the host
 - `make sync-dependencies-yarn-api` : syncs the `node_modules` api folder with the host

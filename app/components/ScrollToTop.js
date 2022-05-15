@@ -19,8 +19,8 @@ export default function ScrollTop() {
 
     return (
         <Zoom in={trigger}>
-            <Box onClick={handleClick} role="presentation" sx={{ position: "fixed", bottom: 16, right: 16 }}>
-                <Fab color="primary" size="small" aria-label="scroll back to top">
+            <Box onClick={handleClick} role="presentation" position="fixed" bottom="16px" right="16px" zIndex="9999">
+                <Fab color="primary" size="small" aria-label="Revenir en haut">
                     <KeyboardArrowUpIcon />
                 </Fab>
             </Box>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -6,21 +6,20 @@ import LoginIcon from "@mui/icons-material/Login";
 import { dehydrate, QueryClient, useQueryClient } from "react-query";
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material";
 import * as yup from "yup";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
 import Cookies from "cookies";
+import Head from "next/head";
+import Image from "next/image";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { useUserLogin } from "../hooks/useUserLogin";
-
-import styles from "../styles/Index.module.scss";
+import backgroundImage from "../public/images/scout-bg.jpg";
 
 export default function Home() {
     const router = useRouter();
-    const theme = useTheme();
     const queryClient = useQueryClient();
     const { data: user } = useUser();
     const onLoginSuccess = ({ data }) => {
@@ -49,23 +48,38 @@ export default function Home() {
 
     return (
         <React.Fragment>
+            <Head>
+                <title>Modulo | Connexion</title>
+                <meta name="description" content="Connexion à l'application Modulo." />
+            </Head>
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit} enableReinitialize={true}>
                 {({ submitCount, isSubmitting, values, errors, handleChange }) => (
-                    <Form className={`w-100 ${styles.background}`}>
+                    <Form className="w-100 position-relative">
+                        <Image
+                            src={backgroundImage}
+                            alt="Image de fond contenant des scouts avançant en fille indienne."
+                            layout="fill"
+                            placeholder="blur"
+                            objectFit="cover"
+                            priority={true}
+                        />
                         <Box
                             className="h-100 container-fluid d-flex justify-content-center align-items-center"
-                            sx={{ backgroundColor: "rgba(4, 38, 62, 0.25)", marginBottom: "100px" }}
+                            position="relative"
+                            sx={{
+                                backgroundColor: "rgba(4, 38, 62, 0.25)"
+                            }}
                         >
                             <Box
                                 className="d-flex justify-content-between align-items-center text-center flex-column p-4 shadow-lg"
+                                width="550px"
+                                height="350px"
+                                borderRadius="0.5rem"
                                 sx={{
-                                    width: 550,
-                                    height: 350,
-                                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                    borderRadius: "0.5rem"
+                                    backgroundColor: "rgba(255, 255, 255, 0.9)"
                                 }}
                             >
-                                <Typography variant="h4" sx={{ color: theme.palette.primary.main }}>
+                                <Typography variant="h4" component="h1" color="primary.main">
                                     Connexion
                                 </Typography>
                                 <TextField

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import UserIcon from "@mui/icons-material/AccountCircle";
 import BadgeIcon from "@mui/icons-material/Badge";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -44,7 +43,7 @@ export default function UserMenu({ user, isFetched }) {
     };
 
     return (
-        <Box>
+        <div>
             <UserIcon
                 id="user-icon"
                 onClick={handleUserMenuOpen}
@@ -100,6 +99,6 @@ export default function UserMenu({ user, isFetched }) {
                 </Menu>
             )}
             {user && <UserScopeModal user={user} open={userScopeModalOpen} handleClose={handleUserModalClose} />}
-        </Box>
+        </div>
     );
 }

@@ -1,4 +1,12 @@
-@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/utilities/api";
+@import "~bootstrap/scss/grid";
+
 @import "~react-toastify/dist/ReactToastify.css";
 
 @import "@fontsource/roboto/300.css";
@@ -47,13 +55,6 @@ body {
   // firefox | doesn't work
   scrollbar-width: 10px;
   scrollbar-color: $primary-blue-main $primary-blue-light;
-}
-
-.app {
-  min-height: 100vh;
-  padding-top: 75px;
-  background-color: $primary-blue-light;
-  scroll-behavior: smooth;
 }
 
 a {
