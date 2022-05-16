@@ -67,7 +67,7 @@ export default function Home() {
                             className="h-100 container-fluid d-flex justify-content-center align-items-center"
                             position="relative"
                             sx={{
-                                backgroundColor: "rgba(4, 38, 62, 0.25)"
+                                backgroundColor: "box.image.filter"
                             }}
                         >
                             <Box
@@ -76,7 +76,7 @@ export default function Home() {
                                 height="350px"
                                 borderRadius="0.5rem"
                                 sx={{
-                                    backgroundColor: "rgba(255, 255, 255, 0.9)"
+                                    backgroundColor: 'box.index.backgroundLogin'
                                 }}
                             >
                                 <Typography variant="h4" component="h1" color="primary.main">

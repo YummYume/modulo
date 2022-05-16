@@ -22,7 +22,10 @@ export default createTheme({
         },
         box: {
             index: {
-                backgroundLogin: "gba(255, 255, 255, 0.9)"
+                backgroundLogin: "rgba(255, 255, 255, 0.9)"
+            },
+            image: {
+                filter: "rgba(4, 38, 62, 0.25)"
             }
         }
     }
