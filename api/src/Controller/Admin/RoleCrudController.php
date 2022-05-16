@@ -38,9 +38,11 @@ class RoleCrudController extends AbstractCrudController
             TextField::new('code', 'role.code'),
             AssociationField::new('ageSection', 'role.age_section'),
             AssociationField::new('categories', 'role.categories'),
-            ChoiceField::new('Features', 'role.features')
+            ChoiceField::new('features', 'role.features')
                 ->setChoices(Feature::toArray(true))
-                ->allowMultipleChoices(),
+                ->allowMultipleChoices()
+                ->renderExpanded()
+                ->setFormTypeOption('error_bubbling', false),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'common.updated_at')

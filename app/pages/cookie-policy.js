@@ -7,7 +7,7 @@ export default function CookiePolicy() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | Gestion des cookies</title>
+                <title>Gestion des cookies | Modulo</title>
                 <meta name="description" content="Qu'est-ce qu'un cookie? Comment les utilisons-nous? Les réponses ici." />
             </Head>
             <div className="container-fluid w-100 my-3">

@@ -101,7 +101,7 @@ role_admin: Administrateur
 role_super_admin: Super Administrateur
 
 # Features
-event_crud: Créer un événement, le modifier, le supprimer 
+event_crud: Créer un événement, le modifier, le supprimer
 edit_third_party_event: Modifier les évènements créés par un tiers dans ma structure
 edit_child_event: Modifier les évènements créés par un tiers dans une structure enfant
 delete_third_party_event: Supprimer les évènements créés par un tiers
@@ -116,3 +116,5 @@ see_child_events: Voir les événements des structures enfant
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
 The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
 The presented password is invalid.: Le mot de passe est invalide.
+Too many login attempts. Please try again later.: Trop de tentatives de connexion. Veuillez réessayer ultérieurement.
+Invalid CSRF token.: Jeton CSRF invalide. Veuillez rafraîchir la page et réessayer.

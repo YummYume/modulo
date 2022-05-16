@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\TimestampableTrait;
+use App\Enum\Feature;
 use App\Repository\RoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -51,7 +52,7 @@ class Role
     private Collection $defaultCategories;
 
     #[ORM\Column(type: 'json')]
-    #[Assert\Choice(choices: ['EVENT_CRUD', 'EDIT_THIRD_PARTY_EVENT'], message: 'Choose valid features.', multiple: true)]
+    #[Assert\Choice(callback: 'getAllowedFeatures', multipleMessage: 'role.features.choice', multiple: true)]
     private array $features = [];
 
     #[Pure]
@@ -223,5 +224,10 @@ class Role
         $this->features = $features;
 
         return $this;
+    }
+
+    public function getAllowedFeatures(): array
+    {
+        return Feature::toArray(true);
     }
 }

@@ -15,9 +15,13 @@ user.password.compromised: Ce mot de passe est compromis. Veuillez en choisir un
 user.password.not_blank: Veuillez saisir un mot de passe.
 user.password.mismatch: Les mots de passe ne correspondent pas.
 user.scopes.unique: Les nouvelles scopes ajoutées doivent être uniques.
+user.role.choice: Un ou plusieurs rôles sélectionnés ne sont pas valides.
 
 # Category
 category.invited_roles.expression: Certains rôles n'autorisent pas cette catégorie.
+
+# Role
+role.features.choice: Une ou plusieurs fonctionnalités sélectionnées ne sont pas valides.
 
 ### Commands
 command.dispatcher.invalid: The command's attribute "{attribute}" is invalid ({message}).

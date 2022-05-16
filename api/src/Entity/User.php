@@ -83,6 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'json')]
     #[Groups(['get', 'get:me'])]
+    #[Assert\Choice(callback: 'getAllowedRoles', multipleMessage: 'user.role.choice', multiple: true)]
     private array $roles = [];
 
     #[Assert\Length(min: 8, max: 50, minMessage: 'user.password.min_length', maxMessage: 'user.password.max_length')]
@@ -325,5 +326,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getInavtiveScopes(): Collection
     {
         return $this->scopes->filter(static fn (Scope $scope) => !$scope->isActive());
+    }
+
+    public function getAllowedRoles(): array
+    {
+        return StaticRole::toArray(true);
     }
 }

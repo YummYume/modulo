@@ -7,7 +7,7 @@ export default function About() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | À propos</title>
+                <title>À propos | Modulo</title>
                 <meta name="description" content="À propos de nous et du site modulo-scout.fr." />
             </Head>
             <div className="container-fluid w-100 my-3">

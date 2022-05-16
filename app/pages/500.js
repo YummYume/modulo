@@ -11,7 +11,7 @@ export default function Custom500() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | Erreur serveur</title>
+                <title>Erreur serveur | Modulo</title>
                 <meta name="description" content="Une erreur serveur est survenue." />
             </Head>
             <div className="d-flex flex-column justify-content-center align-items-center w-100">
