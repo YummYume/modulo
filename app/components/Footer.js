@@ -11,7 +11,7 @@ export default function Footer() {
             bgcolor="primary.main"
             color="primary.text.main"
             boxShadow="0 0 25px #000"
-            zIndex={1000}
+            zIndex={10}
             component="footer"
         >
             <Typography variant="body1" className="text-center" sx={{ padding: "0 10px" }}>
