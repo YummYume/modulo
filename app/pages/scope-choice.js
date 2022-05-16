@@ -52,24 +52,22 @@ export default function ScopeChoice() {
                                 </Typography>
                             </m.div>
                         </Box>
-                        <div className="col-12">
+                        <div className="col-sm-10 col-md-12 mx-auto">
                             <div className="row justify-content-around">
                                 {user.scopes.map((scope) => (
-                                    <div className="col-xl-2 col-lg-4 col-md-5 col-sm-6 col-12 my-3" key={scope.id}>
+                                    <div className="col-xl-3 col-lg-4 col-md-5 col-sm-6 my-3" key={scope.id}>
                                         <m.div
-                                            className="d-flex flex-column justify-content-around align-items-center text-center h-100"
+                                            className="d-flex flex-column justify-content-around align-items-center text-center h-100 shadow-lg"
                                             style={{
                                                 padding: "20px 30px",
-                                                border: `3px solid ${
-                                                    selectedScope?.id === scope.id ? "blue" : theme.palette.primary.light
-                                                }`,
+                                                border: `2px solid ${theme.palette.primary.main}`,
                                                 borderRadius: "10px",
                                                 cursor: "pointer",
-                                                backgroundColor: theme.palette.primary.main,
-                                                color: theme.palette.primary.light,
+                                                backgroundColor: selectedScope?.id === scope.id ? theme.palette.primary.main : theme.palette.primary.secondary,
+                                                color: selectedScope?.id === scope.id ? theme.palette.primary.light : theme.palette.primary.main,
                                                 overflow: "hidden"
                                             }}
-                                            whileHover={{ scale: 1.2, borderRadius: "20px" }}
+                                            whileHover={{ scale: 1.1, borderRadius: "15px" }}
                                             whileTap={{ scale: 1 }}
                                             onClick={() => handleScopeSelection(scope)}
                                             initial={{ opacity: 0 }}
