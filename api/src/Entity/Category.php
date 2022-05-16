@@ -33,7 +33,9 @@ class Category
     private Collection $roles;
 
     #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'defaultCategories')]
-    #[Assert\Expression(expression: "value in this.getRoles().toArray()", message: "category.invited_roles.expression")]
+    #[Assert\All([
+        new Assert\Expression(expression: 'value in this.getRoles().toArray()', message: 'category.invited_roles.expression'),
+    ])]
     private Collection $invitedRoles;
 
     public function __construct()
@@ -125,5 +127,10 @@ class Category
         $this->invitedRoles->removeElement($invitedRole);
 
         return $this;
+    }
+
+    public function getAllowedRoles(): array
+    {
+        return $this->roles->toArray();
     }
 }
