@@ -42,7 +42,9 @@ export default function Layout({ children }) {
                 enableDeclineButton={false}
                 expires={365}
                 debug={false}
-                style={{ zIndex: 10000 }}
+                buttonStyle={{ backgroundColor: theme.palette.primary.text.main, color: theme.palette.primary.main }}
+                buttonClasses="rounded py-2"
+                style={{backgroundColor: theme.palette.secondary.main}}
             >
                 Ce site utilise des cookies pour son bon fonctionnement et pour vous garantir une expérience optimale.{" "}
                 <Link href="/cookie-policy">

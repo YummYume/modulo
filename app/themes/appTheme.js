@@ -12,6 +12,14 @@ export default createTheme({
                 light: "#000"
             }
         },
+        secondary: {
+            main: palette.secondaryGreenMain,
+            light: palette.secondaryGreenLight,
+            text: {
+                main: "#fff",
+                light: "#000"
+            }
+        },
         box: {
             index: {
                 backgroundLogin: "gba(255, 255, 255, 0.9)"
