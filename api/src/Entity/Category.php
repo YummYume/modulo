@@ -9,6 +9,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource]
@@ -31,9 +32,16 @@ class Category
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'categories')]
     private Collection $roles;
 
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'defaultCategories')]
+    #[Assert\All([
+        new Assert\Expression(expression: 'value in this.getRoles().toArray()', message: 'category.invited_roles.expression'),
+    ])]
+    private Collection $invitedRoles;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->invitedRoles = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -95,5 +103,34 @@ class Category
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getInvitedRoles(): Collection
+    {
+        return $this->invitedRoles;
+    }
+
+    public function addInvitedRole(Role $invitedRole): self
+    {
+        if (!$this->invitedRoles->contains($invitedRole)) {
+            $this->invitedRoles[] = $invitedRole;
+        }
+
+        return $this;
+    }
+
+    public function removeInvitedRole(Role $invitedRole): self
+    {
+        $this->invitedRoles->removeElement($invitedRole);
+
+        return $this;
+    }
+
+    public function getAllowedRoles(): array
+    {
+        return $this->roles->toArray();
     }
 }

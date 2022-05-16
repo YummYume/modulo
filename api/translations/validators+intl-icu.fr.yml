@@ -16,6 +16,9 @@ user.password.not_blank: Veuillez saisir un mot de passe.
 user.password.mismatch: Les mots de passe ne correspondent pas.
 user.scopes.unique: Les nouvelles scopes ajoutées doivent être uniques.
 
+# Category
+category.invited_roles.expression: Certains rôles n'autorisent pas cette catégorie.
+
 ### Commands
 command.dispatcher.invalid: The command's attribute "{attribute}" is invalid ({message}).
 
