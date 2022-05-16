@@ -49,8 +49,12 @@ export default function Home() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | Connexion</title>
-                <meta name="description" content="Connexion à l'application Modulo." />
+                <title>Connexion | Modulo</title>
+                <meta
+                    name="description"
+                    content="Saisissez votre numéro d'adhérent et votre mot de passe pour vous connecter à l'application Modulo."
+                />
+                <meta name="robots" content="noodp,noydir" />
             </Head>
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit} enableReinitialize={true}>
                 {({ submitCount, isSubmitting, values, errors, handleChange }) => (

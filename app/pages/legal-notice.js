@@ -7,8 +7,8 @@ export default function LegalNotice() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | Mentions Légales</title>
-                <meta name="description" content="Les mentions légales concernant notre site modulo-scout.fr." />
+                <title>Mentions Légales | Modulo</title>
+                <meta name="description" content="Les mentions légales concernant le site modulo-scout.fr." />
             </Head>
             <div className="container-fluid w-100 my-3">
                 <Typography variant="h1" className="text-center mb-5">

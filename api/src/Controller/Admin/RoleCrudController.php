@@ -3,9 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Role;
+use App\Enum\Feature;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -36,6 +38,11 @@ class RoleCrudController extends AbstractCrudController
             TextField::new('code', 'role.code'),
             AssociationField::new('ageSection', 'role.age_section'),
             AssociationField::new('categories', 'role.categories'),
+            ChoiceField::new('features', 'role.features')
+                ->setChoices(Feature::toArray(true))
+                ->allowMultipleChoices()
+                ->renderExpanded()
+                ->setFormTypeOption('error_bubbling', false),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'common.updated_at')

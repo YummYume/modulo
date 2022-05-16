@@ -11,7 +11,7 @@ export default function Custom404() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | Page introuvable</title>
+                <title>Page introuvable | Modulo</title>
                 <meta name="description" content="Cette page est introuvable." />
             </Head>
             <div className="d-flex flex-column justify-content-center align-items-center w-100">

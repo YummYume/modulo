@@ -86,6 +86,7 @@ role.code: Code
 role.age_section: Section d'âge
 role.icon: Icône
 role.categories: Catégories d'événement autorisées
+role.features: Fonctionnalités autorisées
 
 ### Enums
 
@@ -99,7 +100,21 @@ role_user: Utilisateur
 role_admin: Administrateur
 role_super_admin: Super Administrateur
 
+# Features
+event_crud: Créer un événement, le modifier, le supprimer
+edit_third_party_event: Modifier les évènements créés par un tiers dans ma structure
+edit_child_event: Modifier les évènements créés par un tiers dans une structure enfant
+delete_third_party_event: Supprimer les évènements créés par un tiers
+delete_child_event: Supprimer les évènements créés par un tiers dans une structure enfant
+customize_guest_functions: Personnaliser les fonctions invitées
+nominative_invitations: Définir des invitations nominatives
+customize_event_visibility: Personnaliser la visibilité de l'événement
+agenda_access: Accéder à l'agenda (voir les événements de ma structure et des structures parentes)
+see_child_events: Voir les événements des structures enfant
+
 ### Security
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
 The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
 The presented password is invalid.: Le mot de passe est invalide.
+Too many login attempts. Please try again later.: Trop de tentatives de connexion. Veuillez réessayer ultérieurement.
+Invalid CSRF token.: Jeton CSRF invalide. Veuillez rafraîchir la page et réessayer.

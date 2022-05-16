@@ -26,17 +26,6 @@ class UserFixture extends Fixture
         $file = fopen(sprintf('%s/resources/fixtures/users-fixture.csv', $this->projectDir), 'r');
         $index = 0;
 
-        $admin = (new User())
-            ->setUuid('admin')
-            ->setEmail('admin@modulo.com')
-            ->setPlainPassword('root')
-            ->setFirstName('Admin')
-            ->setLastName('Modulo')
-            ->setGender(Gender::random())
-            ->setRoles([StaticRole::ROLE_USER->name, StaticRole::ROLE_SUPER_ADMIN->name])
-        ;
-        $manager->persist($admin);
-
         while ($row = fgetcsv($file, 1000)) {
             ++$index;
             if (1 === $index) {
@@ -48,6 +37,36 @@ class UserFixture extends Fixture
             $firstName = $faker->firstName;
             $lastName = $faker->lastName;
             $email = strtolower(sprintf('%s.%s_%s@%s', $firstName, $lastName, $index, $faker->unique(true)->safeEmailDomain));
+
+            if (2 === $index) {
+                $admin = (new User())
+                    ->setUuid('admin')
+                    ->setEmail('admin@modulo.com')
+                    ->setPlainPassword('root')
+                    ->setFirstName('Admin')
+                    ->setLastName('Modulo')
+                    ->setGender(Gender::random())
+                    ->setRoles([StaticRole::ROLE_USER->name, StaticRole::ROLE_SUPER_ADMIN->name])
+                ;
+                $manager->persist($admin);
+
+                $adminStructure = $this->getReference(sprintf('structure-%s', $structureCode));
+                if (!$adminStructure instanceof Structure) {
+                    throw new \LogicException();
+                }
+
+                $adminRole = $this->getReference(sprintf('role-%s', $role));
+                if (!$adminRole instanceof Role) {
+                    throw new \LogicException();
+                }
+
+                $adminScope = (new Scope())
+                    ->setUser($admin)
+                    ->setStructure($adminStructure)
+                    ->setRole($adminRole)
+                ;
+                $manager->persist($adminScope);
+            }
 
             $user = (new User())
                 ->setUuid($code)

@@ -39,7 +39,7 @@ export default function ScopeChoice() {
     return (
         <React.Fragment>
             <Head>
-                <title>{"Modulo | Choix d'une fonction"}</title>
+                <title>{"Choix d'une fonction  | Modulo"}</title>
                 <meta name="description" content="Choix de votre fonction." />
             </Head>
             <LazyMotion features={domAnimation} strict>
@@ -63,8 +63,14 @@ export default function ScopeChoice() {
                                                 border: `2px solid ${theme.palette.primary.main}`,
                                                 borderRadius: "10px",
                                                 cursor: "pointer",
-                                                backgroundColor: selectedScope?.id === scope.id ? theme.palette.primary.main : theme.palette.primary.secondary,
-                                                color: selectedScope?.id === scope.id ? theme.palette.primary.light : theme.palette.primary.main,
+                                                backgroundColor:
+                                                    selectedScope?.id === scope.id
+                                                        ? theme.palette.primary.main
+                                                        : theme.palette.primary.secondary,
+                                                color:
+                                                    selectedScope?.id === scope.id
+                                                        ? theme.palette.primary.light
+                                                        : theme.palette.primary.main,
                                                 overflow: "hidden"
                                             }}
                                             whileHover={{ scale: 1.1, borderRadius: "15px" }}

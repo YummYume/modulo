@@ -9,7 +9,7 @@ export default function Home() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | Accueil</title>
+                <title>Accueil | Modulo</title>
                 <meta name="description" content="Accueil de l'application Modulo." />
             </Head>
             <div className="container-fluid w-100">

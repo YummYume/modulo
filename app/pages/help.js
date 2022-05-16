@@ -7,7 +7,7 @@ export default function Help() {
     return (
         <React.Fragment>
             <Head>
-                <title>Modulo | Aide</title>
+                <title>Aide | Modulo</title>
                 <meta name="description" content="Aide pour l'application Modulo." />
             </Head>
             <div className="container-fluid w-100 my-3">
