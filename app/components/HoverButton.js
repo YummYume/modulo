@@ -15,7 +15,7 @@ export default function HoverButton({ buttonProps, children }) {
             }
         },
         visible: {
-            pathLength: 1,
+            pathLength: 0.45,
             opacity: 1,
             transition: {
                 pathLength: { type: "spring", duration: 1, bounce: 0 }
@@ -36,11 +36,11 @@ export default function HoverButton({ buttonProps, children }) {
                     }
                 }}
                 component={m.button}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.25 }}
                 whileHover={{
-                    scale: 1.2,
-                    letterSpacing: "2px",
-                    transition: { duration: 0.5 }
+                    scale: 1.1,
+                    letterSpacing: "4px",
+                    transition: { duration: 0.25 }
                 }}
                 onHoverStart={() => buttonControls.start("visible")}
                 onHoverEnd={() => buttonControls.start("hidden")}
