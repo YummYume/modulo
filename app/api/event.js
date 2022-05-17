@@ -1,7 +1,13 @@
 import { axiosApiInstance } from "./axios/api";
 
-const add = async (data) => {
-    const response = await axiosApiInstance().post("/events", data);
+export const add = async (name, description, active, startDate, endDate) => {
+    const response = await axiosApiInstance().post("/events", {
+        name,
+        description,
+        active,
+        startDate,
+        endDate
+    });
 
     return response;
-}
+};

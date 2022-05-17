@@ -13,6 +13,10 @@ import FormGroup from "@mui/material/FormGroup";
 import IconButton from "@mui/material/IconButton";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import LoadingButton from "@mui/lab/LoadingButton";
+import CheckIcon from "@mui/icons-material/Check";
+import { toast } from "react-toastify";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { isGranted, features } from "../services/user";
@@ -31,16 +35,28 @@ export default function Home() {
             end: new Date()
         }
     ];
-    const addEventMutation = useMutation(() => add());
+    const addEventMutation = useMutation(
+        ({ name, description, active, startDate, endDate }) => add(name, description, active, startDate, endDate),
+        {
+            onSuccess: () => {
+                toast.success("Evénement ajouté !");
+                setOpenModal(false);
+            }
+        }
+    );
     const initialValues = {
         name: "",
         description: "",
-        state: true
+        active: true,
+        startDate: null,
+        endDate: null
     };
     const validationSchema = yup.object({
         name: yup.string().required("Veuillez saisir un nom."),
         description: yup.string().required("Veuillez saisir une description."),
-        active: yup.bool().required("Veuillez saisir l'état.")
+        active: yup.bool().required("Veuillez saisir un état."),
+        startDate: yup.date().required("Veuillez saisir un état."),
+        endDate: yup.date().required("Veuillez saisir un état.")
     });
 
     const onSubmit = async (values) => {

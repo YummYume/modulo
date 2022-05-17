@@ -36,6 +36,8 @@ class EventCrudController extends AbstractCrudController
             TextField::new('description', 'event.description'),
             AssociationField::new('categories', 'event.categories'),
             AssociationField::new('participants', 'event.participants'),
+            DateTimeField::new('startDate', 'event.start_date'),
+            DateTimeField::new('endDate', 'event.end_date'),
             BooleanField::new('active', 'event.active'),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),

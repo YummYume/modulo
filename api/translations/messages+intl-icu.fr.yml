@@ -103,6 +103,8 @@ event.name: Nom
 event.description: Description
 event.categories: Catégories
 event.participants: Participants invités
+event.start_date: Date de début
+event.end_date: Date de fin
 event.active: Actif
 
 # MediaImage
