@@ -53,6 +53,14 @@ view.user.detail: Détails d'un utilisateur
 view.user.single: un utilisateur
 view.user.plural: des utilisateurs
 
+view.admin.event: Évènements
+view.event.index: Évènements
+view.event.create: Créer un évènement
+view.event.edit: Modifier un évènement
+view.event.detail: Détails d'un évènement
+view.event.single: un évènement
+view.event.plural: des évènements
+
 ### Entities
 
 # User
@@ -87,6 +95,13 @@ role.age_section: Section d'âge
 role.icon: Icône
 role.categories: Catégories d'événement autorisées
 role.features: Fonctionnalités autorisées
+
+# Event
+event.name: Nom
+event.description: Description
+event.categories: Catégories
+event.participants: Participants invités
+event.active: Actif
 
 ### Enums
 

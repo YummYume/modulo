@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use App\Entity\Event;
 use App\Entity\Role;
 use App\Entity\Scope;
 use App\Entity\User;
@@ -42,6 +43,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list-ul', Category::class);
         yield MenuItem::linkToCrud('view.admin.role', 'fas fa-user-tag', Role::class);
         yield MenuItem::linkToCrud('view.admin.user', 'fas fa-users', User::class);
+        yield MenuItem::linkToCrud('view.admin.event', 'fas fa-calendar-alt', Event::class);
     }
 
     public function configureUserMenu(UserInterface|User $user): UserMenu
