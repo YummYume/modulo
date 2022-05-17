@@ -321,7 +321,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getActiveScopes(): Collection
     {
-        return $this->scopes->filter(static fn (Scope $scope) => $scope->isActive());
+        return $this->scopes->filter(static fn (Scope $scope): bool => $scope->isActive());
     }
 
     /**
@@ -329,7 +329,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getInavtiveScopes(): Collection
     {
-        return $this->scopes->filter(static fn (Scope $scope) => !$scope->isActive());
+        return $this->scopes->filter(static fn (Scope $scope): bool => !$scope->isActive());
+    }
+
+    public function getCurrentScope(?int $currentScope): Collection
+    {
+        return $this->getActiveScopes()->filter(static fn (Scope $scope): bool => $currentScope === $scope->getId())->first();
     }
 
     public function getAllowedRoles(): array
