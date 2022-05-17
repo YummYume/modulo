@@ -1,15 +1,25 @@
-import React from "react";
-import { dehydrate, QueryClient } from "react-query";
+import React, { useState } from "react";
+import { dehydrate, QueryClient, useMutation } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
+import { Formik, Form } from "formik";
+import * as yup from "yup";
+import TextField from "@mui/material/TextField";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import IconButton from "@mui/material/IconButton";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import Modal from "@mui/material/Modal";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { isGranted, features } from "../services/user";
 import { useUser } from "../hooks/useUser";
 
 export default function Home() {
+    const [openModal, setOpenModal] = useState(false);
     const localizer = momentLocalizer(moment);
     const { data: user } = useUser();
     const events = [
@@ -21,6 +31,21 @@ export default function Home() {
             end: new Date()
         }
     ];
+    const addEventMutation = useMutation(() => add());
+    const initialValues = {
+        name: "",
+        description: "",
+        state: true
+    };
+    const validationSchema = yup.object({
+        name: yup.string().required("Veuillez saisir un nom."),
+        description: yup.string().required("Veuillez saisir une description."),
+        active: yup.bool().required("Veuillez saisir l'état.")
+    });
+
+    const onSubmit = async (values) => {
+        addEventMutation.mutate(values);
+    };
 
     return (
         <React.Fragment>
