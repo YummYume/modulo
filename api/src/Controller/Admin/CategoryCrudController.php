@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Category;
 use App\Repository\RoleRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -48,5 +50,12 @@ class CategoryCrudController extends AbstractCrudController
             TextField::new('updatedBy', 'common.updated_by')
                 ->onlyOnIndex(),
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+        ;
     }
 }
