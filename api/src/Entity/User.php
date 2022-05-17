@@ -113,7 +113,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $scopes;
 
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
-    private $events;
+    private Collection $events;
 
     public function __construct()
     {

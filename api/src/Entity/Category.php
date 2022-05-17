@@ -39,7 +39,7 @@ class Category
     private Collection $invitedRoles;
 
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'categories')]
-    private $events;
+    private Collection $events;
 
     public function __construct()
     {

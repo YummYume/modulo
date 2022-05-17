@@ -13,19 +13,19 @@ class Event
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private ?string $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $description;
+    #[ORM\Column(type: 'text')]
+    private ?string $description;
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'events')]
-    private $categories;
+    private Collection $categories;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
-    private $participants;
+    private Collection $participants;
 
     public function __construct()
     {
