@@ -18,7 +18,7 @@ import { useUser } from "../hooks/useUser";
 import { useUserLogin } from "../hooks/useUserLogin";
 import backgroundImage from "../public/images/scout-bg.jpg";
 
-export default function Home() {
+export default function Home({ isPageReady }) {
     const router = useRouter();
     const queryClient = useQueryClient();
     const { data: user } = useUser();
@@ -80,7 +80,7 @@ export default function Home() {
                                 height="350px"
                                 borderRadius="0.5rem"
                                 sx={{
-                                    backgroundColor: 'box.index.backgroundLogin'
+                                    backgroundColor: "box.index.backgroundLogin"
                                 }}
                             >
                                 <Typography variant="h4" component="h1" color="primary.main">
@@ -111,7 +111,7 @@ export default function Home() {
                                 />
                                 <LoadingButton
                                     loading={isSubmitting || loginMutation.isLoading}
-                                    disabled={Boolean(user || !values.uuid || !values.password)}
+                                    disabled={Boolean(user || !values.uuid || !values.password || !isPageReady)}
                                     type="submit"
                                     loadingPosition="end"
                                     variant="contained"

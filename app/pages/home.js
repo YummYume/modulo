@@ -2,10 +2,23 @@ import React from "react";
 import { dehydrate, QueryClient } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
 
 import { getCurrentUserFromServer } from "../api/user";
 
 export default function Home() {
+    const localizer = momentLocalizer(moment);
+    const events = [
+        {
+            id: 0,
+            title: "Test",
+            allDay: true,
+            start: new Date(),
+            end: new Date()
+        }
+    ];
+
     return (
         <React.Fragment>
             <Head>
@@ -16,6 +29,7 @@ export default function Home() {
                 <Typography variant="h2" component="h1" className="text-center text-break my-2">
                     Accueil Connecté
                 </Typography>
+                <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
             </div>
         </React.Fragment>
     );
