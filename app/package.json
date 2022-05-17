@@ -28,6 +28,7 @@
     "eslint-config-next": "12.1.0",
     "formik": "^2.2.9",
     "framer-motion": "^6.3.3",
+    "moment": "^2.29.3",
     "next": "12.1.0",
     "next-secure-headers": "^2.2.0",
     "next-sitemap": "^2.5.20",
