@@ -11,7 +11,15 @@ export default function LegalNotice() {
                 <meta name="description" content="Les mentions légales concernant le site modulo-scout.fr." />
             </Head>
             <div className="container-fluid w-100 my-5 mx-lg-5 mx-md-5 mx-sm-3">
-                <Typography variant="h2" component="h1" className="text-center mb-5">
+                <Typography
+                    variant="h2"
+                    component="h1"
+                    className="text-center mb-5"
+                    sx={{
+                        color: "primary.main",
+                        fontWeight: "400"
+                    }}
+                >
                     Mentions Légales
                 </Typography>
                 <Fade in={true} timeout={{ enter: 1000 }}>
@@ -34,7 +42,7 @@ export default function LegalNotice() {
                         </Typography>
                     </div>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 1500 }}>
+                <Fade in={true} timeout={{ enter: 1750 }}>
                     <div>
                         <Typography variant="h4" component="h2" className="mb-4">
                             Marques
@@ -46,7 +54,7 @@ export default function LegalNotice() {
                         </Typography>
                     </div>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 2000 }}>
+                <Fade in={true} timeout={{ enter: 2500 }}>
                     <div>
                         <Typography variant="h4" component="h2" className="mb-4">
                             Hébergeur
@@ -57,7 +65,7 @@ export default function LegalNotice() {
                         </Typography>
                     </div>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 2500 }}>
+                <Fade in={true} timeout={{ enter: 3250 }}>
                     <div>
                         <Typography variant="h4" component="h2" className="mb-4">
                             Protection de la vie privée
@@ -117,7 +125,7 @@ export default function LegalNotice() {
                         </Typography>
                     </div>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 3000 }}>
+                <Fade in={true} timeout={{ enter: 4000 }}>
                     <div>
                         <Typography variant="h4" component="h2" className="mb-4">
                             Date de la dernière mise à jour

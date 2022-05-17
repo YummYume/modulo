@@ -11,7 +11,15 @@ export default function About() {
                 <meta name="description" content="À propos de nous et du site modulo-scout.fr." />
             </Head>
             <div className="container-fluid w-100 my-5 mx-lg-5 mx-md-5 mx-sm-3">
-                <Typography variant="h2" component="h1" className="text-center mb-5">
+                <Typography
+                    variant="h2"
+                    component="h1"
+                    className="text-center mb-5"
+                    sx={{
+                        color: "primary.main",
+                        fontWeight: "400"
+                    }}
+                >
                     À propos
                 </Typography>
                 <Fade in={true} timeout={{ enter: 1000 }}>
@@ -24,7 +32,7 @@ export default function About() {
                         blandit, quam justo viverra eros, et euismod quam augue et diam.{" "}
                     </Typography>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 1500 }}>
+                <Fade in={true} timeout={{ enter: 1750 }}>
                     <Typography className="mb-3">
                         Integer laoreet pellentesque risus id sollicitudin. Duis ultrices nisl eu massa finibus elementum. Praesent
                         facilisis orci ac dolor tincidunt feugiat. Maecenas semper urna vel nisi tincidunt tristique. Praesent ligula
@@ -38,7 +46,7 @@ export default function About() {
                         quis arcu vulputate, porttitor tincidunt elit molestie.{" "}
                     </Typography>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 2000 }}>
+                <Fade in={true} timeout={{ enter: 2250 }}>
                     <Typography className="mb-3">
                         Sed pellentesque condimentum velit id congue. Nunc aliquam, leo non pulvinar lobortis, magna nisi tincidunt est, id
                         gravida ipsum est et lacus. Mauris dapibus dui vitae auctor fringilla. Nam vel ante sagittis, lacinia urna vel,
@@ -51,7 +59,7 @@ export default function About() {
                         nec arcu at efficitur. Praesent ultricies lacus a mollis posuere.{" "}
                     </Typography>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 2500 }}>
+                <Fade in={true} timeout={{ enter: 3000 }}>
                     <Typography className="mb-3">
                         Praesent interdum iaculis ligula eu viverra. Aliquam at nulla eleifend, gravida neque eu, blandit leo. Sed ut auctor
                         mauris. Sed quis neque est. Suspendisse viverra euismod porta. Donec tellus nisi, ullamcorper sit amet ligula
@@ -61,7 +69,7 @@ export default function About() {
                         sagittis augue vitae elit euismod, vitae hendrerit massa eleifend.{" "}
                     </Typography>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 3000 }}>
+                <Fade in={true} timeout={{ enter: 3750 }}>
                     <Typography>
                         Etiam ornare eget libero eu sollicitudin. Vivamus fermentum elit id ullamcorper dignissim. Proin pellentesque turpis
                         et commodo sollicitudin. Donec eleifend augue vitae nibh viverra faucibus. Fusce pharetra lacus nunc, nec pulvinar

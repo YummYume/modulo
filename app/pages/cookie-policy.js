@@ -11,7 +11,15 @@ export default function CookiePolicy() {
                 <meta name="description" content="Qu'est-ce qu'un cookie? Comment les utilisons-nous? Les réponses ici." />
             </Head>
             <div className="container-fluid w-100 my-5 mx-lg-5 mx-md-5 mx-sm-3">
-                <Typography variant="h2" component="h1" className="text-center mb-5">
+                <Typography
+                    variant="h2"
+                    component="h1"
+                    className="text-center mb-5"
+                    sx={{
+                        color: "primary.main",
+                        fontWeight: "400"
+                    }}
+                >
                     Gestion des cookies
                 </Typography>
                 <Fade in={true} timeout={{ enter: 1000 }}>
@@ -24,7 +32,7 @@ export default function CookiePolicy() {
                         </Typography>
                     </div>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 1500 }}>
+                <Fade in={true} timeout={{ enter: 1750 }}>
                     <div>
                         <Typography variant="h4" component="h2" className="mb-4">
                             1. Qu’est-ce qu’un “cookie” ?
@@ -39,7 +47,7 @@ export default function CookiePolicy() {
                         </Typography>
                     </div>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 2000 }}>
+                <Fade in={true} timeout={{ enter: 2250 }}>
                     <div>
                         <Typography variant="h4" component="h2" className="mb-4">
                             2. Pourquoi des cookies ?
@@ -84,7 +92,7 @@ export default function CookiePolicy() {
                         </Typography>
                     </div>
                 </Fade>
-                <Fade in={true} timeout={{ enter: 2500 }}>
+                <Fade in={true} timeout={{ enter: 3000 }}>
                     <div>
                         <Typography variant="h4" component="h2" className="mb-4">
                             3. Comment supprimer les cookies ?
