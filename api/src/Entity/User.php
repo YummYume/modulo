@@ -112,9 +112,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Unique(message: 'user.scopes.unique', normalizer: 'trim')]
     private Collection $scopes;
 
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
+    private Collection $events;
+
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -331,5 +335,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getAllowedRoles(): array
     {
         return StaticRole::toArray(true);
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            $event->removeParticipant($this);
+        }
+
+        return $this;
     }
 }
