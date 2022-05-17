@@ -38,10 +38,14 @@ class Category
     ])]
     private Collection $invitedRoles;
 
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'categories')]
+    private $events;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
         $this->invitedRoles = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -132,5 +136,32 @@ class Category
     public function getAllowedRoles(): array
     {
         return $this->roles->toArray();
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->addCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            $event->removeCategory($this);
+        }
+
+        return $this;
     }
 }
