@@ -27,6 +27,9 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     private Collection $participants;
 
+    #[ORM\Column(type: 'boolean')]
+    private $active;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -106,6 +109,18 @@ class Event
     public function removeParticipant(User $participant): self
     {
         $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }
