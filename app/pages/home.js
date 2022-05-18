@@ -25,8 +25,8 @@ export default function Home() {
                 <title>Accueil | Modulo</title>
                 <meta name="description" content="Accueil de l'application Modulo." />
             </Head>
-            <div className="container-fluid w-100">
-                <Typography variant="h2" component="h1" className="text-center text-break my-2">
+            <div className="container-fluid w-100 mx-5">
+                <Typography variant="h2" component="h1" className="text-center text-break my-5">
                     Accueil Connecté
                 </Typography>
                 <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
