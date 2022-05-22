@@ -3,11 +3,14 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Event;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class EventCrudController extends AbstractCrudController
@@ -33,11 +36,12 @@ class EventCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name', 'event.name'),
-            TextField::new('description', 'event.description'),
+            TextareaField::new('description', 'event.description'),
             AssociationField::new('categories', 'event.categories'),
             AssociationField::new('participants', 'event.participants'),
-            DateTimeField::new('startDate', 'event.start_date'),
-            DateTimeField::new('endDate', 'event.end_date'),
+            DateTimeField::new('startDate', 'event.start_date')->renderAsChoice(),
+            DateTimeField::new('endDate', 'event.end_date')->renderAsChoice(),
+            AssociationField::new('scope', 'event.scope'),
             BooleanField::new('active', 'event.active'),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
@@ -48,5 +52,12 @@ class EventCrudController extends AbstractCrudController
             TextField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+        ;
     }
 }

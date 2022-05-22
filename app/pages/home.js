@@ -20,10 +20,13 @@ import { toast } from "react-toastify";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AdapterMoment from "@mui/lab/AdapterMoment";
+import "moment/locale/fr";
 
 import { getCurrentUserFromServer } from "../api/user";
-import { isGranted, features } from "../services/user";
+import { add } from "../api/event";
 import { useUser } from "../hooks/useUser";
+
+moment.locale("fr");
 
 export default function Home() {
     const [openModal, setOpenModal] = useState(false);
@@ -39,7 +42,7 @@ export default function Home() {
         }
     ];
     const addEventMutation = useMutation(
-        ({ name, description, active, startDate, endDate }) => add(name, description, active, startDate, endDate),
+        (values) => add(values.name, values.description, values.active, values.startDate, values.endDate, values.scope),
         {
             onSuccess: () => {
                 toast.success("Evénement ajouté !");
@@ -58,12 +61,13 @@ export default function Home() {
         name: yup.string().required("Veuillez saisir un nom."),
         description: yup.string().required("Veuillez saisir une description."),
         active: yup.bool().required("Veuillez saisir un état."),
-        startDate: yup.date().required("Veuillez saisir un état."),
-        endDate: yup.date().required("Veuillez saisir un état.")
+        startDate: yup.date().typeError("Veuillez saisir une date valide."),
+        endDate: yup.date().typeError("Veuillez saisir une date valide.")
     });
+    const { data: user } = useUser();
 
     const onSubmit = async (values) => {
-        addEventMutation.mutate(values);
+        addEventMutation.mutate({ ...values, scope: `scopes/${user?.currentScope?.id}` });
     };
 
     return (
@@ -83,7 +87,7 @@ export default function Home() {
                 <Modal open={openModal} onClose={() => setOpenModal(false)} className="d-flex justify-content-center align-items-center">
                     <Box backgroundColor="box.index.backgroundLogin" maxWidth="90%" width="35rem" className="p-4 rounded">
                         <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
-                            {({ isSubmitting, values, touched, errors, handleChange, handleBlur }) => (
+                            {({ isSubmitting, values, touched, errors, handleChange, handleBlur, setFieldValue, setFieldTouched }) => (
                                 <Form>
                                     <Typography variant="h4" className="text-center my-4">
                                         Créer un événement
@@ -97,7 +101,8 @@ export default function Home() {
                                         value={values.name}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        error={!!errors.name && touched.name}
+                                        error={touched.name && !!errors.name}
+                                        helperText={touched.name && errors.name}
                                         className="my-2"
                                     />
                                     <TextField
@@ -109,43 +114,48 @@ export default function Home() {
                                         value={values.description}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        error={!!errors.description && touched.description}
+                                        error={touched.description && !!errors.description}
+                                        helperText={touched.description && errors.description}
                                         className="my-2"
                                     />
-                                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                                    <LocalizationProvider dateAdapter={AdapterMoment} locale={"fr"}>
                                         <DateTimePicker
+                                            id="startDate"
+                                            name="startDate"
+                                            label="Date de début"
                                             value={values.startDate}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            error={!!errors.startDate && touched.startDate}
+                                            onChange={(value) => setFieldValue("startDate", value)}
+                                            variant="outlined"
+                                            ampm={false}
                                             renderInput={(props) => (
                                                 <TextField
                                                     {...props}
-                                                    id="startDate"
-                                                    name="startDate"
-                                                    label="Date de début"
-                                                    variant="outlined"
-                                                    fullWidth
                                                     className="my-2"
+                                                    fullWidth
+                                                    error={touched.startDate && !!errors.startDate}
+                                                    onBlur={() => setFieldTouched("startDate", true)}
+                                                    helperText={touched.startDate && errors.startDate}
                                                 />
                                             )}
                                         />
                                     </LocalizationProvider>
                                     <LocalizationProvider dateAdapter={AdapterMoment}>
                                         <DateTimePicker
+                                            id="endDate"
+                                            name="endDate"
+                                            label="Date de fin"
                                             value={values.endDate}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            error={!!errors.endDate && touched.endDate}
+                                            onChange={(value) => setFieldValue("endDate", value)}
+                                            variant="outlined"
+                                            ampm={false}
                                             renderInput={(props) => (
                                                 <TextField
                                                     {...props}
-                                                    id="endDate"
-                                                    name="endDate"
-                                                    label="Date de fin"
-                                                    variant="outlined"
-                                                    fullWidth
                                                     className="my-2"
+                                                    fullWidth
+                                                    error={touched.endDate && !!errors.endDate}
+                                                    onBlur={() => setFieldTouched("endDate", true)}
+                                                    helperText={touched.endDate && errors.endDate}
                                                 />
                                             )}
                                         />
@@ -157,11 +167,10 @@ export default function Home() {
                                                     id="active"
                                                     name="active"
                                                     variant="outlined"
-                                                    fullWidth
                                                     value={values.active}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
-                                                    error={!!errors.active && touched.active}
+                                                    error={touched.active && !!errors.active}
                                                 />
                                             }
                                             label="Actif"
