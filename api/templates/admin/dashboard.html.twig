@@ -2,3 +2,15 @@
 
 {% block page_title %}{{ 'view.admin.dashboard'|trans }}{% endblock %}
 {% block content_title %}{{ 'view.admin.dashboard'|trans }}{% endblock %}
+
+{% block main %}
+    <div class="row my-2">
+        <div class="col-12 text-center">
+            <picture>
+                <source srcset="{{ asset('/pictures/dashboard-welcome.jpg')|imagine_filter('dashboard_picture_webp') }}" type="image/webp">
+                <source srcset="{{ asset('/pictures/dashboard-welcome.jpg')|imagine_filter('dashboard_picture_jpeg') }}" type="image/jpeg">
+                <img src="{{ asset('/pictures/dashboard-welcome.jpg')|imagine_filter('dashboard_picture_jpeg') }}" alt="Image de bienvenue">
+            </picture>
+        </div>
+    </div>
+{% endblock %}

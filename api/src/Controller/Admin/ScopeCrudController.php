@@ -38,13 +38,13 @@ class ScopeCrudController extends AbstractCrudController
             AssociationField::new('structure', 'scope.structure'),
             AssociationField::new('role', 'scope.role'),
             DateTimeField::new('createdAt', 'common.created_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('createdBy', 'common.created_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('updatedBy', 'common.updated_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             BooleanField::new('active', 'scope.active'),
         ];
     }

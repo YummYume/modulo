@@ -52,12 +52,12 @@ export default function ScopeChoice() {
                                 </Typography>
                             </m.div>
                         </Box>
-                        <div className="col-sm-10 col-md-12 mx-auto">
+                        <div className="col-sm-10 col-md-11 mx-auto">
                             <div className="row justify-content-around">
                                 {user.scopes.map((scope) => (
                                     <div className="col-xl-3 col-lg-4 col-md-5 col-sm-6 my-3" key={scope.id}>
                                         <m.div
-                                            className="d-flex flex-column justify-content-around align-items-center text-center h-100 shadow-lg"
+                                            className="d-flex flex-column justify-content-around align-items-center text-center h-100 shadow-lg mx-2"
                                             style={{
                                                 padding: "20px 30px",
                                                 border: `2px solid ${theme.palette.primary.main}`,

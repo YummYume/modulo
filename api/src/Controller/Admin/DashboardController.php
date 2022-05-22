@@ -11,15 +11,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private TranslatorInterface $translator)
-    {
+    public function __construct(
+        private TranslatorInterface $translator,
+        private UploaderHelper $uploaderHelper,
+        private CacheManager $imagineCacheManager
+    ) {
     }
 
     #[Route('/', name: 'admin', host: '%host_domain_admin%')]
@@ -48,8 +53,16 @@ class DashboardController extends AbstractDashboardController
 
     public function configureUserMenu(UserInterface|User $user): UserMenu
     {
+        $userAvatar = null;
+
+        if (null !== $user->getAvatar()) {
+            $userAvatar = $this->uploaderHelper->asset($user->getAvatar(), 'image');
+            $userAvatar = $this->imagineCacheManager->getBrowserPath($userAvatar, 'avatar');
+        }
+
         return parent::configureUserMenu($user)
             ->setName($user->getFullName())
+            ->setAvatarUrl($userAvatar)
         ;
     }
 }

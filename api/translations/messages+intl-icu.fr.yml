@@ -75,6 +75,8 @@ user.first_name: Prénom
 user.last_name: Nom
 user.roles: Rôles
 user.scopes: Scopes
+user.avatar: Avatar
+user.description: Description
 
 # Scope
 scope.user: Utilisateur
@@ -102,6 +104,12 @@ event.description: Description
 event.categories: Catégories
 event.participants: Participants invités
 event.active: Actif
+
+# MediaImage
+media_image.help: "Taille maximum: 5MB"
+
+# MediaFile
+media_file.help: "Taille maximum: 5MB"
 
 ### Enums
 

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import UserIcon from "@mui/icons-material/AccountCircle";
 import BadgeIcon from "@mui/icons-material/Badge";
 import CircularProgress from "@mui/material/CircularProgress";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -13,6 +12,7 @@ import { useRouter } from "next/router";
 
 import { useUserLogout } from "../hooks/useUserLogout";
 import UserScopeModal from "./UserScopeModal";
+import UserAvatar from "./UserAvatar";
 
 export default function UserMenu({ user, isFetched }) {
     const router = useRouter();
@@ -44,12 +44,15 @@ export default function UserMenu({ user, isFetched }) {
 
     return (
         <div>
-            <UserIcon
-                id="user-icon"
-                onClick={handleUserMenuOpen}
-                aria-controls={userMenuOpen ? "user-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={userMenuOpen ? "true" : undefined}
+            <UserAvatar
+                avatarProps={{
+                    id: "user-icon",
+                    onClick: handleUserMenuOpen,
+                    "aria-controls": userMenuOpen ? "user-menu" : undefined,
+                    "aria-haspopup": "true",
+                    "aria-expanded": userMenuOpen ? "true" : undefined
+                }}
+                user={user}
             />
             {isFetched ? (
                 <React.Fragment>

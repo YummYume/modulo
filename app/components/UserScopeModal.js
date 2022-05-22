@@ -22,6 +22,8 @@ export default function UserScopeModal({ user, open, handleClose }) {
             sameSite: "lax",
             secure: true
         });
+
+        handleClose();
     };
 
     return (
