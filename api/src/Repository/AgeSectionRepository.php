@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method AgeSection[]    findAll()
  * @method AgeSection[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AgeSectionRepository extends ServiceEntityRepository
+final class AgeSectionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
