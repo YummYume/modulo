@@ -106,7 +106,7 @@ event.participants: Participants invités
 event.active: Actif
 
 # MediaImage
-media_image.help: "Taille maximum: 5MB"
+media_image.help: "Taille maximum: 2MB"
 
 # MediaFile
 media_file.help: "Taille maximum: 5MB"
@@ -136,6 +136,7 @@ agenda_access: Accéder à l'agenda (voir les événements de ma structure et de
 see_child_events: Voir les événements des structures enfant
 
 ### Security
+
 Bad credentials.: Numéro d'adhérent ou mot de passe incorrect.
 The presented password cannot be empty.: Le mot de passe ne peut pas être vide.
 The presented password is invalid.: Le mot de passe est invalide.

@@ -2,17 +2,19 @@ FROM php:8.1-fpm-alpine
 
 WORKDIR /app/api
 
-RUN apk add --no-cache \
+RUN apk add --no-cache --update \
    icu-dev \
-   freetype-dev \
-   libjpeg-turbo-dev \
-   libwebp-dev \
-   libpng-dev
-
-RUN docker-php-ext-configure intl && \
-   docker-php-ext-configure gd --enable-gd --with-jpeg --with-webp --with-freetype && \
-   docker-php-ext-install pdo pdo_mysql intl gd && \
-   docker-php-ext-enable pdo pdo_mysql intl
+   autoconf \
+   g++ \
+   imagemagick \
+   imagemagick-dev \
+   libtool \
+   make \
+   pcre-dev && \
+   pecl install imagick && \
+   docker-php-ext-configure intl && \
+   docker-php-ext-install pdo pdo_mysql intl && \
+   docker-php-ext-enable pdo pdo_mysql intl imagick
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

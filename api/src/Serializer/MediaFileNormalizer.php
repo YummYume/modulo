@@ -19,7 +19,7 @@ final class MediaFileNormalizer implements ContextAwareNormalizerInterface, Norm
     {
     }
 
-    public function normalize($object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         $context[self::ALREADY_CALLED] = true;
 
@@ -28,7 +28,7 @@ final class MediaFileNormalizer implements ContextAwareNormalizerInterface, Norm
         return $this->normalizer->normalize($object, $format, $context);
     }
 
-    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         if (isset($context[self::ALREADY_CALLED])) {
             return false;

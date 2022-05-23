@@ -69,7 +69,7 @@ class MediaImage
         dimensions: 'imageDimensions'
     )]
     #[Assert\Image(
-        maxSize: '5M',
+        maxSize: '2M',
         detectCorrupted: true,
         corruptedMessage: 'media_image.corrupted',
         maxSizeMessage: 'media_image.max_size',

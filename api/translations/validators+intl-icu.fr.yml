@@ -25,7 +25,9 @@ role.features.choice: Une ou plusieurs fonctionnalités sélectionnées ne sont 
 
 # MediaImage
 media_image.corrupted: L'image est corrompue.
-media_image.max_size: La taille de l'image est trop grande ({size} {suffix}). La taille maximum est de {limit} {suffix}.
+media_image.max_size: >
+  La taille de l'image est trop grande ({size} {suffix}). La taille maximum est de {limit} {suffix}.
+  Si vous pensez que cette taille est trop petite, veuillez contactez le support Modulo.
 media_image.empty: L'image est vide.
 media_image.mime_types: Le format {type} n'est pas valide. Les formats supportés sont {types} (tout type d'image).
 media_image.not_readable: L'image n'est pas lisible.
@@ -34,13 +36,17 @@ media_image.upload_error: Erreur lors de l'envoi de l'image. Veuillez contacter 
 media_image.upload_extension_error: Erreur lors de l'envoi de l'image. Veuillez contacter le support Modulo.
 media_image.upload_form_size_error: La taille de l'image est trop grande.
 media_image.upload_ini_size_error: >
-  La taille de l'image est trop grande. La taille maximum autorisée par le serveur est de {limit} {suffix}.
+  La taille de l'image est beaucoup trop grande. La taille maximum autorisée par le serveur est de {limit} {suffix}.
   Si vous pensez que cette taille est trop petite, veuillez contactez le support Modulo.
 media_image.upload_no_file_error: Aucune image n'a été sélectionnée.
 media_image.upload_no_tmp_dir_error: Impossible de trouver le répertoire temporaire. Veuillez contacter le support Modulo.
 media_image.upload_partial_error: L'image n'a été que partiellement envoyée. Veuillez réessayer.
 
 # MediaFile
+media_file.max_size: >
+  La taille du fichier est trop grande ({size} {suffix}). La taille maximum est de {limit} {suffix}.
+  Si vous pensez que cette taille est trop petite, veuillez contactez le support Modulo.
+media_file.empty: Le fichier est vide.
 media_file.mime_types: Le format {type} n'est pas valide. Les formats supportés sont {types}.
 media_file.not_readable: Le fichier n'est pas lisible.
 media_file.upload_cant_write_error: Impossible d'écrire le fichier sur le disque. Veuillez contacter le support Modulo.
@@ -48,7 +54,7 @@ media_file.upload_error: Erreur lors de l'envoi du fichier. Veuillez contacter l
 media_file.upload_extension_error: Erreur lors de l'envoi du fichier. Veuillez contacter le support Modulo.
 media_file.upload_form_size_error: La taille du fichier est trop grande.
 media_file.upload_ini_size_error: >
-  La taille du fichier est trop grande. La taille maximum autorisée par le serveur est de {limit} {suffix}.
+  La taille du fichier est beaucoup trop grande. La taille maximum autorisée par le serveur est de {limit} {suffix}.
   Si vous pensez que cette taille est trop petite, veuillez contactez le support Modulo.
 media_file.upload_no_file_error: Aucun fichier n'a été sélectionné.
 media_file.upload_no_tmp_dir_error: Impossible de trouver le répertoire temporaire. Veuillez contacter le support Modulo.

@@ -1,6 +1,6 @@
 liip_imagine:
     # valid drivers options include "gd" or "gmagick" or "imagick"
-    driver: gd
+    driver: imagick
     webp:
         generate: true
     controller:
@@ -13,8 +13,21 @@ liip_imagine:
     filter_sets:
         cache: ~
 
+        original:
+            quality: 100
+            animated: true
+
+        avatar:
+            quality: 80
+            animated: true
+            filters:
+                thumbnail:
+                    size: [48, 48]
+                    mode: outbound
+
         thumbnail_preview_small:
             quality: 90
+            animated: true
             filters:
                 thumbnail:
                     size: [24, 24]
@@ -22,6 +35,7 @@ liip_imagine:
 
         thumbnail_preview:
             quality: 80
+            animated: true
             filters:
                 thumbnail:
                     size: [134, 134]
@@ -29,6 +43,7 @@ liip_imagine:
 
         thumbnail_preview_large:
             quality: 75
+            animated: true
             filters:
                 thumbnail:
                     size: [324, 324]
@@ -41,13 +56,3 @@ liip_imagine:
         dashboard_picture_webp:
             format: webp
             quality: 100
-
-        avatar:
-            quality: 80
-            filters:
-                thumbnail:
-                    size: [48, 48]
-                    mode: outbound
-
-        original:
-            quality: 90

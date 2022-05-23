@@ -25,6 +25,9 @@ export const getCurrentUser = async () => {
     const response = await axiosApiInstance().get("/me", {
         headers: {
             Accept: "application/json"
+        },
+        params: {
+            imagineFilter: "avatar"
         }
     });
 
@@ -36,6 +39,9 @@ export const getCurrentUserFromServer = async (cookie = null) => {
         headers: {
             Accept: "application/json",
             Cookie: cookie
+        },
+        params: {
+            imagineFilter: "avatar"
         }
     });
 
