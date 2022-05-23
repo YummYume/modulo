@@ -48,7 +48,7 @@ class Event
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\Type(type: 'datetime', message: 'event.end_date.type')]
-    #[Assert\GreaterThanOrEqual(propertyPath: 'endDate', message: 'event.end_date.invalid')]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'startDate', message: 'event.end_date.invalid')]
     private ?\DateTime $endDate;
 
     public function __construct()

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { dehydrate, QueryClient, useMutation } from "react-query";
+import React, { useEffect, useState } from "react";
+import { dehydrate, QueryClient, useMutation, useQuery } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import { Calendar, momentLocalizer } from "react-big-calendar";
@@ -21,9 +21,19 @@ import DateTimePicker from "@mui/lab/DateTimePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AdapterMoment from "@mui/lab/AdapterMoment";
 import "moment/locale/fr";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import FormHelperText from "@mui/material/FormHelperText";
+import Autocomplete from "@mui/material/Autocomplete";
+import Checkbox from "@mui/material/Checkbox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
-import { getCurrentUserFromServer } from "../api/user";
+import { getCurrentUserFromServer, getUsers } from "../api/user";
 import { add } from "../api/event";
+import { getCategories } from "../api/category";
 import { useUser } from "../hooks/useUser";
 
 moment.locale("fr");
@@ -42,32 +52,68 @@ export default function Home() {
         }
     ];
     const addEventMutation = useMutation(
-        (values) => add(values.name, values.description, values.active, values.startDate, values.endDate, values.scope),
+        (values) =>
+            add(
+                values.name,
+                values.description,
+                values.active,
+                values.startDate,
+                values.endDate,
+                values.scope,
+                values.categories,
+                values.participants
+            ),
         {
             onSuccess: () => {
                 toast.success("Evénement ajouté !");
                 setOpenModal(false);
+            },
+
+            onError: (error) => {
+                if (422 === error?.response?.status) {
+                    toast.error("Une erreur est survenue lors de l'ajout.");
+                } else {
+                    toast.error("Une erreur est survenue.");
+                }
             }
         }
     );
+    const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
+        initialData: { "hydra:member": [] }
+    });
+    const { data: participants, isFetching: isParticipantsLoading } = useQuery("participants", getUsers, {
+        initialData: { "hydra:member": [] }
+    });
     const initialValues = {
         name: "",
         description: "",
         active: true,
         startDate: null,
-        endDate: null
+        endDate: null,
+        categories: [],
+        participants: []
     };
     const validationSchema = yup.object({
         name: yup.string().required("Veuillez saisir un nom."),
         description: yup.string().required("Veuillez saisir une description."),
-        active: yup.bool().required("Veuillez saisir un état."),
         startDate: yup.date().typeError("Veuillez saisir une date valide."),
-        endDate: yup.date().typeError("Veuillez saisir une date valide.")
+        endDate: yup
+            .date()
+            .typeError("Veuillez saisir une date valide.")
+            .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début."),
+        categories: yup.array(),
+        participants: yup.array(),
+        active: yup.bool().required("Veuillez saisir un état.")
     });
     const { data: user } = useUser();
 
     const onSubmit = async (values) => {
-        addEventMutation.mutate({ ...values, scope: `scopes/${user?.currentScope?.id}` });
+        addEventMutation.mutate({
+            ...values,
+            scope: `scopes/${user?.currentScope?.id}`,
+            categories: values.categories.map((category) => category["@id"]),
+            participants: values.participants.map((participant) => participant["@id"])
+        });
     };
 
     return (
@@ -160,6 +206,66 @@ export default function Home() {
                                             )}
                                         />
                                     </LocalizationProvider>
+                                    <FormControl fullWidth className="my-2" error={touched.categories && !!errors.categories}>
+                                        <Autocomplete
+                                            loading={isCategoriesLoading}
+                                            loadingText="Chargement..."
+                                            id="categories"
+                                            name="categories"
+                                            value={values.categories}
+                                            onChange={(event, value) => setFieldValue("categories", value)}
+                                            onBlur={handleBlur}
+                                            options={categories["hydra:member"]}
+                                            disableCloseOnSelect
+                                            getOptionLabel={({ name }) => name}
+                                            renderOption={(props, { name }, { selected }) => (
+                                                <li {...props}>
+                                                    <Checkbox
+                                                        icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                                        checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                                        style={{ marginRight: 8 }}
+                                                        checked={selected}
+                                                    />
+                                                    {name}
+                                                </li>
+                                            )}
+                                            renderInput={(params) => <TextField {...params} label="Catégories" />}
+                                            multiple
+                                            openOnFocus
+                                            limitTags={2}
+                                        />
+                                        <FormHelperText>{touched.participants && errors.participants}</FormHelperText>
+                                    </FormControl>
+                                    <FormControl fullWidth className="my-2" error={touched.participants && !!errors.participants}>
+                                        <Autocomplete
+                                            loading={isParticipantsLoading}
+                                            loadingText="Chargement..."
+                                            id="participants"
+                                            name="participants"
+                                            value={values.participants}
+                                            onChange={(event, value) => setFieldValue("participants", value)}
+                                            onBlur={handleBlur}
+                                            options={participants["hydra:member"]}
+                                            disableCloseOnSelect
+                                            getOptionLabel={({ fullName }) => fullName}
+                                            renderOption={(props, { fullName }, { selected }) => (
+                                                <li {...props}>
+                                                    <Checkbox
+                                                        icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                                        checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                                        style={{ marginRight: 8 }}
+                                                        checked={selected}
+                                                    />
+                                                    {fullName}
+                                                </li>
+                                            )}
+                                            renderInput={(params) => <TextField {...params} label="Participants" />}
+                                            multiple
+                                            openOnFocus
+                                            limitTags={2}
+                                        />
+                                        <FormHelperText>{touched.participants && errors.participants}</FormHelperText>
+                                    </FormControl>
                                     <FormGroup>
                                         <FormControlLabel
                                             control={

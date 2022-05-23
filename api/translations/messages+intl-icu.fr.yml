@@ -105,6 +105,7 @@ event.categories: Catégories
 event.participants: Participants invités
 event.start_date: Date de début
 event.end_date: Date de fin
+event.scope: Scope
 event.active: Actif
 
 # MediaImage
