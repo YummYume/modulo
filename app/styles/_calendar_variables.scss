@@ -1,28 +1,41 @@
-$out-of-range-color: lighten(green, 40%);
-$out-of-range-bg-color: lighten(green, 70%);
+@use "sass:math";
+
+$out-of-range-color: darken($primary-blue-main, 10%);
+$out-of-range-bg-color: transparent;
 
 $calendar-border: $primary-blue-main;
 $cell-border: $primary-blue-main;
 
 $border-color: $primary-blue-main;
 
-$time-selection-color: green;
-$time-selection-bg-color: green;
-$date-selection-bg-color: green;
+$segment-width: percentage(math.div(1, 7)) !default;
 
-$event-bg: green;
-$event-border: darken(green, 10%);
-$event-outline: green;
-$event-color: #fff;
+$time-selection-color: $secondary-green-main;
+$time-selection-bg-color: $secondary-green-main;
+$date-selection-bg-color: $secondary-green-main;
+
+$event-bg: $secondary-green-main;
+$event-border: darken($secondary-green-main, 10%);
+$event-outline: $secondary-green-main;
+$event-color: $white;
 $event-border-radius: 5px;
 $event-padding: 5px 10px;
 $event-zindex: 4;
 
 $btn-color: $primary-blue-main;
 $btn-border: $primary-blue-main;
+$btn-bg: $primary-blue-light;
 
 $current-time-color: $primary-blue-main;
 
 $rbc-css-prefix: rbc-i;
 
-$today-highlight-bg: #eaf6ff;
+$today-highlight-bg: lighten($secondary-green-main, 40%);
+
+[class^="rbc-day-bg"] {
+  background-color: darken($secondary-green-light, 5%);
+}
+
+[class^="rbc-day-slot rbc-time-column"] {
+  background-color: darken($secondary-green-light, 5%);
+}
