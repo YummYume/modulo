@@ -38,13 +38,13 @@ class EventCrudController extends AbstractCrudController
             AssociationField::new('participants', 'event.participants'),
             BooleanField::new('active', 'event.active'),
             DateTimeField::new('createdAt', 'common.created_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('createdBy', 'common.created_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('updatedBy', 'common.updated_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
         ];
     }
 }

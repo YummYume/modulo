@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import { toast, Flip } from "react-toastify";
 
@@ -16,6 +17,8 @@ export default function UserHandler() {
         () => setUserFailure(false),
         () => setUserFailure(true)
     );
+    const [currentScope, setCurrentScope] = useState(null);
+    const router = useRouter();
     const refreshUser = useQuery("refresh", refresh, {
         refetchOnWindowFocus: false,
         refetchInterval: 60000 * 30, // 30 minutes
@@ -73,6 +76,16 @@ export default function UserHandler() {
             toast.dismiss(userStatusToast.current);
         }
     }, [userFailure, user, isOnline, refreshUser]);
+
+    useEffect(() => {
+        if (Boolean(currentScope && user?.currentScope)) {
+            if (router.pathname !== "/scope-choice" && user.currentScope.id !== currentScope) {
+                router.push("/home");
+            }
+        }
+
+        setCurrentScope(user?.currentScope?.id);
+    }, [user]);
 
     useEffect(() => {
         if (isOnline) {

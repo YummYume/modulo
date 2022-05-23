@@ -1,0 +1,58 @@
+liip_imagine:
+    # valid drivers options include "gd" or "gmagick" or "imagick"
+    driver: imagick
+    webp:
+        generate: true
+    controller:
+        redirect_response_code: 302
+
+    resolvers:
+        default:
+            web_path: ~
+
+    filter_sets:
+        cache: ~
+
+        original:
+            quality: 100
+            animated: true
+
+        avatar:
+            quality: 80
+            animated: true
+            filters:
+                thumbnail:
+                    size: [48, 48]
+                    mode: outbound
+
+        thumbnail_preview_small:
+            quality: 90
+            animated: true
+            filters:
+                thumbnail:
+                    size: [24, 24]
+                    mode: outbound
+
+        thumbnail_preview:
+            quality: 80
+            animated: true
+            filters:
+                thumbnail:
+                    size: [134, 134]
+                    mode: outbound
+
+        thumbnail_preview_large:
+            quality: 75
+            animated: true
+            filters:
+                thumbnail:
+                    size: [324, 324]
+                    mode: outbound
+
+        dashboard_picture_jpeg:
+            format: jpeg
+            quality: 80
+
+        dashboard_picture_webp:
+            format: webp
+            quality: 100

@@ -67,3 +67,6 @@ nginx/logs/*
 # Ignore all local history of files
 .history
 .ionide
+
+### Images
+/api/public/media

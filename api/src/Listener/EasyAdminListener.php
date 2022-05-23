@@ -31,16 +31,19 @@ final class EasyAdminListener implements EventSubscriberInterface
          * @var Session $session
          */
         $session = $this->requestStack->getSession();
+        $request = $this->requestStack->getCurrentRequest();
         $entity = $event->getEntityInstance();
 
-        $session->getFlashBag()->add('success', new TranslatableMessage('flash.create.success', [
-            'name' => (string) $entity,
-        ]));
-
-        if ($entity instanceof User && 0 >= $entity->getActiveScopes()->count()) {
-            $session->getFlashBag()->add('warning', new TranslatableMessage('flash.user.warning.scopes', [
+        if (!$request->isXmlHttpRequest()) {
+            $session->getFlashBag()->add('success', new TranslatableMessage('flash.create.success', [
                 'name' => (string) $entity,
             ]));
+
+            if ($entity instanceof User && 0 >= $entity->getActiveScopes()->count()) {
+                $session->getFlashBag()->add('warning', new TranslatableMessage('flash.user.warning.scopes', [
+                    'name' => (string) $entity,
+                ]));
+            }
         }
     }
 
@@ -50,16 +53,19 @@ final class EasyAdminListener implements EventSubscriberInterface
          * @var Session $session
          */
         $session = $this->requestStack->getSession();
+        $request = $this->requestStack->getCurrentRequest();
         $entity = $event->getEntityInstance();
 
-        $session->getFlashBag()->add('success', new TranslatableMessage('flash.update.success', [
-            'name' => (string) $entity,
-        ]));
-
-        if ($entity instanceof User && 0 >= $entity->getActiveScopes()->count()) {
-            $session->getFlashBag()->add('warning', new TranslatableMessage('flash.user.warning.scopes', [
+        if (!$request->isXmlHttpRequest()) {
+            $session->getFlashBag()->add('success', new TranslatableMessage('flash.update.success', [
                 'name' => (string) $entity,
             ]));
+
+            if ($entity instanceof User && 0 >= $entity->getActiveScopes()->count()) {
+                $session->getFlashBag()->add('warning', new TranslatableMessage('flash.user.warning.scopes', [
+                    'name' => (string) $entity,
+                ]));
+            }
         }
     }
 
@@ -69,9 +75,12 @@ final class EasyAdminListener implements EventSubscriberInterface
          * @var Session $session
          */
         $session = $this->requestStack->getSession();
+        $request = $this->requestStack->getCurrentRequest();
 
-        $session->getFlashBag()->add('success', new TranslatableMessage('flash.delete.success', [
-            'name' => (string) $event->getEntityInstance(),
-        ]));
+        if (!$request->isXmlHttpRequest()) {
+            $session->getFlashBag()->add('success', new TranslatableMessage('flash.delete.success', [
+                'name' => (string) $event->getEntityInstance(),
+            ]));
+        }
     }
 }

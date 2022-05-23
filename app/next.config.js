@@ -3,8 +3,8 @@
 const { createSecureHeaders } = require("next-secure-headers");
 const withNextBundleAnalyzer = require("@next/bundle-analyzer")({ enabled: "true" === process.env.ANALYZE });
 
-const srcSubDomain = "development" === process.env.NODE_ENV ? "*.modulo.local" : "*.modulo-scout.fr";
-const imageSubDomains = "development" === process.env.NODE_ENV ? "*.modulo.local" : "*.modulo-scout.fr";
+const srcSubDomain = `*.${process.env.NEXT_PUBLIC_HOST_DOMAIN}`;
+const imageSubDomains = process.env.NEXT_PUBLIC_API_HOSTNAME;
 const scriptSrcs = "development" === process.env.NODE_ENV ? ["'self'", "'unsafe-eval'"] : ["'self'"];
 
 const nextConfig = {

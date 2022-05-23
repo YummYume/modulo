@@ -42,13 +42,13 @@ class CategoryCrudController extends AbstractCrudController
             TextField::new('description', 'category.description'),
             AssociationField::new('invitedRoles', 'category.invitedRoles'),
             DateTimeField::new('createdAt', 'common.created_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('createdBy', 'common.created_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('updatedBy', 'common.updated_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
         ];
     }
 

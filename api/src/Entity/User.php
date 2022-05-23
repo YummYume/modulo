@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\TimestampableTrait;
@@ -102,9 +103,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['get', 'get:me'])]
     private ?string $lastName;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['get', 'get:me'])]
+    private ?string $description;
+
     #[ORM\Column(type: 'string', nullable: false, enumType: Gender::class)]
     #[Groups(['get', 'get:me'])]
     private ?Gender $gender;
+
+    #[ORM\ManyToOne(targetEntity: MediaImage::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    #[ApiProperty(iri: 'http://schema.org/image')]
+    #[Groups(['get', 'get:me'])]
+    #[Assert\Valid]
+    private ?MediaImage $avatar;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Scope::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['get', 'get:me'])]
@@ -235,6 +247,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Groups(['get'])]
+    public function getFullName(): string
+    {
+        return trim(sprintf('%s %s', $this->getFirstName(), $this->getLastName()));
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     public function getGender(): ?Gender
     {
         return $this->gender;
@@ -247,10 +277,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[Groups(['get'])]
-    public function getFullName(): string
+    public function getAvatar(): ?MediaImage
     {
-        return trim(sprintf('%s %s', $this->getFirstName(), $this->getLastName()));
+        return $this->avatar;
+    }
+
+    public function setAvatar(?MediaImage $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
     }
 
     /**
@@ -321,7 +357,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getActiveScopes(): Collection
     {
-        return $this->scopes->filter(static fn (Scope $scope) => $scope->isActive());
+        return $this->scopes->filter(static fn (Scope $scope): bool => $scope->isActive());
     }
 
     /**
@@ -329,7 +365,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getInavtiveScopes(): Collection
     {
-        return $this->scopes->filter(static fn (Scope $scope) => !$scope->isActive());
+        return $this->scopes->filter(static fn (Scope $scope): bool => !$scope->isActive());
+    }
+
+    public function getCurrentScope(?int $currentScope): Collection
+    {
+        return $this->getActiveScopes()->filter(static fn (Scope $scope): bool => $currentScope === $scope->getId())->first();
     }
 
     public function getAllowedRoles(): array

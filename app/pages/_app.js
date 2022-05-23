@@ -10,7 +10,6 @@ import UserHandler from "../components/UserHandler";
 import theme from "../themes/appTheme";
 
 import "../styles/globals.scss";
-import "react-big-calendar/lib/css/react-big-calendar.css";
 
 function App({ Component, pageProps }) {
     const router = useRouter();

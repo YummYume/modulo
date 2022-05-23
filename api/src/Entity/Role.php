@@ -52,6 +52,7 @@ class Role
     private Collection $defaultCategories;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(['get:me'])]
     #[Assert\Choice(callback: 'getAllowedFeatures', multipleMessage: 'role.features.choice', multiple: true)]
     private array $features = [];
 

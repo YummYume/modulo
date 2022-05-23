@@ -11,7 +11,7 @@ import ScrollToTop from "../components/ScrollToTop";
 
 import styles from "../styles/Layout.module.scss";
 
-export default function Layout({ children }) {
+export default function Layout({ children, isPageReady }) {
     const theme = useTheme();
 
     return (
@@ -44,7 +44,7 @@ export default function Layout({ children }) {
                 debug={false}
                 buttonStyle={{ backgroundColor: theme.palette.primary.text.main, color: theme.palette.primary.main }}
                 buttonClasses="rounded py-2"
-                style={{backgroundColor: theme.palette.secondary.main}}
+                style={{ backgroundColor: theme.palette.secondary.main }}
             >
                 Ce site utilise des cookies pour son bon fonctionnement et pour vous garantir une expérience optimale.{" "}
                 <Link href="/cookie-policy">

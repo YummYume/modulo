@@ -5,27 +5,35 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use App\Enum\Gender;
 use App\Enum\StaticRole;
+use App\Form\Admin\MediaImageType;
 use App\Form\Admin\UserScopeFormType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AvatarField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class UserCrudController extends AbstractCrudController
 {
-    public function __construct(private TranslatorInterface $translator)
-    {
+    public function __construct(
+        private TranslatorInterface $translator,
+        private UploaderHelper $uploaderHelper,
+        private CacheManager $imagineCacheManager
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -55,13 +63,16 @@ class UserCrudController extends AbstractCrudController
                 ->allowMultipleChoices()
                 ->onlyOnForms(),
             ChoiceField::new('roles', 'user.roles')
-                ->onlyOnIndex()
+                ->hideOnForm()
                 ->setChoices(StaticRole::toArray(true))
                 ->allowMultipleChoices(),
             TextField::new('firstName', 'user.first_name'),
             TextField::new('lastName', 'user.last_name'),
+            TextareaField::new('description', 'user.description')
+                ->hideOnIndex()
+                ->setRequired(false),
             ChoiceField::new('gender', 'user.gender')
-                ->onlyOnIndex()
+                ->hideOnForm()
                 ->setChoices(function () {
                     $choices = array_map(static fn (?Gender $unit) => [$unit->value => $unit->name], Gender::cases());
 
@@ -70,7 +81,7 @@ class UserCrudController extends AbstractCrudController
                 ->setFormType(EnumType::class)
                 ->setFormTypeOption('class', Gender::class)
                 ->setFormTypeOption('choice_label', fn (Gender $gender) => $gender->value)
-                ->formatValue(fn (string $gender) => $gender),
+                ->formatValue(static fn (string $gender): string => $gender),
             ChoiceField::new('gender', 'user.gender')
                 ->onlyOnForms()
                 ->setChoices(function () {
@@ -81,6 +92,31 @@ class UserCrudController extends AbstractCrudController
                 ->setFormType(EnumType::class)
                 ->setFormTypeOption('class', Gender::class)
                 ->setFormTypeOption('choice_label', fn (Gender $gender) => $gender->value),
+            AvatarField::new('avatar', 'user.avatar')
+                ->onlyOnIndex()
+                ->formatValue(function (?string $path, User $user): ?string {
+                    if (null === $path || null === $user->getAvatar()) {
+                        return null;
+                    }
+
+                    $avatarPath = $this->uploaderHelper->asset($user->getAvatar(), 'image');
+
+                    return $this->imagineCacheManager->getBrowserPath($avatarPath, 'thumbnail_preview_small');
+                }),
+            AvatarField::new('avatar', 'user.avatar')
+                ->onlyOnDetail()
+                ->formatValue(function (?string $path, User $user): ?string {
+                    if (null === $path || null === $user->getAvatar()) {
+                        return null;
+                    }
+
+                    $avatarPath = $this->uploaderHelper->asset($user->getAvatar(), 'image');
+
+                    return $this->imagineCacheManager->getBrowserPath($avatarPath, 'avatar');
+                }),
+            TextField::new('avatar', 'user.avatar')
+                ->onlyOnForms()
+                ->setFormType(MediaImageType::class),
             TextField::new('plainPassword', 'user.password')
                 ->setFormType(RepeatedType::class)
                 ->setFormTypeOptions([
@@ -119,7 +155,7 @@ class UserCrudController extends AbstractCrudController
                 ])
                 ->onlyWhenUpdating(),
             AssociationField::new('scopes', 'user.scopes')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             CollectionField::new('scopes', 'user.scopes')
                 ->allowAdd()
                 ->allowDelete()
@@ -128,13 +164,13 @@ class UserCrudController extends AbstractCrudController
                 ->setFormTypeOption('error_bubbling', false)
                 ->onlyOnForms(),
             DateTimeField::new('createdAt', 'common.created_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('createdBy', 'common.created_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
             TextField::new('updatedBy', 'common.updated_by')
-                ->onlyOnIndex(),
+                ->hideOnForm(),
         ];
     }
 

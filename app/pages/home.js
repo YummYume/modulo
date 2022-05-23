@@ -6,9 +6,12 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 
 import { getCurrentUserFromServer } from "../api/user";
+import { isGranted, features } from "../services/user";
+import { useUser } from "../hooks/useUser";
 
 export default function Home() {
     const localizer = momentLocalizer(moment);
+    const { data: user } = useUser();
     const events = [
         {
             id: 0,
@@ -25,11 +28,13 @@ export default function Home() {
                 <title>Accueil | Modulo</title>
                 <meta name="description" content="Accueil de l'application Modulo." />
             </Head>
-            <div className="container-fluid w-100">
-                <Typography variant="h2" component="h1" className="text-center text-break my-2">
+            <div className="container-fluid w-100 mx-5">
+                <Typography variant="h2" component="h1" className="text-center text-break my-5">
                     Accueil Connecté
                 </Typography>
-                <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
+                {isGranted(features.AGENDA_ACCESS, user) && (
+                    <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
+                )}
             </div>
         </React.Fragment>
     );

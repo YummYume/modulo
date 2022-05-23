@@ -8,7 +8,7 @@ The Modulo project.
 - Run `make start`
 - *Extra* : add `127.0.0.1 modulo.local api.modulo.local admin.modulo.local` in your hosts file
 - *Extra* : copy the `api/.php-cs-fixer.dist.php` file and rename it `.php-cs-fixer.php` and configure your IDE to use this file with the PHP-CS-Fixer extension
-- You can now access the different services of modulo (using `localhost` or `modulo.local`)
+- You can now access the different services of Modulo (using `localhost` or `modulo.local`)
 
 ## Ports
 - <a href="https://modulo.local" target="_blank">API</a> (Symfony) : **80** (http, redirects to 443) and **443** (https)
@@ -69,3 +69,6 @@ The Modulo project.
   ]
   ```
 - **PHP** : PHP-CS-Fixer (using `api/.php-cs-fixer.php` config file)
+
+## Demo
+- The website is available at https://www.modulo-scout.fr
