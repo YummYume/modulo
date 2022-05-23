@@ -22,9 +22,6 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AdapterMoment from "@mui/lab/AdapterMoment";
 import "moment/locale/fr";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import FormHelperText from "@mui/material/FormHelperText";
 import Autocomplete from "@mui/material/Autocomplete";
 import Checkbox from "@mui/material/Checkbox";
@@ -32,16 +29,16 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 import { getCurrentUserFromServer, getUsers } from "../api/user";
-import { add } from "../api/event";
+import { addEvent } from "../api/event";
 import { getCategories } from "../api/category";
 import { useUser } from "../hooks/useUser";
+import { isGranted, features } from "../services/user";
 
 moment.locale("fr");
 
 export default function Home() {
     const [openModal, setOpenModal] = useState(false);
     const localizer = momentLocalizer(moment);
-    const { data: user } = useUser();
     const events = [
         {
             id: 0,
@@ -53,7 +50,7 @@ export default function Home() {
     ];
     const addEventMutation = useMutation(
         (values) =>
-            add(
+            addEvent(
                 values.name,
                 values.description,
                 values.active,
@@ -126,10 +123,14 @@ export default function Home() {
                 <Typography variant="h2" component="h1" className="text-center text-break my-5">
                     Accueil Connecté
                 </Typography>
-                <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
-                <Fab color="primary" className="mx-auto d-block mt-5" onClick={() => setOpenModal(true)}>
-                    <AddIcon />
-                </Fab>
+                {isGranted(features.AGENDA_ACCESS, user) && (
+                    <React.Fragment>
+                        <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
+                        <Fab color="primary" className="mx-auto d-block mt-5" onClick={() => setOpenModal(true)}>
+                            <AddIcon />
+                        </Fab>
+                    </React.Fragment>
+                )}
                 <Modal open={openModal} onClose={() => setOpenModal(false)} className="d-flex justify-content-center align-items-center">
                     <Box backgroundColor="box.index.backgroundLogin" maxWidth="90%" width="35rem" className="p-4 rounded">
                         <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
