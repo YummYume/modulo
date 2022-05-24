@@ -46,7 +46,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         ],
     ]
 )]
-class MediaImage
+class MediaImage implements \Serializable
 {
     use BlameableTrait;
     use TimestampableTrait;
@@ -70,7 +70,7 @@ class MediaImage
     )]
     #[Assert\Image(
         maxSize: '2M',
-        detectCorrupted: true,
+        detectCorrupted: false,
         corruptedMessage: 'media_image.corrupted',
         maxSizeMessage: 'media_image.max_size',
         disallowEmptyMessage: 'media_image.empty',
@@ -201,5 +201,15 @@ class MediaImage
     public function getUploadTimestamp(): ?\DateTimeInterface
     {
         return $this->uploadTimestamp;
+    }
+
+    public function serialize(): void
+    {
+        $this->imageName = base64_encode($this->imageName);
+    }
+
+    public function unserialize(string $serialized): void
+    {
+        $this->imageName = base64_decode($this->imageName, true);
     }
 }

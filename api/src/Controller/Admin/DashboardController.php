@@ -55,7 +55,7 @@ class DashboardController extends AbstractDashboardController
     {
         $userAvatar = null;
 
-        if (null !== $user->getAvatar()) {
+        if (null !== $user->getAvatar()?->getImageName()) {
             $userAvatar = $this->uploaderHelper->asset($user->getAvatar(), 'image');
             $userAvatar = $this->imagineCacheManager->getBrowserPath($userAvatar, 'avatar');
         }
