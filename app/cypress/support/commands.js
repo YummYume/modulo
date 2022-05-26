@@ -1,25 +1,26 @@
 // ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
 // For more comprehensive examples of custom
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add("acceptCookies", () => {
+    cy.get("#cookie-consent-accept")
+        .click()
+        .then(() => {
+            cy.getCookie("cookie_consent").then((cookie) => {
+                expect(cookie.value).to.equal("true");
+                expect(cookie.path).to.equal("/");
+                expect(cookie.httpOnly).to.equal(false);
+                expect(cookie.secure).to.equal(true);
+                expect(cookie.sameSite).to.equal("strict");
+                expect(cookie.domain).to.equal("modulo.local");
+            });
+        });
+});
+
+Cypress.Commands.add("login", (credentials) => {
+    cy.get('input[name="uuid"]').type(credentials.uuid);
+    cy.get('input[name="password"]').type(credentials.password);
+    cy.get('button[type="submit"]').as("submitButton").click();
+});

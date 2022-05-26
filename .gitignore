@@ -70,3 +70,7 @@ nginx/logs/*
 
 ### Images
 /api/public/media
+
+### Cypress ###
+/app/cypress/videos
+/app/cypress/screenshots

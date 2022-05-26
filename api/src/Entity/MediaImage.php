@@ -87,23 +87,26 @@ class MediaImage implements \Serializable
     )]
     private ?File $image = null;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $imageName = null;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $imageSize = null;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $imageMimeType = null;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $imageOriginalName = null;
 
-    #[ORM\Column(type: 'array')]
+    #[ORM\Column(type: 'array', nullable: true)]
     private ?array $imageDimensions = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private \DateTimeInterface $uploadTimestamp;
+
+    #[ORM\OneToOne(mappedBy: 'avatar', targetEntity: User::class)]
+    private ?User $user;
 
     public function __toString(): string
     {
@@ -211,5 +214,27 @@ class MediaImage implements \Serializable
     public function unserialize(string $serialized): void
     {
         $this->imageName = base64_decode($this->imageName, true);
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        // unset the owning side of the relation if necessary
+        if (null === $user && null !== $this->user) {
+            $this->user->setAvatar(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if (null !== $user && $user->getAvatar() !== $this) {
+            $user->setAvatar($this);
+        }
+
+        $this->user = $user;
+
+        return $this;
     }
 }
