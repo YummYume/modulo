@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StructureRepository::class)]
-#[ApiResource]
+#[ApiResource(mercure: true)]
 class Structure
 {
     use BlameableTrait;

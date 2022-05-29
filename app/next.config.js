@@ -33,7 +33,7 @@ const nextConfig = {
                             childSrc: ["'self'"],
                             scriptSrc: scriptSrcs,
                             styleSrc: ["'self'", "'unsafe-inline'"],
-                            connectSrc: ["'self'", srcSubDomain],
+                            connectSrc: ["'self'", srcSubDomain, `${process.env.NEXT_PUBLIC_HOST_DOMAIN}:4000`],
                             imgSrc: ["'self'", "data:", "blob:", srcSubDomain],
                             fontSrc: ["'self'", "data:", "blob:", srcSubDomain]
                         }

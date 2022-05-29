@@ -68,9 +68,12 @@ nginx/logs/*
 .history
 .ionide
 
-### Images
+### Images ###
 /api/public/media
 
 ### Cypress ###
 /app/cypress/videos
 /app/cypress/screenshots
+
+### Mercure ###
+/api/mercure.db
