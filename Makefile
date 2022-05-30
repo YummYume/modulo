@@ -193,6 +193,8 @@ update-prod:
 	yarn build && \
 	php bin/console assets:install && \
 	APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear && \
+	sudo chmod -R 777 /api/var/cache/* && \
+	sudo chmod -R 777 /api/var/log/* && \
 	cd ../app && \
 	yarn install --production --no-progress && \
 	yarn build
