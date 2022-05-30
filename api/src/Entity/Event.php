@@ -2,23 +2,35 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Traits\BlameableTrait;
+use App\Entity\Traits\ScopeableTrait;
+use App\Entity\Traits\TimestampableTrait;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[ApiResource]
 class Event
 {
+    use BlameableTrait;
+    use ScopeableTrait;
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'event.name.blank', allowNull: false)]
     private ?string $name;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: 'event.description.blank', allowNull: false)]
     private ?string $description;
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'events')]
@@ -28,7 +40,16 @@ class Event
     private Collection $participants;
 
     #[ORM\Column(type: 'boolean')]
-    private $active;
+    private bool $active = true;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\Type(type: 'datetime', message: 'event.start_date.type')]
+    private ?\DateTime $startDate;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\Type(type: 'datetime', message: 'event.end_date.type')]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'startDate', message: 'event.end_date.invalid')]
+    private ?\DateTime $endDate;
 
     public function __construct()
     {
@@ -126,6 +147,30 @@ class Event
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?\DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
 
         return $this;
     }

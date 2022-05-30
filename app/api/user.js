@@ -47,3 +47,9 @@ export const getCurrentUserFromServer = async (cookie = null) => {
 
     return response.data;
 };
+
+export const getUsers = async () => {
+    const response = await axiosApiInstance().get("/users");
+
+    return response.data;
+};
