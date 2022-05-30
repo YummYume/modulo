@@ -8,7 +8,9 @@
     "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "cypress": "cypress open",
+    "cypress:headless": "cypress run"
   },
   "dependencies": {
     "@emotion/react": "^11.8.2",
@@ -45,6 +47,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "cypress": "^9.6.1",
     "local-ssl-proxy": "^1.3.0"
   }
 }

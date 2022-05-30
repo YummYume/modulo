@@ -50,3 +50,13 @@ services:
               event: "prePersist"
             - name: "doctrine.event_listener"
               event: "preUpdate"
+
+    App\EventListener\MediaImageListener:
+        tags:
+            - name: "doctrine.event_listener"
+              event: "postUpdate"
+
+    App\EventListener\MediaFileListener:
+        tags:
+            - name: "doctrine.event_listener"
+              event: "postUpdate"

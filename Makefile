@@ -67,7 +67,7 @@ ssh-api:
 	$(EXECAPI) sh
 
 ssh-app:
-	$(EXECAPP) sh
+	$(EXECAPP) bash
 
 ssh-nginx:
 	$(EXECNGINX) bash
@@ -177,6 +177,12 @@ sync-dependencies:
 	make sync-dependencies-app
 	make sync-dependencies-yarn-api
 	@echo Dependencies synced!
+
+cypress:
+	$(EXECAPP) /bin/bash -c "DISPLAY=:20 yarn cypress"
+
+cypress-headless:
+	$(EXECAPP) yarn cypress:headless
 
 # PRODUCTION
 update-prod:

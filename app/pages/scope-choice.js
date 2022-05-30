@@ -53,9 +53,9 @@ export default function ScopeChoice() {
                             </m.div>
                         </Box>
                         <div className="col-sm-10 col-md-11 mx-auto">
-                            <div className="row justify-content-around">
+                            <div id="available-scopes" className="row justify-content-around">
                                 {user.scopes.map((scope) => (
-                                    <div className="col-xl-3 col-lg-4 col-md-5 col-sm-6 my-3" key={scope.id}>
+                                    <div className="col-xl-3 col-lg-4 col-md-5 col-sm-6 my-3" key={scope.id} id={scope.id}>
                                         <m.div
                                             className="d-flex flex-column justify-content-around align-items-center text-center h-100 shadow-lg mx-2"
                                             style={{
@@ -105,7 +105,8 @@ export default function ScopeChoice() {
                                     <HoverButton
                                         buttonProps={{
                                             endIcon: <ArrowForward />,
-                                            disabled: !user.currentScope
+                                            disabled: !user.currentScope,
+                                            id: "confirm-scope-choice"
                                         }}
                                     >
                                         {"C'est parti !"}

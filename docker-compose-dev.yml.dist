@@ -70,6 +70,8 @@ services:
     stdin_open: true
     ports:
       - "3000:3000"
+      - "5920:5920"
+    tty: true
     restart: always
     networks:
       - modulo_network

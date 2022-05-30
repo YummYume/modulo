@@ -97,22 +97,22 @@ class MediaFile
     )]
     private ?File $file = null;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $fileName = null;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $fileSize = null;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $fileMimeType = null;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $fileOriginalName = null;
 
-    #[ORM\Column(type: 'array')]
+    #[ORM\Column(type: 'array', nullable: true)]
     private ?array $fileDimensions = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private \DateTimeInterface $uploadTimestamp;
 
     public function __toString(): string

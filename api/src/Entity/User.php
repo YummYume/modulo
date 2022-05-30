@@ -111,8 +111,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['get', 'get:me'])]
     private ?Gender $gender;
 
-    #[ORM\ManyToOne(targetEntity: MediaImage::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(inversedBy: 'user', targetEntity: MediaImage::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ApiProperty(iri: 'http://schema.org/image')]
     #[Groups(['get', 'get:me'])]
     #[Assert\Valid]

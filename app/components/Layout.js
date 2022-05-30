@@ -44,6 +44,7 @@ export default function Layout({ children, isPageReady }) {
                 debug={false}
                 buttonStyle={{ backgroundColor: theme.palette.primary.text.main, color: theme.palette.primary.main }}
                 buttonClasses="rounded py-2"
+                buttonId="cookie-consent-accept"
                 style={{ backgroundColor: theme.palette.secondary.main }}
             >
                 Ce site utilise des cookies pour son bon fonctionnement et pour vous garantir une expérience optimale.{" "}

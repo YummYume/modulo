@@ -17,6 +17,7 @@ export default function UserHandler() {
         () => setUserFailure(false),
         () => setUserFailure(true)
     );
+    const allowedRoutes = ["/scope-choice", "/home"];
     const [currentScope, setCurrentScope] = useState(null);
     const router = useRouter();
     const refreshUser = useQuery("refresh", refresh, {
@@ -79,7 +80,7 @@ export default function UserHandler() {
 
     useEffect(() => {
         if (Boolean(currentScope && user?.currentScope)) {
-            if (router.pathname !== "/scope-choice" && user.currentScope.id !== currentScope) {
+            if (!allowedRoutes.includes(router.pathname) && user.currentScope.id !== currentScope) {
                 router.push("/home");
             }
         }

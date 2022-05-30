@@ -49,6 +49,8 @@ The Modulo project.
 - `make sync-dependencies-app` : syncs the `node_modules` app folder with the host
 - `make sync-dependencies-yarn-api` : syncs the `node_modules` api folder with the host
 - `make sync-dependencies` : runs `make sync-dependencies-api`, `make sync-dependencies-app` and `make sync-dependencies-yarn-api`, in this exact order
+- `make cypress` : runs `yarn cypress` in the app container (see the **Tests** section below for more info)
+- `make cypress-headless` : runs `yarn cypress:headless` in the app container (no GUI)
 
 ## Install a new dependency
 **This is important** : To install a `yarn` or `composer` package, `ssh` into the container (`make ssh-app` or `make ssh-api`) and install it there, then run `make sync-dependencies` (or any `sync-dependencies` command to sync only the required container)
@@ -69,6 +71,13 @@ The Modulo project.
   ]
   ```
 - **PHP** : PHP-CS-Fixer (using `api/.php-cs-fixer.php` config file)
+
+## Tests
+### You can run tests with Cypress :
+- Download VNC Viewer <a href="https://www.realvnc.com/fr/connect/download/viewer/" target="_blank">here</a>
+- Connect to 127.0.0.1:5920 in VNC Viewer
+- Run `make cypress` to launch the Cypress GUI in the VNC Viewer
+- You can also run `make cypress-headless` for CL tests only (no GUI)
 
 ## Demo
 - The website is available at https://www.modulo-scout.fr
