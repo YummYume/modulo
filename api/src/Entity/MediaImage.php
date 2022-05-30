@@ -46,7 +46,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         ],
     ]
 )]
-class MediaImage implements \Serializable
+class MediaImage
 {
     use BlameableTrait;
     use TimestampableTrait;
@@ -111,6 +111,28 @@ class MediaImage implements \Serializable
     public function __toString(): string
     {
         return $this->imageName ?? '';
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'imageName' => $this->imageName,
+            'imageSize' => $this->imageSize,
+            'imageMimeType' => $this->imageMimeType,
+            'imageOriginalName' => $this->imageOriginalName,
+            'imageDimensions' => $this->imageDimensions,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'];
+        $this->imageName = $data['imageName'];
+        $this->imageSize = $data['imageSize'];
+        $this->imageMimeType = $data['imageMimeType'];
+        $this->imageOriginalName = $data['imageOriginalName'];
+        $this->imageDimensions = $data['imageDimensions'];
     }
 
     public function getId(): ?int
@@ -204,16 +226,6 @@ class MediaImage implements \Serializable
     public function getUploadTimestamp(): ?\DateTimeInterface
     {
         return $this->uploadTimestamp;
-    }
-
-    public function serialize(): void
-    {
-        $this->imageName = base64_encode($this->imageName);
-    }
-
-    public function unserialize(string $serialized): void
-    {
-        $this->imageName = base64_decode($this->imageName, true);
     }
 
     public function getUser(): ?User

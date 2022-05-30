@@ -120,6 +120,28 @@ class MediaFile
         return $this->fileName ?? '';
     }
 
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'fileName' => $this->fileName,
+            'fileSize' => $this->fileSize,
+            'fileMimeType' => $this->fileMimeType,
+            'fileOriginalName' => $this->fileOriginalName,
+            'fileDimensions' => $this->fileDimensions,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'];
+        $this->fileName = $data['fileName'];
+        $this->fileSize = $data['fileSize'];
+        $this->fileMimeType = $data['fileMimeType'];
+        $this->fileOriginalName = $data['fileOriginalName'];
+        $this->fileDimensions = $data['fileDimensions'];
+    }
+
     public function getId(): ?int
     {
         return $this->id;
