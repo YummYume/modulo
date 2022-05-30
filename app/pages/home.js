@@ -1,18 +1,14 @@
 import React, { useState } from "react";
-import { dehydrate, QueryClient, useMutation, useQuery } from "react-query";
+import { dehydrate, QueryClient } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import * as yup from "yup";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import { toast } from "react-toastify";
 import "moment/locale/fr";
 
-import { getCurrentUserFromServer, getUsers } from "../api/user";
-import { addEvent } from "../api/event";
-import { getCategories } from "../api/category";
+import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { isGranted, features } from "../services/user";
 import AddEventModal from "../components/AddEventModal";
@@ -21,6 +17,7 @@ moment.locale("fr");
 
 export default function Home() {
     const [openModal, setOpenModal] = useState(false);
+    const { data: user } = useUser();
     const localizer = momentLocalizer(moment);
     const events = [
         {
@@ -31,70 +28,6 @@ export default function Home() {
             end: new Date()
         }
     ];
-    const addEventMutation = useMutation(
-        (values) =>
-            addEvent(
-                values.name,
-                values.description,
-                values.active,
-                values.startDate,
-                values.endDate,
-                values.scope,
-                values.categories,
-                values.participants
-            ),
-        {
-            onSuccess: () => {
-                toast.success("Evénement ajouté !");
-                setOpenModal(false);
-            },
-
-            onError: (error) => {
-                if (422 === error?.response?.status) {
-                    toast.error("Une erreur est survenue lors de l'ajout.");
-                } else {
-                    toast.error("Une erreur est survenue.");
-                }
-            }
-        }
-    );
-    const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
-        initialData: { "hydra:member": [] }
-    });
-    const { data: participants, isFetching: isParticipantsLoading } = useQuery("participants", getUsers, {
-        initialData: { "hydra:member": [] }
-    });
-    const initialValues = {
-        name: "",
-        description: "",
-        active: true,
-        startDate: null,
-        endDate: null,
-        categories: [],
-        participants: []
-    };
-    const validationSchema = yup.object({
-        name: yup.string().required("Veuillez saisir un nom."),
-        description: yup.string().required("Veuillez saisir une description."),
-        startDate: yup.date().typeError("Veuillez saisir une date valide."),
-        endDate: yup
-            .date()
-            .typeError("Veuillez saisir une date valide.")
-            .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début."),
-        categories: yup.array(),
-        participants: yup.array(),
-        active: yup.bool().required("Veuillez saisir un état.")
-    });
-    const { data: user } = useUser();
-
-    const handleSubmit = async (values) => {
-        addEventMutation.mutate({
-            ...values,
-            scope: `scopes/${user?.currentScope?.id}`,
-            categories: values.categories.map((category) => category["@id"]),
-            participants: values.participants.map((participant) => participant["@id"])
-        });
-    };
 
     return (
         <React.Fragment>
@@ -114,18 +47,7 @@ export default function Home() {
                         </Fab>
                     </React.Fragment>
                 )}
-                <AddEventModal
-                    addEventMutation={addEventMutation}
-                    categories={categories}
-                    handleSubmit={handleSubmit}
-                    initialValues={initialValues}
-                    isCategoriesLoading={isCategoriesLoading}
-                    isParticipantsLoading={isParticipantsLoading}
-                    openModal={openModal}
-                    participants={participants}
-                    setOpenModal={setOpenModal}
-                    validationSchema={validationSchema}
-                />
+                <AddEventModal openModal={openModal} setOpenModal={setOpenModal} user={user} />
             </div>
         </React.Fragment>
     );

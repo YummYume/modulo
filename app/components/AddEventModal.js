@@ -19,19 +19,80 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Checkbox from "@mui/material/Checkbox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import * as yup from "yup";
+import { toast } from "react-toastify";
+import { useMutation, useQuery } from "react-query";
 
-export default function AddEventModal({
-    addEventMutation,
-    categories,
-    handleSubmit,
-    initialValues,
-    isCategoriesLoading,
-    isParticipantsLoading,
-    openModal,
-    participants,
-    setOpenModal,
-    validationSchema
-}) {
+import { getUsers } from "../api/user";
+import { addEvent } from "../api/event";
+import { getCategories } from "../api/category";
+
+export default function AddEventModal({ openModal, setOpenModal, user }) {
+    const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
+        initialData: { "hydra:member": [] }
+    });
+    const { data: participants, isFetching: isParticipantsLoading } = useQuery("participants", getUsers, {
+        initialData: { "hydra:member": [] }
+    });
+    const initialValues = {
+        name: "",
+        description: "",
+        active: true,
+        startDate: null,
+        endDate: null,
+        categories: [],
+        participants: []
+    };
+    const validationSchema = yup.object({
+        name: yup.string().required("Veuillez saisir un nom."),
+        description: yup.string().required("Veuillez saisir une description."),
+        startDate: yup.date().typeError("Veuillez saisir une date valide."),
+        endDate: yup
+            .date()
+            .typeError("Veuillez saisir une date valide.")
+            .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début."),
+        categories: yup.array(),
+        participants: yup.array(),
+        active: yup.bool().required("Veuillez saisir un état.")
+    });
+
+    const addEventMutation = useMutation(
+        (values) =>
+            addEvent(
+                values.name,
+                values.description,
+                values.active,
+                values.startDate,
+                values.endDate,
+                values.scope,
+                values.categories,
+                values.participants
+            ),
+        {
+            onSuccess: () => {
+                toast.success("Evénement ajouté !");
+                setOpenModal(false);
+            },
+
+            onError: (error) => {
+                if (422 === error?.response?.status) {
+                    toast.error("Une erreur est survenue lors de l'ajout.");
+                } else {
+                    toast.error("Une erreur est survenue.");
+                }
+            }
+        }
+    );
+
+    const handleSubmit = async (values) => {
+        addEventMutation.mutate({
+            ...values,
+            scope: `scopes/${user?.currentScope?.id}`,
+            categories: values.categories.map((category) => category["@id"]),
+            participants: values.participants.map((participant) => participant["@id"])
+        });
+    };
+
     return (
         <Modal open={openModal} onClose={() => setOpenModal(false)} className="d-flex justify-content-center align-items-center">
             <Box backgroundColor="box.index.backgroundLogin" maxWidth="90%" width="35rem" className="p-4 rounded">
@@ -113,6 +174,7 @@ export default function AddEventModal({
                                 <Autocomplete
                                     loading={isCategoriesLoading}
                                     loadingText="Chargement..."
+                                    noOptionsText="Aucune catégorie trouvée"
                                     id="categories"
                                     name="categories"
                                     value={values.categories}
@@ -143,6 +205,7 @@ export default function AddEventModal({
                                 <Autocomplete
                                     loading={isParticipantsLoading}
                                     loadingText="Chargement..."
+                                    noOptionsText="Aucun participant trouvé"
                                     id="participants"
                                     name="participants"
                                     value={values.participants}
