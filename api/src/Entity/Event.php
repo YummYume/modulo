@@ -3,12 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-<<<<<<< HEAD
 use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\ScopeableTrait;
 use App\Entity\Traits\TimestampableTrait;
-=======
->>>>>>> Add event in progress
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

@@ -126,7 +126,7 @@ export default function Home() {
                 {isGranted(features.AGENDA_ACCESS, user) && (
                     <React.Fragment>
                         <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
-                        <Fab color="primary" className="mx-auto d-block mt-5" onClick={() => setOpenModal(true)}>
+                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => setOpenModal(true)}>
                             <AddIcon />
                         </Fab>
                     </React.Fragment>
