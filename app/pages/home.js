@@ -19,6 +19,26 @@ export default function Home() {
     const [openModal, setOpenModal] = useState(false);
     const { data: user } = useUser();
     const localizer = momentLocalizer(moment);
+    const messages = {
+        date: "Date",
+        time: "Heure",
+        event: "Evénement",
+        allDay: "Toute la journée",
+        week: "Semaine",
+        work_week: "Semaine de travail",
+        day: "Jour",
+        month: "Mois",
+        previous: "Précédent",
+        next: "Suivant",
+        yesterday: "Hier",
+        tomorrow: "Demain",
+        today: "Aujourd'hui",
+        agenda: "Agenda",
+
+        noEventsInRange: "Il n'y a pas d'événements dans cette période.",
+
+        showMore: (total) => `+${total} plus`
+    };
     const events = [
         {
             id: 0,
@@ -41,7 +61,14 @@ export default function Home() {
                 </Typography>
                 {isGranted(features.AGENDA_ACCESS, user) && (
                     <React.Fragment>
-                        <Calendar localizer={localizer} events={events} startAccessor="start" endAccessor="end" style={{ height: 500 }} />
+                        <Calendar
+                            messages={messages}
+                            localizer={localizer}
+                            events={events}
+                            startAccessor="start"
+                            endAccessor="end"
+                            style={{ height: 500 }}
+                        />
                         <Fab color="primary" className="mx-auto d-block my-5" onClick={() => setOpenModal(true)}>
                             <AddIcon />
                         </Fab>
