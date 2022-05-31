@@ -29,6 +29,7 @@ class RoleCrudController extends AbstractCrudController
             ->setPageTitle('detail', 'view.role.detail')
             ->setEntityLabelInSingular('view.role.single')
             ->setEntityLabelInPlural('view.role.plural')
+            ->setDefaultSort(['updatedAt' => 'DESC'])
         ;
     }
 

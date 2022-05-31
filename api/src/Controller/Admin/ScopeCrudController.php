@@ -28,6 +28,7 @@ class ScopeCrudController extends AbstractCrudController
             ->setPageTitle('detail', 'view.scope.detail')
             ->setEntityLabelInSingular('view.scope.single')
             ->setEntityLabelInPlural('view.scope.plural')
+            ->setDefaultSort(['updatedAt' => 'DESC'])
         ;
     }
 

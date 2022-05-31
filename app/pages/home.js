@@ -55,7 +55,7 @@ export default function Home() {
                 <title>Accueil | Modulo</title>
                 <meta name="description" content="Accueil de l'application Modulo." />
             </Head>
-            <div className="container-fluid w-100 mx-5">
+            <div className="container-fluid mx-sm-5">
                 <Typography variant="h2" component="h1" className="text-center text-break my-5">
                     Accueil Connecté
                 </Typography>
