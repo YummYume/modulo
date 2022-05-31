@@ -50,6 +50,7 @@ class UserCrudController extends AbstractCrudController
             ->setPageTitle('detail', 'view.user.detail')
             ->setEntityLabelInSingular('view.user.single')
             ->setEntityLabelInPlural('view.user.plural')
+            ->setDefaultSort(['updatedAt' => 'DESC'])
         ;
     }
 

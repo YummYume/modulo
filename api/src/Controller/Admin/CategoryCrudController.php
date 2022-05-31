@@ -32,6 +32,7 @@ class CategoryCrudController extends AbstractCrudController
             ->setPageTitle('detail', 'view.category.detail')
             ->setEntityLabelInSingular('view.category.single')
             ->setEntityLabelInPlural('view.category.plural')
+            ->setDefaultSort(['updatedAt' => 'DESC'])
         ;
     }
 

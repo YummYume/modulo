@@ -29,6 +29,7 @@ class EventCrudController extends AbstractCrudController
             ->setPageTitle('detail', 'view.event.detail')
             ->setEntityLabelInSingular('view.event.single')
             ->setEntityLabelInPlural('view.event.plural')
+            ->setDefaultSort(['updatedAt' => 'DESC'])
         ;
     }
 
