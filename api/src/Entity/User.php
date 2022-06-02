@@ -297,31 +297,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->plainPassword = null;
     }
 
-    public function getApiFields(): array
-    {
-        return [
-            'uuid' => $this->uuid,
-            'email' => $this->email,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-            'fullName' => $this->getFullName(),
-            'gender' => $this->gender?->value,
-            'roles' => $this->getRoles(),
-            'scopes' => array_map(static function (Scope $scope): array {
-                return [
-                    'id' => $scope->getId(),
-                    'active' => $scope->isActive(),
-                    'role' => [
-                        'name' => $scope->getRole()->getName(),
-                    ],
-                    'structure' => [
-                        'name' => $scope->getStructure()->getName(),
-                    ],
-                ];
-            }, $this->getActiveScopes()->toArray()),
-        ];
-    }
-
     /**
      * @return Collection<int, Scope>
      */
