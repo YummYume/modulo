@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Formik, Form } from "formik";
 import TextField from "@mui/material/TextField";
@@ -27,14 +27,29 @@ import { getUsers } from "../api/user";
 import { addEvent } from "../api/event";
 import { getCategories } from "../api/category";
 
-export default function AddEventModal({ openModal, setOpenModal, user }) {
+export default function AddEventModal({ handleClose, user, setEvents, initialValuesOverride }) {
     const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
-        initialData: { "hydra:member": [] }
+        initialData: { "hydra:member": [] },
+        refetchOnWindowFocus: false
     });
     const { data: participants, isFetching: isParticipantsLoading } = useQuery("participants", getUsers, {
-        initialData: { "hydra:member": [] }
+        initialData: { "hydra:member": [] },
+        refetchOnWindowFocus: false
     });
-    const initialValues = {
+    const validationSchema = yup.object({
+        name: yup.string().required("Veuillez saisir un nom."),
+        description: yup.string().required("Veuillez saisir une description."),
+        startDate: yup.date().typeError("Veuillez saisir une date valide.").nullable(),
+        endDate: yup
+            .date()
+            .typeError("Veuillez saisir une date valide.")
+            .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début.")
+            .nullable(),
+        categories: yup.array(),
+        participants: yup.array(),
+        active: yup.bool().required("Veuillez saisir un état.")
+    });
+    const [initialValues, setInitialValues] = useState({
         name: "",
         description: "",
         active: true,
@@ -42,18 +57,6 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
         endDate: null,
         categories: [],
         participants: []
-    };
-    const validationSchema = yup.object({
-        name: yup.string().required("Veuillez saisir un nom."),
-        description: yup.string().required("Veuillez saisir une description."),
-        startDate: yup.date().typeError("Veuillez saisir une date valide."),
-        endDate: yup
-            .date()
-            .typeError("Veuillez saisir une date valide.")
-            .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début."),
-        categories: yup.array(),
-        participants: yup.array(),
-        active: yup.bool().required("Veuillez saisir un état.")
     });
 
     const addEventMutation = useMutation(
@@ -69,9 +72,10 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                 values.participants
             ),
         {
-            onSuccess: () => {
+            onSuccess: ({ data: { name, startDate, endDate } }) => {
                 toast.success("Evénement ajouté !");
-                setOpenModal(false);
+                setEvents((oldEvents) => [...oldEvents, { start: new Date(startDate), end: new Date(endDate), title: name }]);
+                handleClose();
             },
 
             onError: (error) => {
@@ -93,10 +97,16 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
         });
     };
 
+    useEffect(() => {
+        if (initialValuesOverride) {
+            setInitialValues({ ...initialValues, ...initialValuesOverride });
+        }
+    }, [initialValuesOverride]);
+
     return (
-        <Modal open={openModal} onClose={() => setOpenModal(false)} className="d-flex justify-content-center align-items-center">
+        <Modal open onClose={handleClose} className="d-flex justify-content-center align-items-center">
             <Box backgroundColor="box.index.backgroundLogin" maxWidth="90%" width="35rem" className="p-4 rounded">
-                <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
+                <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize>
                     {({ isSubmitting, values, touched, errors, handleChange, handleBlur, setFieldValue, setFieldTouched }) => (
                         <Form>
                             <Typography variant="h4" className="text-center my-4">
@@ -126,9 +136,11 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                                 onBlur={handleBlur}
                                 error={touched.description && !!errors.description}
                                 helperText={touched.description && errors.description}
+                                multiline
+                                minRows="3"
                                 className="my-2"
                             />
-                            <LocalizationProvider dateAdapter={AdapterMoment} locale={"fr"}>
+                            <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <DateTimePicker
                                     id="startDate"
                                     name="startDate"

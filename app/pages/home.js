@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { dehydrate, QueryClient } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
@@ -7,6 +7,9 @@ import moment from "moment";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import "moment/locale/fr";
+import "moment-timezone";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -17,8 +20,11 @@ moment.locale("fr");
 
 export default function Home() {
     const [openModal, setOpenModal] = useState(false);
+    const [events, setEvents] = useState([]);
+    const [initialValuesOverride, setInitialValuesOverride] = useState(null);
     const { data: user } = useUser();
     const localizer = momentLocalizer(moment);
+    const DnDCalendar = withDragAndDrop(Calendar);
     const messages = {
         date: "Date",
         time: "Heure",
@@ -39,15 +45,22 @@ export default function Home() {
 
         showMore: (total) => `+${total} plus`
     };
-    const events = [
-        {
-            id: 0,
-            title: "Test",
-            allDay: true,
-            start: new Date(),
-            end: new Date()
-        }
-    ];
+
+    const handleClose = () => {
+        setOpenModal(false);
+        setInitialValuesOverride(null);
+    };
+
+    const handleSelectSlot = ({ start, end }) => {
+        setOpenModal(true);
+        setInitialValuesOverride({ startDate: start, endDate: end });
+    };
+
+    const handleSelectEvent = useCallback((event) => window.alert(event.title), []);
+
+    const handleResize = ({ event, start, end }) => {
+        console.log(event);
+    };
 
     return (
         <React.Fragment>
@@ -61,20 +74,32 @@ export default function Home() {
                 </Typography>
                 {isGranted(features.AGENDA_ACCESS, user) && (
                     <React.Fragment>
-                        <Calendar
+                        <DnDCalendar
                             messages={messages}
                             localizer={localizer}
                             events={events}
                             startAccessor="start"
                             endAccessor="end"
+                            selectable
+                            onSelectEvent={handleSelectEvent}
+                            onSelectSlot={handleSelectSlot}
+                            resizable
+                            onEventResize={handleResize}
                             style={{ height: 500 }}
                         />
                         <Fab color="primary" className="mx-auto d-block my-5" onClick={() => setOpenModal(true)}>
                             <AddIcon />
                         </Fab>
+                        {openModal && (
+                            <AddEventModal
+                                handleClose={handleClose}
+                                initialValuesOverride={initialValuesOverride}
+                                setEvents={setEvents}
+                                user={user}
+                            />
+                        )}
                     </React.Fragment>
                 )}
-                <AddEventModal openModal={openModal} setOpenModal={setOpenModal} user={user} />
             </div>
         </React.Fragment>
     );
