@@ -67,7 +67,7 @@ ssh-api:
 	$(EXECAPI) sh
 
 ssh-app:
-	$(EXECAPP) bash
+	$(EXECAPP) sh
 
 ssh-nginx:
 	$(EXECNGINX) bash

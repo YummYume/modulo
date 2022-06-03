@@ -2,28 +2,25 @@ import React, { useCallback, useState } from "react";
 import { dehydrate, QueryClient } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import "moment/locale/fr";
-import "moment-timezone";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import format from "date-fns/format";
+import startOfWeek from "date-fns/startOfWeek";
+import getDay from "date-fns/getDay";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { isGranted, features } from "../services/user";
 import AddEventModal from "../components/AddEventModal";
 
-moment.locale("fr");
-
 export default function Home() {
     const [openModal, setOpenModal] = useState(false);
     const [events, setEvents] = useState([]);
     const [initialValuesOverride, setInitialValuesOverride] = useState(null);
     const { data: user } = useUser();
-    const localizer = momentLocalizer(moment);
     const DnDCalendar = withDragAndDrop(Calendar);
     const messages = {
         date: "Date",
@@ -45,6 +42,15 @@ export default function Home() {
 
         showMore: (total) => `+${total} plus`
     };
+    const locales = {
+        fr: require("date-fns/locale/fr")
+    };
+    const localizer = dateFnsLocalizer({
+        format,
+        startOfWeek,
+        getDay,
+        locales
+    });
 
     const handleClose = () => {
         setOpenModal(false);
@@ -58,8 +64,11 @@ export default function Home() {
 
     const handleSelectEvent = useCallback((event) => window.alert(event.title), []);
 
-    const handleResize = ({ event, start, end }) => {
-        console.log(event);
+    // TODO: Use event id
+    const updateEvent = ({ event, start, end }) => {
+        let newEvents = events.filter((e) => e.name !== event.name);
+        newEvents.push({ ...event, start, end });
+        setEvents(newEvents);
     };
 
     return (
@@ -81,10 +90,11 @@ export default function Home() {
                             startAccessor="start"
                             endAccessor="end"
                             selectable
-                            onSelectEvent={handleSelectEvent}
                             onSelectSlot={handleSelectSlot}
+                            onSelectEvent={handleSelectEvent}
+                            onEventDrop={updateEvent}
                             resizable
-                            onEventResize={handleResize}
+                            onEventResize={updateEvent}
                             style={{ height: 500 }}
                         />
                         <Fab color="primary" className="mx-auto d-block my-5" onClick={() => setOpenModal(true)}>

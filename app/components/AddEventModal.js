@@ -11,8 +11,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CheckIcon from "@mui/icons-material/Check";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import AdapterMoment from "@mui/lab/AdapterMoment";
-import "moment/locale/fr";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -22,6 +21,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import { useMutation, useQuery } from "react-query";
+import frLocale from "date-fns/locale/fr";
 
 import { getUsers } from "../api/user";
 import { addEvent } from "../api/event";
@@ -140,7 +140,7 @@ export default function AddEventModal({ handleClose, user, setEvents, initialVal
                                 minRows="3"
                                 className="my-2"
                             />
-                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
                                 <DateTimePicker
                                     id="startDate"
                                     name="startDate"
@@ -161,7 +161,7 @@ export default function AddEventModal({ handleClose, user, setEvents, initialVal
                                     )}
                                 />
                             </LocalizationProvider>
-                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
                                 <DateTimePicker
                                     id="endDate"
                                     name="endDate"
