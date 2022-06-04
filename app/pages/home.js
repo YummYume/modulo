@@ -10,6 +10,8 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import format from "date-fns/format";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
+import fr from "date-fns/locale/fr";
+import parse from "date-fns/parse";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -43,10 +45,11 @@ export default function Home() {
         showMore: (total) => `+${total} plus`
     };
     const locales = {
-        fr: require("date-fns/locale/fr")
+        fr
     };
     const localizer = dateFnsLocalizer({
         format,
+        parse,
         startOfWeek,
         getDay,
         locales
@@ -95,6 +98,7 @@ export default function Home() {
                             onEventDrop={updateEvent}
                             resizable
                             onEventResize={updateEvent}
+                            culture={"fr"}
                             style={{ height: 500 }}
                         />
                         <Fab color="primary" className="mx-auto d-block my-5" onClick={() => setOpenModal(true)}>
