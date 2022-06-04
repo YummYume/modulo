@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { dehydrate, QueryClient } from "react-query";
+import React, { useState } from "react";
+import { dehydrate, QueryClient, useQuery, useMutation } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
@@ -12,15 +12,20 @@ import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import fr from "date-fns/locale/fr";
 import parse from "date-fns/parse";
+import { getEvents } from "../api/event";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { isGranted, features } from "../services/user";
 import AddEventModal from "../components/AddEventModal";
+import editEvent from "../api/event";
 
 export default function Home() {
     const [openModal, setOpenModal] = useState(false);
-    const [events, setEvents] = useState([]);
+    const { data: events, refetch } = useQuery("events", getEvents, {
+        initialData: [],
+        refetchOnWindowFocus: false
+    });
     const [initialValuesOverride, setInitialValuesOverride] = useState(null);
     const { data: user } = useUser();
     const DnDCalendar = withDragAndDrop(Calendar);
@@ -54,24 +59,63 @@ export default function Home() {
         getDay,
         locales
     });
+    const [formMode, setFormMode] = useState();
+
+    const editEventMutation = useMutation(
+        (values) =>
+            editEvent(
+                values.id,
+                values.name,
+                values.description,
+                values.active,
+                values.startDate,
+                values.endDate,
+                values.categories,
+                values.participants
+            ),
+        {
+            onSuccess: () => {
+                refetch();
+                toast.success("Evénement modifié !");
+            },
+
+            onError: (error) => {
+                if (422 === error?.response?.status) {
+                    toast.error("Une erreur est survenue lors de la modification.");
+                } else {
+                    toast.error("Une erreur est survenue.");
+                }
+            }
+        }
+    );
 
     const handleClose = () => {
         setOpenModal(false);
         setInitialValuesOverride(null);
     };
 
-    const handleSelectSlot = ({ start, end }) => {
+    const handleNewEvent = () => {
+        setFormMode("add");
         setOpenModal(true);
+    };
+
+    const handleSelectEvent = (event) => {
+        setInitialValuesOverride(event);
+        setFormMode("edit");
+        setOpenModal(true);
+    };
+
+    const handleSelectSlot = ({ start, end }) => {
+        handleNewEvent();
         setInitialValuesOverride({ startDate: start, endDate: end });
     };
 
-    const handleSelectEvent = useCallback((event) => window.alert(event.title), []);
-
-    // TODO: Use event id
-    const updateEvent = ({ event, start, end }) => {
-        let newEvents = events.filter((e) => e.name !== event.name);
-        newEvents.push({ ...event, start, end });
-        setEvents(newEvents);
+    const updateEvent = ({ event: { id }, end, start }) => {
+        editEventMutation.mutate({
+            endDate: end,
+            id,
+            startDate: start
+        });
     };
 
     return (
@@ -90,8 +134,9 @@ export default function Home() {
                             messages={messages}
                             localizer={localizer}
                             events={events}
-                            startAccessor="start"
-                            endAccessor="end"
+                            startAccessor="startDate"
+                            endAccessor="endDate"
+                            titleAccessor="name"
                             selectable
                             onSelectSlot={handleSelectSlot}
                             onSelectEvent={handleSelectEvent}
@@ -101,14 +146,16 @@ export default function Home() {
                             culture={"fr"}
                             style={{ height: 500 }}
                         />
-                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => setOpenModal(true)}>
+                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => handleNewEvent()}>
                             <AddIcon />
                         </Fab>
                         {openModal && (
                             <AddEventModal
+                                editEventMutation={editEventMutation}
                                 handleClose={handleClose}
                                 initialValuesOverride={initialValuesOverride}
-                                setEvents={setEvents}
+                                mode={formMode}
+                                refetch={refetch}
                                 user={user}
                             />
                         )}

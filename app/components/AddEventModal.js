@@ -27,7 +27,7 @@ import { getUsers } from "../api/user";
 import { addEvent } from "../api/event";
 import { getCategories } from "../api/category";
 
-export default function AddEventModal({ handleClose, user, setEvents, initialValuesOverride }) {
+export default function AddEventModal({ editEventMutation, handleClose, initialValuesOverride, mode, refetch, user }) {
     const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
         initialData: { "hydra:member": [] },
         refetchOnWindowFocus: false
@@ -72,9 +72,9 @@ export default function AddEventModal({ handleClose, user, setEvents, initialVal
                 values.participants
             ),
         {
-            onSuccess: ({ data: { name, startDate, endDate } }) => {
+            onSuccess: () => {
+                refetch();
                 toast.success("Evénement ajouté !");
-                setEvents((oldEvents) => [...oldEvents, { start: new Date(startDate), end: new Date(endDate), title: name }]);
                 handleClose();
             },
 
@@ -89,12 +89,20 @@ export default function AddEventModal({ handleClose, user, setEvents, initialVal
     );
 
     const handleSubmit = async (values) => {
-        addEventMutation.mutate({
-            ...values,
-            scope: `scopes/${user?.currentScope?.id}`,
-            categories: values.categories.map((category) => category["@id"]),
-            participants: values.participants.map((participant) => participant["@id"])
-        });
+        if (mode === "add") {
+            addEventMutation.mutate({
+                ...values,
+                scope: `scopes/${user?.currentScope?.id}`,
+                categories: values.categories.map((category) => category["@id"]),
+                participants: values.participants.map((participant) => participant["@id"])
+            });
+        } else if (mode === "edit") {
+            editEventMutation.mutate({
+                ...values,
+                categories: values.categories.map((category) => category["@id"]),
+                participants: values.participants.map((participant) => participant["@id"])
+            });
+        }
     };
 
     useEffect(() => {
