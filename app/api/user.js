@@ -1,16 +1,28 @@
 import { axiosApiInstance } from "./axios/api";
 
 export const login = async (uuid, password) => {
-    const response = await axiosApiInstance().post("/auth-token", {
-        uuid,
-        password
-    });
+    const response = await axiosApiInstance().post(
+        "/auth-token",
+        {
+            uuid,
+            password
+        },
+        {
+            params: {
+                imagineFilter: "avatar"
+            }
+        }
+    );
 
     return response;
 };
 
 export const refresh = async () => {
-    const response = await axiosApiInstance().get("/refresh-token");
+    const response = await axiosApiInstance().get("/refresh-token", {
+        params: {
+            imagineFilter: "avatar"
+        }
+    });
 
     return response;
 };

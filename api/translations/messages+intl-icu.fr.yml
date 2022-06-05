@@ -35,6 +35,13 @@ dashboard.disk_space_used: >
   }
 dashboard.disk_space_used_percentage: >
   Pourcentage d'espace disque utilisé, dont {diskMediaFolderUsedSpace} {diskMediaFolderUsedSpaceUnit} ({diskMediaFolderUsedPercentage}%) pour les fichiers multimédias.
+dashboard.chart.active_events_count: Nombre d'événements actifs
+dashboard.chart.active_events_count.active: Événements actifs
+dashboard.chart.active_events_count.inactive: Événements inactifs
+dashboard.chart.categories_by_event_count: Nombres d'événements par catégories
+dashboard.chart.categories_by_event_count.events: Événements liés
+dashboard.chart.recent_events_count: Nombre d'événements créés ces deux dernières semaines
+dashboard.chart.recent_events_count.events: Événements créés
 
 view.admin.scope: Scopes
 view.scope.index: Scopes

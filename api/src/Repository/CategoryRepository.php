@@ -44,4 +44,16 @@ final class CategoryRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
+
+    public function findByEventCount(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.id, c.name, COUNT(e) AS eventCount')
+            ->leftJoin('c.events', 'e')
+            ->groupBy('c.id')
+            ->orderBy('eventCount', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

@@ -19,7 +19,7 @@
             </h3>
             {% set diskUsedPercentageColor = diskUsedPercentage < 80 ? 'success' : diskUsedPercentage < 90 ? 'warning' : 'danger' %}
             <div class="row justify-content-center align-items-center">
-                <div class="col-12 col-md-10 col-lg-8">
+                <div class="col-12 col-md-10 col-lg-8 mb-2">
                     <div class="progress" style="height: 20px;">
                         <div
                             class="progress-bar bg-{{ diskUsedPercentageColor }}"
@@ -39,6 +39,20 @@
                             {{ (diskUsedPercentage|number_format(2, ',')) ~ '%' }}
                         </div>
                     </div>
+                </div>
+                <div class="col-md-6 col-12 my-4">
+                    <h3 class="my-2">{{ 'dashboard.chart.active_events_count'|trans }}</h3>
+                    <div class="d-flex w-100 align-item-center justify-content-center">
+                        {{ render_chart(activeEventsChart, { 'class': 'pie-chart-max-dimensions' }) }}
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 my-4">
+                    <h3 class="my-2">{{ 'dashboard.chart.categories_by_event_count'|trans }}</h3>
+                    {{ render_chart(categoriesCountChart) }}
+                </div>
+                <div class="col-12 my-4">
+                    <h3 class="my-2">{{ 'dashboard.chart.recent_events_count'|trans }}</h3>
+                    {{ render_chart(recentEventsCountChart, { 'data-controller': 'chart_recent_events' }) }}
                 </div>
             </div>
         </div>
