@@ -78,7 +78,17 @@ final class JwtDecorator implements OpenApiFactoryInterface
                     '200' => [
                         'description' => 'Get a HttpOnly cookie containing the JWT to authenticate. Returns the user\'s API fields.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/User',
                                 ],
@@ -88,7 +98,17 @@ final class JwtDecorator implements OpenApiFactoryInterface
                     '401' => [
                         'description' => 'The credentials are invalid.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/InvalidCredentials',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/InvalidCredentials',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/InvalidCredentials',
                                 ],
@@ -100,7 +120,17 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 requestBody: new Model\RequestBody(
                     description: 'Generate a JWT to authenticate the user.',
                     content: new \ArrayObject([
+                        'application/ld+json' => [
+                            'schema' => [
+                                '$ref' => '#/components/schemas/Credentials',
+                            ],
+                        ],
                         'application/json' => [
+                            'schema' => [
+                                '$ref' => '#/components/schemas/Credentials',
+                            ],
+                        ],
+                        'text/html' => [
                             'schema' => [
                                 '$ref' => '#/components/schemas/Credentials',
                             ],
@@ -117,9 +147,19 @@ final class JwtDecorator implements OpenApiFactoryInterface
                 tags: ['Token'],
                 responses: [
                     '200' => [
-                        'description' => 'Refreshes the user\'s JWT and JWT Refresh Token. Returns the user\'s api fields.',
+                        'description' => 'Refreshes the user\'s JWT and JWT Refresh Token. Returns the user.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/User',
                                 ],
@@ -129,7 +169,17 @@ final class JwtDecorator implements OpenApiFactoryInterface
                     '401' => [
                         'description' => 'The JWT Refresh Token is missing or invalid.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingRefreshToken',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingRefreshToken',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/MissingRefreshToken',
                                 ],
@@ -153,7 +203,17 @@ final class JwtDecorator implements OpenApiFactoryInterface
                     '200' => [
                         'description' => 'Removes the user\'s HttpOnly JWT cookie and JWT Refresh Token cookie, and invalidates the JWT Refresh Token.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/InvalidateRefreshToken',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/InvalidateRefreshToken',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/InvalidateRefreshToken',
                                 ],
@@ -163,7 +223,17 @@ final class JwtDecorator implements OpenApiFactoryInterface
                     '401' => [
                         'description' => 'The JWT Refresh Token is missing or invalid.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingRefreshToken',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingRefreshToken',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/MissingRefreshToken',
                                 ],

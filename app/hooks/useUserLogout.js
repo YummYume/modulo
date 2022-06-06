@@ -15,6 +15,12 @@ export const useUserLogout = (onMutationSuccess, onMutationFailure, onMutationSe
         },
         onSuccess: async (data) => {
             onMutationSuccess && onMutationSuccess(data);
+        },
+        onError: async (error) => {
+            onMutationFailure && onMutationFailure(error);
+        },
+        onSettled: async (data) => {
+            onMutationSettled && onMutationSettled(data);
 
             setCookie("login_allow_user", true, {
                 path: "/",
@@ -26,25 +32,6 @@ export const useUserLogout = (onMutationSuccess, onMutationFailure, onMutationSe
             "/" !== router.pathname && (await router.push("/"));
 
             queryClient.setQueryData("user", null);
-        },
-        onError: async (error) => {
-            onMutationFailure && onMutationFailure(error);
-
-            if (400 === error.response.status) {
-                setCookie("login_allow_user", true, {
-                    path: "/",
-                    maxAge: 60,
-                    sameSite: "strict",
-                    secure: true
-                });
-
-                "/" !== router.pathname && (await router.push("/"));
-
-                queryClient.setQueryData("user", null);
-            }
-        },
-        onSettled: async (data) => {
-            onMutationSettled && onMutationSettled(data);
         }
     });
 };

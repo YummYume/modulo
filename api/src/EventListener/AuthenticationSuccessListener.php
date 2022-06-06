@@ -21,7 +21,7 @@ final class AuthenticationSuccessListener
             return;
         }
 
-        $data = $this->userNormalizer->normalize($user, null, ['groups' => ['get:me']]);
+        $data = $this->userNormalizer->normalize($user, 'jsonld', ['groups' => ['get:me']]);
 
         $event->setData($data);
     }

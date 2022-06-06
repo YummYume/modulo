@@ -52,9 +52,14 @@ class DashboardController extends AbstractDashboardController
         $since = $to->sub(new \DateInterval('P2W'));
         $activeEventsCount = $this->eventRepository->findEventCountByActiveAndInactive();
         $categoriesByEvents = $this->categoryRepository->findByEventCount();
+        $recentEventsCount = $this->eventRepository->findByCountAndDate($since, $to);
         $recentEventsCount = array_merge(
-            ChartJsHelper::fillDatesBetween($since, new \DateTimeImmutable('tomorrow')),
-            $this->eventRepository->findByCountAndDate($since, $to)
+            ChartJsHelper::fillDatesBetween(
+                $since,
+                new \DateTimeImmutable('tomorrow'),
+                excludeDates: array_map(static fn (array $event): string => $event['x'], $recentEventsCount)
+            ),
+            $recentEventsCount
         );
 
         usort($recentEventsCount, static fn (array $a, array $b): int => $a['x'] <=> $b['x']);

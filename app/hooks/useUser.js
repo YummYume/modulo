@@ -7,7 +7,7 @@ export const useUser = (onQuerySuccess, onQueryFailure, onQuerySettled) => {
     const [cookies] = useCookies(["current_scope"]);
 
     return useQuery("user", getCurrentUser, {
-        refetchInterval: 60000,
+        refetchInterval: 120000,
         retry: 2,
         refetchOnWindowFocus: false,
         select: (data) => {

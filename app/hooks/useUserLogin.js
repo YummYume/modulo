@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import { login } from "../api/user";
 
 export const useUserLogin = (onMutationSuccess, onMutationFailure, onMutationSettled) => {
-    return useMutation((credentials) => login(credentials.uuid, credentials.password), {
+    return useMutation((credentials) => login(credentials), {
         onSuccess: (data) => {
             onMutationSuccess && onMutationSuccess(data);
         },

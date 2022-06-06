@@ -30,7 +30,7 @@ export default function Home({ isPageReady }) {
     const onLoginError = (error) => {
         let message = "Une erreur est survenue.";
 
-        if (401 === error.response.status) {
+        if (401 === error?.response?.status) {
             message = "Identifiants invalides.";
         } else if (403 === error.response.status) {
             message = "Votre compte n'est pas configuré pour pouvoir vous connecter. Veuillez contacter le service Modulo.";
@@ -138,15 +138,19 @@ export async function getServerSideProps({ req }) {
         allowUser = "true" === cookies.get("login_allow_user");
 
         Cookies.set("login_allow_user");
+        Cookies.set("BEARER");
+        Cookies.set("refresh_token");
     } catch (e) {
         allowUser = false;
     }
 
     try {
         user = await queryClient.fetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
-    } catch (e) {}
+    } catch (e) {
+        // TODO: log error
+    }
 
-    if (user && !allowUser) {
+    if (Boolean(user) && !allowUser) {
         return {
             redirect: {
                 permanent: false,

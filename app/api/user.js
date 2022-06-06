@@ -1,15 +1,17 @@
 import { axiosApiInstance } from "./axios/api";
 
-export const login = async (uuid, password) => {
+export const login = async (credentials) => {
     const response = await axiosApiInstance().post(
         "/auth-token",
         {
-            uuid,
-            password
+            ...credentials
         },
         {
             params: {
                 imagineFilter: "avatar"
+            },
+            headers: {
+                Accept: "application/ld+json"
             }
         }
     );
@@ -21,6 +23,9 @@ export const refresh = async () => {
     const response = await axiosApiInstance().get("/refresh-token", {
         params: {
             imagineFilter: "avatar"
+        },
+        headers: {
+            Accept: "application/ld+json"
         }
     });
 
@@ -36,7 +41,7 @@ export const logout = async () => {
 export const getCurrentUser = async () => {
     const response = await axiosApiInstance().get("/me", {
         headers: {
-            Accept: "application/json"
+            Accept: "application/ld+json"
         },
         params: {
             imagineFilter: "avatar"
@@ -49,7 +54,7 @@ export const getCurrentUser = async () => {
 export const getCurrentUserFromServer = async (cookie = null) => {
     const response = await axiosApiInstance().get("/me", {
         headers: {
-            Accept: "application/json",
+            Accept: "application/ld+json",
             Cookie: cookie
         },
         params: {

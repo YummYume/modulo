@@ -27,8 +27,6 @@ export default function UserHandler() {
         refetchIntervalInBackground: true,
         enabled: Boolean(user && isOnline),
         onSuccess: () => {
-            setUserFailure(false);
-
             if (userFailure) {
                 if (toast.isActive(userStatusToast.current)) {
                     toast.update(userStatusToast.current, {
@@ -43,6 +41,8 @@ export default function UserHandler() {
                     });
                 }
             }
+
+            setUserFailure(false);
         },
         onError: () => {
             if (userFailure) {

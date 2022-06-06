@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\TimestampableTrait;
+use App\Enum\Feature;
 use App\Repository\ScopeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -98,5 +99,10 @@ class Scope
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    public function hasFeature(Feature $feature): bool
+    {
+        return \in_array($feature->name, $this->getRole()->getFeatures(), true);
     }
 }

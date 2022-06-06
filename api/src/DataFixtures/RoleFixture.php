@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\AgeSection;
 use App\Entity\Role;
+use App\Enum\Feature;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use LogicException;
@@ -163,8 +164,9 @@ class RoleFixture extends Fixture
             $section = $row['ageSection'] ?? false;
             $ageSectionRef = $section ? sprintf('age-section-%s', $section) : AgeSectionFixture::SUPPORT_ROLE_REF;
             $ageSection = $this->getReference($ageSectionRef);
+
             if (!$ageSection instanceof AgeSection) {
-                throw new LogicException('Invalid reference to age section');
+                throw new LogicException('Invalid reference to age section.');
             }
 
             $role = (new Role())
@@ -172,6 +174,7 @@ class RoleFixture extends Fixture
                 ->setCode($row['code'])
                 ->setAgeSection($ageSection)
                 ->setFeminineName($row['feminineName'] ?? null)
+                ->setFeatures([Feature::AGENDA_ACCESS->name])
             ;
             $manager->persist($role);
 

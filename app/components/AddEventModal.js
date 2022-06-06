@@ -19,15 +19,21 @@ import Checkbox from "@mui/material/Checkbox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import * as yup from "yup";
-import { toast } from "react-toastify";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import frLocale from "date-fns/locale/fr";
 
 import { getUsers } from "../api/user";
-import { addEvent } from "../api/event";
 import { getCategories } from "../api/category";
 
-export default function AddEventModal({ editEventMutation, handleClose, initialValuesOverride, mode, refetch, user }) {
+export default function AddEventModal({
+    addEventMutation,
+    editEventMutation,
+    handleClose,
+    initialValuesOverride,
+    open,
+    user,
+    selectedEvent
+}) {
     const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
         initialData: { "hydra:member": [] },
         refetchOnWindowFocus: false
@@ -46,7 +52,7 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
             .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début.")
             .nullable(),
         categories: yup.array(),
-        participants: yup.array(),
+        participants: yup.array().min(1, "Veuillez sélectionner au moins un participant."),
         active: yup.bool().required("Veuillez saisir un état.")
     });
     const [initialValues, setInitialValues] = useState({
@@ -59,46 +65,20 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
         participants: []
     });
 
-    const addEventMutation = useMutation(
-        (values) =>
-            addEvent(
-                values.name,
-                values.description,
-                values.active,
-                values.startDate,
-                values.endDate,
-                values.scope,
-                values.categories,
-                values.participants
-            ),
-        {
-            onSuccess: () => {
-                refetch();
-                toast.success("Evénement ajouté !");
-                handleClose();
-            },
-
-            onError: (error) => {
-                if (422 === error?.response?.status) {
-                    toast.error("Une erreur est survenue lors de l'ajout.");
-                } else {
-                    toast.error("Une erreur est survenue.");
-                }
-            }
-        }
-    );
-
     const handleSubmit = async (values) => {
-        if (mode === "add") {
+        if (Boolean(selectedEvent)) {
+            editEventMutation.mutate({
+                id: selectedEvent["@id"],
+                values: {
+                    ...values,
+                    categories: values.categories.map((category) => category["@id"]),
+                    participants: values.participants.map((participant) => participant["@id"])
+                }
+            });
+        } else {
             addEventMutation.mutate({
                 ...values,
-                scope: `scopes/${user?.currentScope?.id}`,
-                categories: values.categories.map((category) => category["@id"]),
-                participants: values.participants.map((participant) => participant["@id"])
-            });
-        } else if (mode === "edit") {
-            editEventMutation.mutate({
-                ...values,
+                scope: user?.currentScope["@id"],
                 categories: values.categories.map((category) => category["@id"]),
                 participants: values.participants.map((participant) => participant["@id"])
             });
@@ -112,7 +92,7 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
     }, [initialValuesOverride]);
 
     return (
-        <Modal open onClose={handleClose} className="d-flex justify-content-center align-items-center">
+        <Modal open={open} onClose={handleClose} className="d-flex justify-content-center align-items-center">
             <Box backgroundColor="box.index.backgroundLogin" maxWidth="90%" width="35rem" className="p-4 rounded">
                 <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize>
                     {({ isSubmitting, values, touched, errors, handleChange, handleBlur, setFieldValue, setFieldTouched }) => (
@@ -201,6 +181,7 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
                                     onChange={(event, value) => setFieldValue("categories", value)}
                                     onBlur={handleBlur}
                                     options={categories["hydra:member"]}
+                                    isOptionEqualToValue={(option, value) => option["@id"] === value["@id"]}
                                     disableCloseOnSelect
                                     getOptionLabel={({ name }) => name}
                                     renderOption={(props, { name }, { selected }) => (
@@ -219,7 +200,7 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
                                     openOnFocus
                                     limitTags={2}
                                 />
-                                <FormHelperText>{touched.participants && errors.participants}</FormHelperText>
+                                <FormHelperText>{touched.categories && errors.categories}</FormHelperText>
                             </FormControl>
                             <FormControl fullWidth className="my-2" error={touched.participants && !!errors.participants}>
                                 <Autocomplete
@@ -232,8 +213,9 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
                                     onChange={(event, value) => setFieldValue("participants", value)}
                                     onBlur={handleBlur}
                                     options={participants["hydra:member"]}
+                                    isOptionEqualToValue={(option, value) => option["@id"] === value["@id"]}
                                     disableCloseOnSelect
-                                    getOptionLabel={({ fullName }) => fullName}
+                                    getOptionLabel={({ fullName, firstName, lastName }) => fullName ?? `${firstName} ${lastName}`}
                                     renderOption={(props, { fullName }, { selected }) => (
                                         <li {...props}>
                                             <Checkbox
@@ -245,7 +227,9 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
                                             {fullName}
                                         </li>
                                     )}
-                                    renderInput={(params) => <TextField {...params} label="Participants" />}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Participants" error={touched.participants && !!errors.participants} />
+                                    )}
                                     multiple
                                     openOnFocus
                                     limitTags={2}
@@ -270,13 +254,13 @@ export default function AddEventModal({ editEventMutation, handleClose, initialV
                             </FormGroup>
                             <div className="text-center">
                                 <LoadingButton
-                                    loading={isSubmitting || addEventMutation.isLoading}
+                                    loading={isSubmitting || addEventMutation.isLoading || editEventMutation.isLoading}
                                     type="submit"
                                     variant="contained"
                                     loadingPosition="end"
                                     endIcon={<CheckIcon />}
                                 >
-                                    Valider
+                                    {selectedEvent ? "Modifier" : "Ajouter"}
                                 </LoadingButton>
                             </div>
                         </Form>

@@ -8,6 +8,7 @@ final class ChartJsHelper
         \DateTimeImmutable|\DateTime $since,
         \DateTimeImmutable|\DateTime $to,
         \DateInterval $interval = new \DateInterval('P1D'),
+        array $excludeDates = [],
         mixed $yAxisValue = 0,
         string $xAxisIndex = 'x',
         string $yAxisIndex = 'y'
@@ -16,10 +17,12 @@ final class ChartJsHelper
         $period = new \DatePeriod($since, $interval, $to);
 
         foreach ($period as $date) {
-            $dates[] = [
-                $xAxisIndex => $date->format('Y-m-d'),
-                $yAxisIndex => $yAxisValue,
-            ];
+            if (!\in_array($date->format('Y-m-d'), $excludeDates, true)) {
+                $dates[] = [
+                    $xAxisIndex => $date->format('Y-m-d'),
+                    $yAxisIndex => $yAxisValue,
+                ];
+            }
         }
 
         return $dates;
