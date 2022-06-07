@@ -40,6 +40,11 @@ services:
                   method: onAuthenticationSuccessResponse
               }
 
+    acme_api.event.jwt_invalid_listener:
+        class: App\EventListener\JWTInvalidListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_invalid, method: onJWTInvalid }
+
     App\EventListener\LogoutListener:
         tags:
             - { name: kernel.event_listener, event: 'Symfony\Component\Security\Http\Event\LogoutEvent', method: onLogout, priority: -100 }

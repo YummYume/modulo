@@ -34,6 +34,8 @@ export default function Home({ isPageReady }) {
             message = "Identifiants invalides.";
         } else if (403 === error.response.status) {
             message = "Votre compte n'est pas configuré pour pouvoir vous connecter. Veuillez contacter le service Modulo.";
+        } else if (409 === error.response.status) {
+            message = "Une erreur est survenue lors de l'authentification. Veuillez réessayer.";
         }
 
         toast.error(message);

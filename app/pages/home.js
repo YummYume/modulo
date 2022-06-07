@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { dehydrate, QueryClient, useQuery, useMutation, useQueryClient } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
@@ -12,7 +12,8 @@ import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import fr from "date-fns/locale/fr";
 import parse from "date-fns/parse";
-import { toast } from "react-toastify";
+import { toast, Flip } from "react-toastify";
+import Cookies from "cookies";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -23,15 +24,19 @@ import AddEventModal from "../components/AddEventModal";
 export default function Home() {
     const queryClient = useQueryClient();
     const [openModal, setOpenModal] = useState(false);
+    const [canView, setCanView] = useState(false);
+    const [crudAllowed, setCrudAllowed] = useState(false);
+    const [initialValuesOverride, setInitialValuesOverride] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [defaultView, setDefaultView] = useState("month");
+    const eventStatusToast = useRef(null);
     const { data: user } = useUser();
     const { data: events } = useQuery("events", getEvents, {
         initialData: [],
         refetchOnWindowFocus: true,
         refetchInterval: 60000,
-        enabled: isGranted(features.AGENDA_ACCESS, user)
+        enabled: canView
     });
-    const [initialValuesOverride, setInitialValuesOverride] = useState(null);
-    const [selectedEvent, setSelectedEvent] = useState(null);
     const DnDCalendar = withDragAndDrop(Calendar);
     const messages = {
         date: "Date",
@@ -48,9 +53,7 @@ export default function Home() {
         tomorrow: "Demain",
         today: "Aujourd'hui",
         agenda: "Agenda",
-
         noEventsInRange: "Il n'y a pas d'événements dans cette période.",
-
         showMore: (total) => `+${total} événement${total > 1 ? "s" : ""}`
     };
     const locales = {
@@ -83,10 +86,11 @@ export default function Home() {
     });
     const editEventMutation = useMutation((data) => editEvent(data.id, data.values, user.currentScope["@id"]), {
         onMutate: async (data) => {
+            eventStatusToast.current = toast.loading(`Modification de l'événement en cours...`);
+
             await queryClient.cancelQueries("events");
 
             const previousEvents = queryClient.getQueryData("events");
-            console.log(data, previousEvents);
 
             queryClient.setQueryData("events", (currentEvent) =>
                 currentEvent.map((event) => (event["@id"] === data?.id ? { ...event, ...data?.values } : event))
@@ -95,7 +99,21 @@ export default function Home() {
             return previousEvents;
         },
         onSuccess: ({ data }) => {
-            toast.success(`Evénement ${data.name} modifié avec succès.`);
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: `Evénement ${data.name} modifié avec succès.`,
+                    type: toast.TYPE.SUCCESS,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.success(`Evénement ${data.name} modifié avec succès.`);
+            }
+
             handleClose();
         },
         onError: (error, variables, context) => {
@@ -109,12 +127,32 @@ export default function Home() {
                 message = "Vous n'êtes pas autorisé à modifier cet événement.";
             }
 
-            toast.error(message);
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: message,
+                    type: toast.TYPE.ERROR,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.error(message);
+            }
         },
         onSettled: () => {
             queryClient.invalidateQueries("events");
         }
     });
+
+    useEffect(() => {
+        if (Boolean(user)) {
+            setCanView(isGranted(features.AGENDA_ACCESS, user));
+            setCrudAllowed(isGranted(features.EVENT_CRUD, user));
+        }
+    }, [user]);
 
     const handleClose = () => {
         setOpenModal(false);
@@ -123,29 +161,44 @@ export default function Home() {
     };
 
     const handleNewEvent = () => {
-        setSelectedEvent(null);
-        setOpenModal(true);
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+            setSelectedEvent(null);
+            setOpenModal(true);
+        }
     };
 
     const handleSelectEvent = (event) => {
-        setInitialValuesOverride(event);
-        setSelectedEvent(event);
-        setOpenModal(true);
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+            setInitialValuesOverride(event);
+            setSelectedEvent(event);
+            setOpenModal(true);
+        }
     };
 
     const handleSelectSlot = ({ start, end }) => {
-        setInitialValuesOverride({ startDate: start, endDate: end });
-        handleNewEvent();
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+            setInitialValuesOverride({ startDate: start, endDate: end });
+            handleNewEvent();
+        }
     };
 
     const updateEvent = ({ event, end, start }) => {
-        editEventMutation.mutate({
-            id: event["@id"],
-            values: {
-                endDate: end,
-                startDate: start
-            }
-        });
+        setInitialValuesOverride(null);
+        setSelectedEvent(null);
+
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+            editEventMutation.mutate({
+                id: event["@id"],
+                values: {
+                    endDate: end,
+                    startDate: start
+                }
+            });
+        }
+    };
+
+    const handleViewChange = (view) => {
+        setDefaultView(view);
     };
 
     return (
@@ -158,7 +211,7 @@ export default function Home() {
                 <Typography variant="h2" component="h1" className="text-center text-break my-5">
                     Accueil Connecté
                 </Typography>
-                {isGranted(features.AGENDA_ACCESS, user) && (
+                {canView && (
                     <DnDCalendar
                         messages={messages}
                         localizer={localizer}
@@ -174,11 +227,18 @@ export default function Home() {
                         onEventResize={updateEvent}
                         culture={"fr"}
                         style={{ height: 500 }}
+                        onView={handleViewChange}
+                        defaultView={defaultView}
                     />
                 )}
-                {isGranted(features.EVENT_CRUD, user) && (
+                {crudAllowed && (
                     <React.Fragment>
-                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => handleNewEvent()}>
+                        <Fab
+                            color="primary"
+                            className="mx-auto d-block my-5"
+                            onClick={() => handleNewEvent()}
+                            disabled={!crudAllowed || addEventMutation.isLoading || editEventMutation.isLoading}
+                        >
                             <AddIcon />
                         </Fab>
                         <AddEventModal
@@ -199,6 +259,7 @@ export default function Home() {
 
 export async function getServerSideProps({ req }) {
     const queryClient = new QueryClient();
+    const cookies = new Cookies(req);
     let user;
 
     try {
@@ -213,9 +274,19 @@ export async function getServerSideProps({ req }) {
         };
     }
 
-    //if (Boolean(user) && isGranted(features.AGENDA_ACCESS, user)) {
-    //await queryClient.prefetchQuery("events", () => getEventsFromServer(req.headers.cookie));
-    //}
+    try {
+        if (Boolean(user)) {
+            const scopes = user.scopes.filter((scope) => scope.active);
+            const cookieScope = parseInt(cookies.get("current_scope"), 10);
+            const currentScope = scopes.find((scope) => cookieScope === scope.id) ?? scopes[0];
+
+            if (isGranted(features.AGENDA_ACCESS, { ...user.data, currentScope })) {
+                await queryClient.prefetchQuery("events", () => getEventsFromServer(req.headers.cookie));
+            }
+        }
+    } catch (error) {
+        // TODO error logging
+    }
 
     return {
         props: {

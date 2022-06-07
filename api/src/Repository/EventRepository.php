@@ -65,10 +65,15 @@ final class EventRepository extends ServiceEntityRepository
 
     public function findEventCountByActiveAndInactive(): array
     {
-        return $this->createQueryBuilder('e')
+        $events = $this->createQueryBuilder('e')
             ->select('SUM(CASE WHEN e.active = 1 THEN 1 ELSE 0 END) as active, SUM(CASE WHEN e.active = 0 THEN 1 ELSE 0 END) as inactive')
             ->getQuery()
             ->getSingleResult()
         ;
+
+        return [
+            'active' => $events['active'] ?? 0,
+            'inactive' => $events['inactive'] ?? 0,
+        ];
     }
 }
