@@ -88,6 +88,16 @@ export default function AddEventModal({
     useEffect(() => {
         if (initialValuesOverride) {
             setInitialValues({ ...initialValues, ...initialValuesOverride });
+        } else {
+            setInitialValues({
+                name: "",
+                description: "",
+                active: true,
+                startDate: null,
+                endDate: null,
+                categories: [],
+                participants: []
+            });
         }
     }, [initialValuesOverride]);
 

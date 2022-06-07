@@ -17,7 +17,7 @@ export default function UserHandler() {
         () => setUserFailure(false),
         () => setUserFailure(true)
     );
-    const allowedRoutes = ["/scope-choice", "/home"];
+    const allowedRoutes = ["/scope-choice"];
     const [currentScope, setCurrentScope] = useState(null);
     const router = useRouter();
     const refreshUser = useQuery("refresh", refresh, {

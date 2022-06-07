@@ -109,7 +109,8 @@ scope.active: Actif
 # Category
 category.name: Nom
 category.description: Description
-category.invitedRoles: Rôles invités par défault
+category.invited_roles: Rôles invités par défault
+category.invited_roles.help: Seuls les rôles qui autorisent cette catégorie peuvent être invités.
 
 # Role
 role.name: Nom

@@ -21,7 +21,7 @@ import { isGranted, features } from "../services/user";
 import { getEvents, getEventsFromServer, addEvent, editEvent } from "../api/event";
 import AddEventModal from "../components/AddEventModal";
 
-export default function Home() {
+export default function Home({ isPageReady }) {
     const queryClient = useQueryClient();
     const [openModal, setOpenModal] = useState(false);
     const [canView, setCanView] = useState(false);
@@ -67,9 +67,26 @@ export default function Home() {
         locales
     });
     const addEventMutation = useMutation((values) => addEvent(values, user.currentScope["@id"]), {
+        onMutate: () => {
+            eventStatusToast.current = toast.loading(`Ajout de l'événement en cours...`);
+        },
         onSuccess: ({ data }) => {
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: `Evénement ${data.name} ajouté avec succès.`,
+                    type: toast.TYPE.SUCCESS,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.success(`Evénement ${data.name} ajouté avec succès.`);
+            }
+
             queryClient.setQueryData("events", (events) => [...events, data]);
-            toast.success(`Evénement ${data.name} ajouté avec succès.`);
             handleClose();
         },
         onError: (error) => {
@@ -81,7 +98,20 @@ export default function Home() {
                 message = "Vous n'êtes pas autorisé à ajouter un événement.";
             }
 
-            toast.error(message);
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: message,
+                    type: toast.TYPE.ERROR,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.error(message);
+            }
         }
     });
     const editEventMutation = useMutation((data) => editEvent(data.id, data.values, user.currentScope["@id"]), {
@@ -161,14 +191,14 @@ export default function Home() {
     };
 
     const handleNewEvent = () => {
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
             setSelectedEvent(null);
             setOpenModal(true);
         }
     };
 
     const handleSelectEvent = (event) => {
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
             setInitialValuesOverride(event);
             setSelectedEvent(event);
             setOpenModal(true);
@@ -176,7 +206,7 @@ export default function Home() {
     };
 
     const handleSelectSlot = ({ start, end }) => {
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
             setInitialValuesOverride({ startDate: start, endDate: end });
             handleNewEvent();
         }
@@ -186,7 +216,7 @@ export default function Home() {
         setInitialValuesOverride(null);
         setSelectedEvent(null);
 
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading) {
+        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
             editEventMutation.mutate({
                 id: event["@id"],
                 values: {
@@ -237,7 +267,7 @@ export default function Home() {
                             color="primary"
                             className="mx-auto d-block my-5"
                             onClick={() => handleNewEvent()}
-                            disabled={!crudAllowed || addEventMutation.isLoading || editEventMutation.isLoading}
+                            disabled={!crudAllowed || addEventMutation.isLoading || editEventMutation.isLoading || !isPageReady}
                         >
                             <AddIcon />
                         </Fab>

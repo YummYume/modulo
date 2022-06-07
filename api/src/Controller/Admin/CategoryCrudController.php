@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Category;
 use App\Repository\RoleRepository;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -40,7 +41,16 @@ class CategoryCrudController extends AbstractCrudController
         return [
             TextField::new('name', 'category.name'),
             TextareaField::new('description', 'category.description'),
-            AssociationField::new('invitedRoles', 'category.invitedRoles')
+            AssociationField::new('invitedRoles', 'category.invited_roles')
+                ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
+                    $category = $this->getContext()->getEntity()->getInstance();
+
+                    return $qb
+                        ->andWhere($qb->expr()->isMemberOf(':category', 'entity.categories'))
+                        ->setParameter('category', $category)
+                    ;
+                })
+                ->setFormTypeOption('help', 'category.invited_roles.help')
                 ->hideWhenCreating(),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),

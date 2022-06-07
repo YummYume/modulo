@@ -59,7 +59,7 @@ class Event
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     #[Groups(['event:get'])]
-    // #[Assert\Length(min: 1, minMessage: 'event.participants.min')] #TODO this is causing issues with the API
+    #[Assert\Count(min: 1, minMessage: 'event.participants.min')]
     private Collection $participants;
 
     #[ORM\Column(type: 'boolean')]
