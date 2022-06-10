@@ -4,8 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Role;
 use App\Enum\Feature;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -55,12 +53,5 @@ class RoleCrudController extends AbstractCrudController
             TextField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
-    }
-
-    public function configureActions(Actions $actions): Actions
-    {
-        return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-        ;
     }
 }

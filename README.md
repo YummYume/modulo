@@ -35,8 +35,9 @@ The Modulo project.
 - `make jwt-keypair` : runs `php bin/console lexik:jwt:generate-keypair` in the api container to generate the jwt keys
 - `make yarn` : runs `yarn install` for the app container
 - `make yarn-api` : runs `yarn install` for the api container
-- `make yarn-api-compile` : runs `make yarn-api` and `yarn dev` for the api container
-- `make yarn-api-watch` : runs `make yarn-api` and `yarn watch` for the api container
+- `make yarn-api-compile` : runs `make yarn-api`, `make assets-api` and `yarn dev` for the api container
+- `make yarn-api-watch` : runs `make yarn-api`, `make assets-api` and `yarn watch` for the api container
+- `make assets-api` : installs assets for the api container
 - `make composer-sync` : runs `make composer` and `make sync-dependencies-api`, in this exact order
 - `make yarn-sync` : runs `make yarn` and `make sync-dependencies-app`, in this exact order
 - `make yarn-api-sync` : runs `make yarn-api` and `make sync-dependencies-yarn-app`, in this exact order

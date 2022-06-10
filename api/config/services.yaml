@@ -30,6 +30,10 @@ services:
         decorates: "api_platform.openapi.factory"
         arguments: ["@.inner"]
 
+    app.jwt_extended_authenticator:
+        class: App\Security\JWTExtendedAuthenticator
+        parent: lexik_jwt_authentication.security.jwt_authenticator
+
     # Listeners
     acme_api.event.authentication_success_listener:
         class: App\EventListener\AuthenticationSuccessListener
@@ -39,6 +43,28 @@ services:
                   event: lexik_jwt_authentication.on_authentication_success,
                   method: onAuthenticationSuccessResponse
               }
+
+    acme_api.event.jwt_created_listener:
+        class: App\EventListener\JWTCreatedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
+    acme_api.event.jwt_decoded_listener:
+        class: App\EventListener\JWTDecodedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJWTDecoded }
+
+    acme_api.event.jwt_authenticated_listener:
+        class: App\EventListener\JWTAuthenticatedListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJWTAuthenticated }
+
+    acme_api.event.jwt_invalid_listener:
+        class: App\EventListener\JWTInvalidListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_invalid, method: onJWTInvalid }
 
     App\EventListener\LogoutListener:
         tags:

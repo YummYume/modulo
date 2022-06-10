@@ -3,7 +3,6 @@
 namespace App\Serializer;
 
 use App\Entity\MediaFile;
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
@@ -15,7 +14,7 @@ final class MediaFileNormalizer implements ContextAwareNormalizerInterface, Norm
 
     private const ALREADY_CALLED = 'MEDIA_FILE_NORMALIZER_ALREADY_CALLED';
 
-    public function __construct(private StorageInterface $storage, private CacheManager $imagineCacheManager)
+    public function __construct(private StorageInterface $storage)
     {
     }
 

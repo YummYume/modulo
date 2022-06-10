@@ -7,8 +7,6 @@ use App\Enum\Gender;
 use App\Enum\StaticRole;
 use App\Form\Admin\MediaImageType;
 use App\Form\Admin\UserScopeFormType;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -173,12 +171,5 @@ class UserCrudController extends AbstractCrudController
             TextField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
-    }
-
-    public function configureActions(Actions $actions): Actions
-    {
-        return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-        ;
     }
 }

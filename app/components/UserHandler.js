@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
 import { useQuery } from "react-query";
 import { toast, Flip } from "react-toastify";
 
@@ -13,22 +13,18 @@ export default function UserHandler() {
     const [isOnline, setIsOnline] = useState(true);
     const [userFailure, setUserFailure] = useState(false);
     const logoutMutation = useUserLogout();
+    const [cookies, setCookie] = useCookies(["current_scope"]);
     const { data: user } = useUser(
         () => setUserFailure(false),
         () => setUserFailure(true)
     );
-    const allowedRoutes = ["/scope-choice", "/home"];
-    const [currentScope, setCurrentScope] = useState(null);
-    const router = useRouter();
-    const refreshUser = useQuery("refresh", refresh, {
+    const refreshUser = useQuery("refresh", () => refresh(cookies.current_scope), {
         refetchOnWindowFocus: false,
         refetchInterval: 60000 * 30, // 30 minutes
         retry: 4,
         refetchIntervalInBackground: true,
         enabled: Boolean(user && isOnline),
         onSuccess: () => {
-            setUserFailure(false);
-
             if (userFailure) {
                 if (toast.isActive(userStatusToast.current)) {
                     toast.update(userStatusToast.current, {
@@ -43,6 +39,8 @@ export default function UserHandler() {
                     });
                 }
             }
+
+            setUserFailure(false);
         },
         onError: () => {
             if (userFailure) {
@@ -77,16 +75,6 @@ export default function UserHandler() {
             toast.dismiss(userStatusToast.current);
         }
     }, [userFailure, user, isOnline, refreshUser]);
-
-    useEffect(() => {
-        if (Boolean(currentScope && user?.currentScope)) {
-            if (!allowedRoutes.includes(router.pathname) && user.currentScope.id !== currentScope) {
-                router.push("/home");
-            }
-        }
-
-        setCurrentScope(user?.currentScope?.id);
-    }, [user]);
 
     useEffect(() => {
         if (isOnline) {

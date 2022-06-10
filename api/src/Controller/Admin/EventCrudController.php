@@ -3,8 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Event;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -40,9 +38,9 @@ class EventCrudController extends AbstractCrudController
             TextareaField::new('description', 'event.description'),
             AssociationField::new('categories', 'event.categories'),
             AssociationField::new('participants', 'event.participants'),
+            AssociationField::new('scope', 'event.scope'),
             DateTimeField::new('startDate', 'event.start_date')->renderAsChoice(),
             DateTimeField::new('endDate', 'event.end_date')->renderAsChoice(),
-            AssociationField::new('scope', 'event.scope'),
             BooleanField::new('active', 'event.active'),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
@@ -53,12 +51,5 @@ class EventCrudController extends AbstractCrudController
             TextField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
-    }
-
-    public function configureActions(Actions $actions): Actions
-    {
-        return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-        ;
     }
 }

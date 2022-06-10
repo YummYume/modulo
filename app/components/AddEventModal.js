@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Formik, Form } from "formik";
 import TextField from "@mui/material/TextField";
@@ -11,8 +11,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CheckIcon from "@mui/icons-material/Check";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import AdapterMoment from "@mui/lab/AdapterMoment";
-import "moment/locale/fr";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -20,21 +19,43 @@ import Checkbox from "@mui/material/Checkbox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import * as yup from "yup";
-import { toast } from "react-toastify";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
+import frLocale from "date-fns/locale/fr";
 
 import { getUsers } from "../api/user";
-import { addEvent } from "../api/event";
 import { getCategories } from "../api/category";
 
-export default function AddEventModal({ openModal, setOpenModal, user }) {
+export default function AddEventModal({
+    addEventMutation,
+    editEventMutation,
+    handleClose,
+    initialValuesOverride,
+    open,
+    user,
+    selectedEvent
+}) {
     const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
-        initialData: { "hydra:member": [] }
+        initialData: { "hydra:member": [] },
+        refetchOnWindowFocus: false
     });
     const { data: participants, isFetching: isParticipantsLoading } = useQuery("participants", getUsers, {
-        initialData: { "hydra:member": [] }
+        initialData: { "hydra:member": [] },
+        refetchOnWindowFocus: false
     });
-    const initialValues = {
+    const validationSchema = yup.object({
+        name: yup.string().required("Veuillez saisir un nom."),
+        description: yup.string().required("Veuillez saisir une description."),
+        startDate: yup.date().typeError("Veuillez saisir une date valide.").nullable(),
+        endDate: yup
+            .date()
+            .typeError("Veuillez saisir une date valide.")
+            .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début.")
+            .nullable(),
+        categories: yup.array(),
+        participants: yup.array().min(1, "Veuillez sélectionner au moins un participant."),
+        active: yup.bool().required("Veuillez saisir un état.")
+    });
+    const [initialValues, setInitialValues] = useState({
         name: "",
         description: "",
         active: true,
@@ -42,61 +63,48 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
         endDate: null,
         categories: [],
         participants: []
-    };
-    const validationSchema = yup.object({
-        name: yup.string().required("Veuillez saisir un nom."),
-        description: yup.string().required("Veuillez saisir une description."),
-        startDate: yup.date().typeError("Veuillez saisir une date valide."),
-        endDate: yup
-            .date()
-            .typeError("Veuillez saisir une date valide.")
-            .min(yup.ref("startDate"), "La date de fin doit être supérieure à la date de début."),
-        categories: yup.array(),
-        participants: yup.array(),
-        active: yup.bool().required("Veuillez saisir un état.")
     });
 
-    const addEventMutation = useMutation(
-        (values) =>
-            addEvent(
-                values.name,
-                values.description,
-                values.active,
-                values.startDate,
-                values.endDate,
-                values.scope,
-                values.categories,
-                values.participants
-            ),
-        {
-            onSuccess: () => {
-                toast.success("Evénement ajouté !");
-                setOpenModal(false);
-            },
-
-            onError: (error) => {
-                if (422 === error?.response?.status) {
-                    toast.error("Une erreur est survenue lors de l'ajout.");
-                } else {
-                    toast.error("Une erreur est survenue.");
-                }
-            }
-        }
-    );
-
     const handleSubmit = async (values) => {
-        addEventMutation.mutate({
-            ...values,
-            scope: `scopes/${user?.currentScope?.id}`,
-            categories: values.categories.map((category) => category["@id"]),
-            participants: values.participants.map((participant) => participant["@id"])
-        });
+        if (Boolean(selectedEvent)) {
+            editEventMutation.mutate({
+                id: selectedEvent["@id"],
+                values: {
+                    ...values,
+                    categories: values.categories.map((category) => category["@id"]),
+                    participants: values.participants.map((participant) => participant["@id"])
+                }
+            });
+        } else {
+            addEventMutation.mutate({
+                ...values,
+                scope: user?.currentScope["@id"],
+                categories: values.categories.map((category) => category["@id"]),
+                participants: values.participants.map((participant) => participant["@id"])
+            });
+        }
     };
 
+    useEffect(() => {
+        if (initialValuesOverride) {
+            setInitialValues({ ...initialValues, ...initialValuesOverride });
+        } else {
+            setInitialValues({
+                name: "",
+                description: "",
+                active: true,
+                startDate: null,
+                endDate: null,
+                categories: [],
+                participants: []
+            });
+        }
+    }, [initialValuesOverride]);
+
     return (
-        <Modal open={openModal} onClose={() => setOpenModal(false)} className="d-flex justify-content-center align-items-center">
+        <Modal open={open} onClose={handleClose} className="d-flex justify-content-center align-items-center">
             <Box backgroundColor="box.index.backgroundLogin" maxWidth="90%" width="35rem" className="p-4 rounded">
-                <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
+                <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize>
                     {({ isSubmitting, values, touched, errors, handleChange, handleBlur, setFieldValue, setFieldTouched }) => (
                         <Form>
                             <Typography variant="h4" className="text-center my-4">
@@ -126,9 +134,11 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                                 onBlur={handleBlur}
                                 error={touched.description && !!errors.description}
                                 helperText={touched.description && errors.description}
+                                multiline
+                                minRows="3"
                                 className="my-2"
                             />
-                            <LocalizationProvider dateAdapter={AdapterMoment} locale={"fr"}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
                                 <DateTimePicker
                                     id="startDate"
                                     name="startDate"
@@ -149,7 +159,7 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                                     )}
                                 />
                             </LocalizationProvider>
-                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
                                 <DateTimePicker
                                     id="endDate"
                                     name="endDate"
@@ -181,6 +191,7 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                                     onChange={(event, value) => setFieldValue("categories", value)}
                                     onBlur={handleBlur}
                                     options={categories["hydra:member"]}
+                                    isOptionEqualToValue={(option, value) => option["@id"] === value["@id"]}
                                     disableCloseOnSelect
                                     getOptionLabel={({ name }) => name}
                                     renderOption={(props, { name }, { selected }) => (
@@ -199,7 +210,7 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                                     openOnFocus
                                     limitTags={2}
                                 />
-                                <FormHelperText>{touched.participants && errors.participants}</FormHelperText>
+                                <FormHelperText>{touched.categories && errors.categories}</FormHelperText>
                             </FormControl>
                             <FormControl fullWidth className="my-2" error={touched.participants && !!errors.participants}>
                                 <Autocomplete
@@ -212,8 +223,9 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                                     onChange={(event, value) => setFieldValue("participants", value)}
                                     onBlur={handleBlur}
                                     options={participants["hydra:member"]}
+                                    isOptionEqualToValue={(option, value) => option["@id"] === value["@id"]}
                                     disableCloseOnSelect
-                                    getOptionLabel={({ fullName }) => fullName}
+                                    getOptionLabel={({ fullName, firstName, lastName }) => fullName ?? `${firstName} ${lastName}`}
                                     renderOption={(props, { fullName }, { selected }) => (
                                         <li {...props}>
                                             <Checkbox
@@ -225,7 +237,9 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                                             {fullName}
                                         </li>
                                     )}
-                                    renderInput={(params) => <TextField {...params} label="Participants" />}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Participants" error={touched.participants && !!errors.participants} />
+                                    )}
                                     multiple
                                     openOnFocus
                                     limitTags={2}
@@ -250,13 +264,13 @@ export default function AddEventModal({ openModal, setOpenModal, user }) {
                             </FormGroup>
                             <div className="text-center">
                                 <LoadingButton
-                                    loading={isSubmitting || addEventMutation.isLoading}
+                                    loading={isSubmitting || addEventMutation.isLoading || editEventMutation.isLoading}
                                     type="submit"
                                     variant="contained"
                                     loadingPosition="end"
                                     endIcon={<CheckIcon />}
                                 >
-                                    Valider
+                                    {selectedEvent ? "Modifier" : "Ajouter"}
                                 </LoadingButton>
                             </div>
                         </Form>
