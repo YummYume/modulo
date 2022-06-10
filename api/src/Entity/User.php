@@ -79,12 +79,66 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ],
             ],
         ],
+        'switch-scope' => [
+            'method' => 'GET',
+            'path' => '/switch-scope',
+            'defaults' => ['id' => 0],
+            'openapi_context' => [
+                'summary' => 'Get the current user.',
+                'description' => 'Get the current user.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The current user.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '401' => [
+                        'description' => 'The JWT is missing or invalid.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use BlameableTrait;
     use TimestampableTrait;
+
+    #[Groups(['get:me'])]
+    public ?Scope $currentScope = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -297,6 +351,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getCurrentScope(): ?Scope
+    {
+        return $this->currentScope;
+    }
+
+    public function setCurrentScope(?Scope $currentScope): self
+    {
+        $this->currentScope = $currentScope;
+
+        return $this;
+    }
+
     public function getAvatar(): ?MediaImage
     {
         return $this->avatar;
@@ -398,5 +464,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isValidScope(Scope $scope): bool
     {
         return $this->getActiveScopes()->contains($scope);
+    }
+
+    public function getDefaultScope(): ?Scope
+    {
+        return $this->getActiveScopes()->first() ?? null;
     }
 }

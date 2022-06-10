@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "react-query";
 
 import { logout } from "../api/user";
 
-export const useUserLogout = (onMutationSuccess, onMutationFailure, onMutationSettled) => {
+export const useUserLogout = (onMutationSuccess, onMutationFailure, onMutationPreSettled, onMutationPostSettled) => {
     const queryClient = useQueryClient();
     const router = useRouter();
     const [cookies, setCookie] = useCookies(["login_allow_user"]);
@@ -20,7 +20,7 @@ export const useUserLogout = (onMutationSuccess, onMutationFailure, onMutationSe
             onMutationFailure && onMutationFailure(error);
         },
         onSettled: async (data) => {
-            onMutationSettled && onMutationSettled(data);
+            onMutationPreSettled && onMutationPreSettled(data);
 
             setCookie("login_allow_user", true, {
                 path: "/",
@@ -32,6 +32,8 @@ export const useUserLogout = (onMutationSuccess, onMutationFailure, onMutationSe
             "/" !== router.pathname && (await router.push("/"));
 
             queryClient.setQueryData("user", null);
+
+            onMutationPostSettled && onMutationPostSettled(data);
         }
     });
 };

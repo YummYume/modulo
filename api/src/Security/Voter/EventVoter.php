@@ -18,7 +18,7 @@ final class EventVoter extends Voter
 
     public function canView(User $user, Event $event): bool
     {
-        $scope = $event->getCurrentScope();
+        $scope = $user->getCurrentScope();
 
         if (null === $scope || !$user->isValidScope($scope)) {
             return false;
@@ -33,40 +33,40 @@ final class EventVoter extends Voter
 
     public function canAdd(User $user, Event $event): bool
     {
-        $scope = $event->getCurrentScope();
+        $scope = $user->getCurrentScope();
 
         if (null === $scope || !$user->isValidScope($scope)) {
             return false;
         }
 
-        return \in_array(Feature::EVENT_CRUD->name, $scope->getRole()->getFeatures(), true);
+        return $scope->hasFeature(Feature::EVENT_CRUD);
     }
 
     public function canEdit(User $user, Event $event): bool
     {
-        $scope = $event->getCurrentScope();
+        $scope = $user->getCurrentScope();
 
         if (null === $scope || !$user->isValidScope($scope)) {
             return false;
         }
 
-        return \in_array(Feature::EVENT_CRUD->name, $scope->getRole()->getFeatures(), true);
+        return $scope->hasFeature(Feature::EVENT_CRUD);
     }
 
     public function canDelete(User $user, Event $event): bool
     {
-        $scope = $event->getCurrentScope();
+        $scope = $user->getCurrentScope();
 
         if (null === $scope || !$user->isValidScope($scope)) {
             return false;
         }
 
-        return \in_array(Feature::EVENT_CRUD->name, $scope->getRole()->getFeatures(), true);
+        return $scope->hasFeature(Feature::EVENT_CRUD);
     }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::ADD, self::EDIT, self::DELETE], true) && $subject instanceof Event;
+        return \in_array($attribute, [self::VIEW, self::ADD, self::EDIT, self::DELETE], true) && $subject instanceof Event;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -78,6 +78,9 @@ final class EventVoter extends Voter
         }
 
         switch ($attribute) {
+            case self::VIEW:
+                return $this->canView($user, $subject);
+                break;
             case self::ADD:
                 return $this->canAdd($user, $subject);
                 break;

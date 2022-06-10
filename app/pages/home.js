@@ -13,7 +13,6 @@ import getDay from "date-fns/getDay";
 import fr from "date-fns/locale/fr";
 import parse from "date-fns/parse";
 import { toast, Flip } from "react-toastify";
-import Cookies from "cookies";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -26,6 +25,7 @@ export default function Home({ isPageReady }) {
     const [openModal, setOpenModal] = useState(false);
     const [canView, setCanView] = useState(false);
     const [crudAllowed, setCrudAllowed] = useState(false);
+    const [actionEnabled, setActionEnabled] = useState(false);
     const [initialValuesOverride, setInitialValuesOverride] = useState(null);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [defaultView, setDefaultView] = useState("month");
@@ -66,7 +66,7 @@ export default function Home({ isPageReady }) {
         getDay,
         locales
     });
-    const addEventMutation = useMutation((values) => addEvent(values, user.currentScope["@id"]), {
+    const addEventMutation = useMutation((values) => addEvent(values), {
         onMutate: () => {
             eventStatusToast.current = toast.loading(`Ajout de l'événement en cours...`);
         },
@@ -114,7 +114,7 @@ export default function Home({ isPageReady }) {
             }
         }
     });
-    const editEventMutation = useMutation((data) => editEvent(data.id, data.values, user.currentScope["@id"]), {
+    const editEventMutation = useMutation((data) => editEvent(data.id, data.values), {
         onMutate: async (data) => {
             eventStatusToast.current = toast.loading(`Modification de l'événement en cours...`);
 
@@ -184,6 +184,10 @@ export default function Home({ isPageReady }) {
         }
     }, [user]);
 
+    useEffect(() => {
+        setActionEnabled(crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady);
+    }, [crudAllowed, addEventMutation, editEventMutation, isPageReady]);
+
     const handleClose = () => {
         setOpenModal(false);
         setSelectedEvent(null);
@@ -191,14 +195,14 @@ export default function Home({ isPageReady }) {
     };
 
     const handleNewEvent = () => {
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
+        if (actionEnabled) {
             setSelectedEvent(null);
             setOpenModal(true);
         }
     };
 
     const handleSelectEvent = (event) => {
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
+        if (actionEnabled) {
             setInitialValuesOverride(event);
             setSelectedEvent(event);
             setOpenModal(true);
@@ -206,7 +210,7 @@ export default function Home({ isPageReady }) {
     };
 
     const handleSelectSlot = ({ start, end }) => {
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
+        if (actionEnabled) {
             setInitialValuesOverride({ startDate: start, endDate: end });
             handleNewEvent();
         }
@@ -216,7 +220,7 @@ export default function Home({ isPageReady }) {
         setInitialValuesOverride(null);
         setSelectedEvent(null);
 
-        if (crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady) {
+        if (actionEnabled) {
             editEventMutation.mutate({
                 id: event["@id"],
                 values: {
@@ -263,12 +267,7 @@ export default function Home({ isPageReady }) {
                 )}
                 {crudAllowed && (
                     <React.Fragment>
-                        <Fab
-                            color="primary"
-                            className="mx-auto d-block my-5"
-                            onClick={() => handleNewEvent()}
-                            disabled={!crudAllowed || addEventMutation.isLoading || editEventMutation.isLoading || !isPageReady}
-                        >
+                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => handleNewEvent()} disabled={!actionEnabled}>
                             <AddIcon />
                         </Fab>
                         <AddEventModal
@@ -289,7 +288,6 @@ export default function Home({ isPageReady }) {
 
 export async function getServerSideProps({ req }) {
     const queryClient = new QueryClient();
-    const cookies = new Cookies(req);
     let user;
 
     try {
@@ -306,11 +304,7 @@ export async function getServerSideProps({ req }) {
 
     try {
         if (Boolean(user)) {
-            const scopes = user.scopes.filter((scope) => scope.active);
-            const cookieScope = parseInt(cookies.get("current_scope"), 10);
-            const currentScope = scopes.find((scope) => cookieScope === scope.id) ?? scopes[0];
-
-            if (isGranted(features.AGENDA_ACCESS, { ...user.data, currentScope })) {
+            if (isGranted(features.AGENDA_ACCESS, user)) {
                 await queryClient.prefetchQuery("events", () => getEventsFromServer(req.headers.cookie));
             }
         }

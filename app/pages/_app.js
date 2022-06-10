@@ -62,7 +62,7 @@ function App({ Component, pageProps }) {
                 </Head>
                 <UserHandler />
                 <ThemeProvider theme={theme}>
-                    <Layout>
+                    <Layout isPageReady={isPageReady}>
                         <Component {...pageProps} isPageReady={isPageReady} />
                     </Layout>
                 </ThemeProvider>

@@ -2,21 +2,17 @@ import { parseFromTimeZone } from "date-fns-timezone";
 
 import { axiosApiInstance } from "./axios/api";
 
-export const addEvent = async (event, currentScope) => {
-    const response = await axiosApiInstance().post("/events", {
-        ...event,
-        currentScope
-    });
+export const addEvent = async (event) => {
+    const response = await axiosApiInstance().post("/events", event);
 
     return response;
 };
 
-export const editEvent = async (id, event, currentScope) => {
+export const editEvent = async (id, event) => {
     const response = await axiosApiInstance().patch(
         id,
         {
-            ...event,
-            currentScope
+            ...event
         },
         {
             headers: {
@@ -28,10 +24,8 @@ export const editEvent = async (id, event, currentScope) => {
     return response;
 };
 
-export const deleteEvent = async (id, currentScope) => {
-    const response = await axiosApiInstance().delete(`/events/${id}`, {
-        currentScope
-    });
+export const deleteEvent = async (id) => {
+    const response = await axiosApiInstance().delete(`/events/${id}`);
 
     return response;
 };
@@ -41,8 +35,8 @@ export const getEvents = async () => {
 
     response.data["hydra:member"] = response.data["hydra:member"].map((event) => ({
         ...event,
-        startDate: parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }),
-        endDate: parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" })
+        startDate: event.startDate ? parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }) : null,
+        endDate: event.endDate ? parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" }) : null
     }));
 
     return response.data["hydra:member"];
@@ -57,8 +51,8 @@ export const getEventsFromServer = async (cookie = null) => {
 
     response.data["hydra:member"] = response.data["hydra:member"].map((event) => ({
         ...event,
-        startDate: parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }),
-        endDate: parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" })
+        startDate: event.startDate ? parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }) : null,
+        endDate: event.endDate ? parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" }) : null
     }));
 
     return response.data["hydra:member"];

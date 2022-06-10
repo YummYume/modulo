@@ -4,32 +4,46 @@ import { QueryClient, dehydrate } from "react-query";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import { useCookies } from "react-cookie";
 import Link from "next/link";
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 import { useUser } from "../hooks/useUser";
 import { getCurrentUserFromServer } from "../api/user";
 import HoverButton from "../components/HoverButton";
+import { useUserSwitchScope } from "../hooks/useUserSwitchScope";
 
-export default function ScopeChoice() {
+export default function ScopeChoice({ isPageReady }) {
     const theme = useTheme();
     const { data: user } = useUser();
-    const [cookies, setCookie] = useCookies(["current_scope"]);
     const [selectedScope, setSelectedScope] = useState(null);
+    const [isSelectingScope, setIsSelectingScope] = useState(false);
+    const router = useRouter();
+    const onMutationPostSuccess = () => {
+        router.push("/home");
+    };
+    const onMutationFailure = () => {
+        toast.error("Une erreur est survenue. Veuillez réessayer.");
+    };
+    const userSwitchScope = useUserSwitchScope(null, onMutationPostSuccess, onMutationFailure);
 
     const handleScopeSelection = (scope) => {
-        setCookie("current_scope", scope.id, {
-            path: "/",
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-            sameSite: "lax",
-            secure: true
-        });
+        if (!userSwitchScope.isLoading && isPageReady) {
+            setSelectedScope(scope);
+            setIsSelectingScope(true);
+        }
+    };
+
+    const handleScopeConfirmation = () => {
+        if (null !== selectedScope) {
+            userSwitchScope.mutate(selectedScope.id);
+        }
     };
 
     useEffect(() => {
-        if (user) {
+        if (Boolean(user) && !isSelectingScope) {
             setSelectedScope(user.currentScope); // this is required to avoid difference between ssr and csr
         } else {
             setSelectedScope(null);
@@ -100,19 +114,18 @@ export default function ScopeChoice() {
                             </div>
                         </div>
                         <div className="col-12 text-center">
-                            <Link href="/home">
-                                <a>
-                                    <HoverButton
-                                        buttonProps={{
-                                            endIcon: <ArrowForward />,
-                                            disabled: !user.currentScope,
-                                            id: "confirm-scope-choice"
-                                        }}
-                                    >
-                                        {"C'est parti !"}
-                                    </HoverButton>
-                                </a>
-                            </Link>
+                            <HoverButton
+                                buttonProps={{
+                                    endIcon: <ArrowForward />,
+                                    id: "confirm-scope-choice",
+                                    loading: userSwitchScope.isLoading,
+                                    loadingPosition: "end",
+                                    disabled: !isPageReady || null === selectedScope,
+                                    onClick: handleScopeConfirmation
+                                }}
+                            >
+                                {"C'est parti !"}
+                            </HoverButton>
                         </div>
                     </div>
                 </div>

@@ -14,7 +14,7 @@ import { useUserLogout } from "../hooks/useUserLogout";
 import UserScopeModal from "./UserScopeModal";
 import UserAvatar from "./UserAvatar";
 
-export default function UserMenu({ user, isFetched }) {
+export default function UserMenu({ user, isFetched, isPageReady }) {
     const router = useRouter();
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
     const [userScopeModalOpen, setUserScopeModalOpen] = useState(false);
@@ -101,7 +101,7 @@ export default function UserMenu({ user, isFetched }) {
                     <CircularProgress size={16} sx={{ margin: 1 }} />
                 </Menu>
             )}
-            {user && <UserScopeModal user={user} open={userScopeModalOpen} handleClose={handleUserModalClose} />}
+            {user && <UserScopeModal user={user} open={userScopeModalOpen} handleClose={handleUserModalClose} isPageReady={isPageReady} />}
         </div>
     );
 }

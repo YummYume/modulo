@@ -10,7 +10,7 @@ import UserMenu from "./UserMenu";
 
 import styles from "../styles/Navbar.module.scss";
 
-export default function Navbar() {
+export default function Navbar({ isPageReady }) {
     const { data: user, isFetched } = useUser();
     const trigger = useScrollTrigger({ disableHysteresis: true });
 
@@ -25,7 +25,7 @@ export default function Navbar() {
                         <Typography variant="h6">Modulo</Typography>
                     </a>
                 </Link>
-                <UserMenu user={user} isFetched={isFetched} />
+                <UserMenu user={user} isFetched={isFetched} isPageReady={isPageReady} />
             </Toolbar>
         </AppBar>
     );

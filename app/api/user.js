@@ -1,6 +1,6 @@
 import { axiosApiInstance } from "./axios/api";
 
-export const login = async (credentials) => {
+export const login = async (credentials, scope) => {
     const response = await axiosApiInstance().post(
         "/auth-token",
         {
@@ -8,7 +8,8 @@ export const login = async (credentials) => {
         },
         {
             params: {
-                imagineFilter: "avatar"
+                imagineFilter: "avatar",
+                scope
             },
             headers: {
                 Accept: "application/ld+json"
@@ -19,10 +20,11 @@ export const login = async (credentials) => {
     return response;
 };
 
-export const refresh = async () => {
+export const refresh = async (scope) => {
     const response = await axiosApiInstance().get("/refresh-token", {
         params: {
-            imagineFilter: "avatar"
+            imagineFilter: "avatar",
+            scope
         },
         headers: {
             Accept: "application/ld+json"
@@ -34,6 +36,20 @@ export const refresh = async () => {
 
 export const logout = async () => {
     const response = await axiosApiInstance().post("/invalidate-token");
+
+    return response;
+};
+
+export const switchScope = async (scope) => {
+    const response = await axiosApiInstance().get("/switch-scope", {
+        params: {
+            imagineFilter: "avatar",
+            scope
+        },
+        headers: {
+            Accept: "application/ld+json"
+        }
+    });
 
     return response;
 };

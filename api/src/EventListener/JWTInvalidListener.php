@@ -12,7 +12,7 @@ final class JWTInvalidListener
     {
     }
 
-    public function onJWTInvalid(JWTInvalidEvent $event)
+    public function onJWTInvalid(JWTInvalidEvent $event): void
     {
         if ('authentication_token' === $event->getRequest()->get('_route')) {
             $response = new JWTAuthenticationFailureResponse(

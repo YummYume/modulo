@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\BlameableTrait;
-use App\Entity\Traits\CurrentScopeableTrait;
 use App\Entity\Traits\ScopeableTrait;
 use App\Entity\Traits\TimestampableTrait;
 use App\Repository\EventRepository;
@@ -34,7 +33,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Event
 {
     use BlameableTrait;
-    use CurrentScopeableTrait;
     use ScopeableTrait;
     use TimestampableTrait;
 
