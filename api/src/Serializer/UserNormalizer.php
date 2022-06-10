@@ -6,8 +6,9 @@ use App\Entity\User;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-final class UserNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+final class UserNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface, NormalizerInterface
 {
     use NormalizerAwareTrait;
 

@@ -31,7 +31,7 @@ export default function Home({ isPageReady }) {
     const [defaultView, setDefaultView] = useState("month");
     const eventStatusToast = useRef(null);
     const { data: user } = useUser();
-    const { data: events } = useQuery("events", getEvents, {
+    const { data: events, refetch: refetchEvents } = useQuery("events", getEvents, {
         initialData: [],
         refetchOnWindowFocus: true,
         refetchInterval: 60000,
@@ -181,6 +181,7 @@ export default function Home({ isPageReady }) {
         if (Boolean(user)) {
             setCanView(isGranted(features.AGENDA_ACCESS, user));
             setCrudAllowed(isGranted(features.EVENT_CRUD, user));
+            refetchEvents();
         }
     }, [user]);
 
