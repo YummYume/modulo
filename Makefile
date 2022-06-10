@@ -185,11 +185,11 @@ cypress-headless:
 # PRODUCTION
 update-prod:
 	cd api && \
-	yarn install --production --no-progress && \
-	yarn build && \
 	composer require symfony/requirements-checker && \
 	composer install --no-dev --optimize-autoloader && \
 	php bin/console assets:install && \
+	yarn install --production --no-progress && \
+	yarn build && \
 	APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear && \
 	cd ../app && \
 	yarn install --production --no-progress && \
