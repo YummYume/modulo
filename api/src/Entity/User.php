@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
-    normalizationContext: ['groups' => ['get', 'get:me']],
+    normalizationContext: ['groups' => ['get:me']],
     itemOperations: [
         'get',
         'put',
@@ -37,9 +37,19 @@ use Symfony\Component\Validator\Constraints as Assert;
                 'description' => 'Get the current user.',
                 'responses' => [
                     '200' => [
-                        'description' => 'The current user\'s API fields.',
+                        'description' => 'The current user.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/User',
                                 ],
@@ -49,7 +59,71 @@ use Symfony\Component\Validator\Constraints as Assert;
                     '401' => [
                         'description' => 'The JWT is missing or invalid.',
                         'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
                             'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'switch-scope' => [
+            'method' => 'GET',
+            'path' => '/switch-scope',
+            'defaults' => ['id' => 0],
+            'openapi_context' => [
+                'summary' => 'Change the current user scope.',
+                'description' => 'Change the current user scope.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The current user.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/User',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '400' => [
+                        'description' => 'Missing or non numerical "scope" parameter.',
+                    ],
+                    '401' => [
+                        'description' => 'The JWT is missing or invalid.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'text/html' => [
                                 'schema' => [
                                     '$ref' => '#/components/schemas/MissingJWT',
                                 ],
@@ -66,24 +140,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     use BlameableTrait;
     use TimestampableTrait;
 
+    #[Groups(['get:me'])]
+    public ?Scope $currentScope = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 96, unique: true)]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     #[Assert\Regex(pattern: '/^[0-9]{9}$/', message: 'user.uuid.invalid')]
     private ?string $uuid;
 
     #[ORM\Column(type: 'string', length: 200, unique: true)]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     #[Assert\NotBlank(allowNull: false, message: 'user.email.not_blank')]
     #[Assert\Email(message: 'user.email.invalid')]
     private ?string $email;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     #[Assert\Choice(callback: 'getAllowedRoles', multipleMessage: 'user.role.choice', multiple: true)]
     private array $roles = [];
 
@@ -96,30 +173,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password;
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     private ?string $firstName;
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     private ?string $lastName;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     private ?string $description;
 
     #[ORM\Column(type: 'string', nullable: false, enumType: Gender::class)]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     private ?Gender $gender;
 
     #[ORM\OneToOne(inversedBy: 'user', targetEntity: MediaImage::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ApiProperty(iri: 'http://schema.org/image')]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     #[Assert\Valid]
     private ?MediaImage $avatar;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Scope::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
-    #[Groups(['get', 'get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     #[Assert\Valid()]
     #[Assert\Unique(message: 'user.scopes.unique', normalizer: 'trim')]
     private Collection $scopes;
@@ -247,7 +324,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[Groups(['get'])]
+    #[Groups(['get:me'])]
     public function getFullName(): string
     {
         return trim(sprintf('%s %s', $this->getFirstName(), $this->getLastName()));
@@ -277,6 +354,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getCurrentScope(): ?Scope
+    {
+        return $this->currentScope;
+    }
+
+    public function setCurrentScope(?Scope $currentScope): self
+    {
+        $this->currentScope = $currentScope;
+
+        return $this;
+    }
+
     public function getAvatar(): ?MediaImage
     {
         return $this->avatar;
@@ -295,31 +384,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         $this->plainPassword = null;
-    }
-
-    public function getApiFields(): array
-    {
-        return [
-            'uuid' => $this->uuid,
-            'email' => $this->email,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-            'fullName' => $this->getFullName(),
-            'gender' => $this->gender?->value,
-            'roles' => $this->getRoles(),
-            'scopes' => array_map(static function (Scope $scope): array {
-                return [
-                    'id' => $scope->getId(),
-                    'active' => $scope->isActive(),
-                    'role' => [
-                        'name' => $scope->getRole()->getName(),
-                    ],
-                    'structure' => [
-                        'name' => $scope->getStructure()->getName(),
-                    ],
-                ];
-            }, $this->getActiveScopes()->toArray()),
-        ];
     }
 
     /**
@@ -363,14 +427,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Scope>
      */
-    public function getInavtiveScopes(): Collection
+    public function getInactiveScopes(): Collection
     {
         return $this->scopes->filter(static fn (Scope $scope): bool => !$scope->isActive());
-    }
-
-    public function getCurrentScope(?int $currentScope): Collection
-    {
-        return $this->getActiveScopes()->filter(static fn (Scope $scope): bool => $currentScope === $scope->getId())->first();
     }
 
     public function getAllowedRoles(): array
@@ -403,5 +462,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function isValidScope(Scope $scope): bool
+    {
+        return $this->getActiveScopes()->contains($scope);
+    }
+
+    public function getDefaultScope(): ?Scope
+    {
+        return $this->getActiveScopes()->first() ?? null;
     }
 }

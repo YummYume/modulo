@@ -9,9 +9,9 @@ import Typography from "@mui/material/Typography";
 import * as yup from "yup";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
-import Cookies from "cookies";
 import Head from "next/head";
 import Image from "next/image";
+import { useCookies } from "react-cookie";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -21,6 +21,7 @@ import backgroundImage from "../public/images/scout-bg.jpg";
 export default function Home({ isPageReady }) {
     const router = useRouter();
     const queryClient = useQueryClient();
+    const [cookies, setCookie] = useCookies(["current_scope"]);
     const { data: user } = useUser();
     const onLoginSuccess = ({ data }) => {
         queryClient.setQueryData("user", data);
@@ -30,10 +31,12 @@ export default function Home({ isPageReady }) {
     const onLoginError = (error) => {
         let message = "Une erreur est survenue.";
 
-        if (401 === error.response.status) {
+        if (401 === error?.response?.status) {
             message = "Identifiants invalides.";
         } else if (403 === error.response.status) {
             message = "Votre compte n'est pas configuré pour pouvoir vous connecter. Veuillez contacter le service Modulo.";
+        } else if (409 === error.response.status) {
+            message = "Une erreur est survenue lors de l'authentification. Veuillez réessayer.";
         }
 
         toast.error(message);
@@ -44,7 +47,11 @@ export default function Home({ isPageReady }) {
         uuid: yup.string().required("Veuillez saisir votre numéro d'adhérent."),
         password: yup.string().required("Veuillez saisir votre mot de passe.")
     });
-    const handleSubmit = async (values) => loginMutation.mutate(values);
+    const handleSubmit = async (values) => {
+        const scope = cookies.current_scope;
+
+        loginMutation.mutate({ ...values, scope: scope ?? null });
+    };
 
     return (
         <React.Fragment>
@@ -128,25 +135,36 @@ export default function Home({ isPageReady }) {
     );
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, res }) {
     const queryClient = new QueryClient();
-    const cookies = new Cookies(req);
     let allowUser = false;
     let user = null;
+    let cookies = req?.headers?.cookie;
 
-    try {
-        allowUser = "true" === cookies.get("login_allow_user");
+    if (Boolean(cookies)) {
+        try {
+            cookies = cookies.replaceAll(" ", "").split(";");
+            allowUser = cookies.includes("login_allow_user=true");
 
-        Cookies.set("login_allow_user");
-    } catch (e) {
-        allowUser = false;
+            if (allowUser) {
+                res.setHeader("Set-Cookie", [
+                    `BEARER=; Path=/; Domain=${process.env.NEXT_PUBLIC_HOST_DOMAIN}; Max-Age=0;`,
+                    `refresh_token=; Path=/; Domain=${process.env.NEXT_PUBLIC_HOST_DOMAIN}; Max-Age=0;`
+                ]);
+            }
+        } catch (e) {
+            console.error(e);
+            allowUser = false;
+        }
     }
 
     try {
         user = await queryClient.fetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
-    } catch (e) {}
+    } catch (e) {
+        // TODO: log error
+    }
 
-    if (user && !allowUser) {
+    if (Boolean(user) && !allowUser) {
         return {
             redirect: {
                 permanent: false,

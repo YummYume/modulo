@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { dehydrate, QueryClient, useQuery, useMutation } from "react-query";
+import React, { useState, useEffect, useRef } from "react";
+import { dehydrate, QueryClient, useQuery, useMutation, useQueryClient } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
@@ -12,22 +12,31 @@ import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import fr from "date-fns/locale/fr";
 import parse from "date-fns/parse";
-import { getEvents } from "../api/event";
+import { toast, Flip } from "react-toastify";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { isGranted, features } from "../services/user";
+import { getEvents, getEventsFromServer, addEvent, editEvent } from "../api/event";
 import AddEventModal from "../components/AddEventModal";
-import editEvent from "../api/event";
 
-export default function Home() {
+export default function Home({ isPageReady }) {
+    const queryClient = useQueryClient();
     const [openModal, setOpenModal] = useState(false);
-    const { data: events, refetch } = useQuery("events", getEvents, {
-        initialData: [],
-        refetchOnWindowFocus: false
-    });
+    const [canView, setCanView] = useState(false);
+    const [crudAllowed, setCrudAllowed] = useState(false);
+    const [actionEnabled, setActionEnabled] = useState(false);
     const [initialValuesOverride, setInitialValuesOverride] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [defaultView, setDefaultView] = useState("month");
+    const eventStatusToast = useRef(null);
     const { data: user } = useUser();
+    const { data: events } = useQuery("events", getEvents, {
+        initialData: [],
+        refetchOnWindowFocus: true,
+        refetchInterval: 60000,
+        enabled: canView
+    });
     const DnDCalendar = withDragAndDrop(Calendar);
     const messages = {
         date: "Date",
@@ -44,10 +53,8 @@ export default function Home() {
         tomorrow: "Demain",
         today: "Aujourd'hui",
         agenda: "Agenda",
-
         noEventsInRange: "Il n'y a pas d'événements dans cette période.",
-
-        showMore: (total) => `+${total} plus`
+        showMore: (total) => `+${total} événement${total > 1 ? "s" : ""}`
     };
     const locales = {
         fr
@@ -59,63 +66,173 @@ export default function Home() {
         getDay,
         locales
     });
-    const [formMode, setFormMode] = useState();
+    const addEventMutation = useMutation((values) => addEvent(values), {
+        onMutate: () => {
+            eventStatusToast.current = toast.loading(`Ajout de l'événement en cours...`);
+        },
+        onSuccess: ({ data }) => {
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: `Evénement ${data.name} ajouté avec succès.`,
+                    type: toast.TYPE.SUCCESS,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.success(`Evénement ${data.name} ajouté avec succès.`);
+            }
 
-    const editEventMutation = useMutation(
-        (values) =>
-            editEvent(
-                values.id,
-                values.name,
-                values.description,
-                values.active,
-                values.startDate,
-                values.endDate,
-                values.categories,
-                values.participants
-            ),
-        {
-            onSuccess: () => {
-                refetch();
-                toast.success("Evénement modifié !");
-            },
+            queryClient.setQueryData("events", (events) => [...events, data]);
+            handleClose();
+        },
+        onError: (error) => {
+            let message = "Une erreur est survenue.";
 
-            onError: (error) => {
-                if (422 === error?.response?.status) {
-                    toast.error("Une erreur est survenue lors de la modification.");
-                } else {
-                    toast.error("Une erreur est survenue.");
-                }
+            if (422 === error?.response?.status) {
+                message = "Une erreur est survenue lors de l'ajout.";
+            } else if (403 === error?.response?.status) {
+                message = "Vous n'êtes pas autorisé à ajouter un événement.";
+            }
+
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: message,
+                    type: toast.TYPE.ERROR,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.error(message);
             }
         }
-    );
+    });
+    const editEventMutation = useMutation((data) => editEvent(data.id, data.values), {
+        onMutate: async (data) => {
+            eventStatusToast.current = toast.loading(`Modification de l'événement en cours...`);
+
+            await queryClient.cancelQueries("events");
+
+            const previousEvents = queryClient.getQueryData("events");
+
+            queryClient.setQueryData("events", (currentEvent) =>
+                currentEvent.map((event) => (event["@id"] === data?.id ? { ...event, ...data?.values } : event))
+            );
+
+            return previousEvents;
+        },
+        onSuccess: ({ data }) => {
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: `Evénement ${data.name} modifié avec succès.`,
+                    type: toast.TYPE.SUCCESS,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.success(`Evénement ${data.name} modifié avec succès.`);
+            }
+
+            handleClose();
+        },
+        onError: (error, variables, context) => {
+            queryClient.setQueryData("events", context.previousEvents);
+
+            let message = "Une erreur est survenue.";
+
+            if (422 === error?.response?.status) {
+                message = "Une erreur est survenue lors de la modification.";
+            } else if (403 === error?.response?.status) {
+                message = "Vous n'êtes pas autorisé à modifier cet événement.";
+            }
+
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: message,
+                    type: toast.TYPE.ERROR,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.error(message);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries("events");
+        }
+    });
+
+    useEffect(() => {
+        if (Boolean(user)) {
+            setCanView(isGranted(features.AGENDA_ACCESS, user));
+            setCrudAllowed(isGranted(features.EVENT_CRUD, user));
+        }
+    }, [user]);
+
+    useEffect(() => {
+        setActionEnabled(crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady);
+    }, [crudAllowed, addEventMutation, editEventMutation, isPageReady]);
 
     const handleClose = () => {
         setOpenModal(false);
+        setSelectedEvent(null);
         setInitialValuesOverride(null);
     };
 
     const handleNewEvent = () => {
-        setFormMode("add");
-        setOpenModal(true);
+        if (actionEnabled) {
+            setSelectedEvent(null);
+            setOpenModal(true);
+        }
     };
 
     const handleSelectEvent = (event) => {
-        setInitialValuesOverride(event);
-        setFormMode("edit");
-        setOpenModal(true);
+        if (actionEnabled) {
+            setInitialValuesOverride(event);
+            setSelectedEvent(event);
+            setOpenModal(true);
+        }
     };
 
     const handleSelectSlot = ({ start, end }) => {
-        handleNewEvent();
-        setInitialValuesOverride({ startDate: start, endDate: end });
+        if (actionEnabled) {
+            setInitialValuesOverride({ startDate: start, endDate: end });
+            handleNewEvent();
+        }
     };
 
-    const updateEvent = ({ event: { id }, end, start }) => {
-        editEventMutation.mutate({
-            endDate: end,
-            id,
-            startDate: start
-        });
+    const updateEvent = ({ event, end, start }) => {
+        setInitialValuesOverride(null);
+        setSelectedEvent(null);
+
+        if (actionEnabled) {
+            editEventMutation.mutate({
+                id: event["@id"],
+                values: {
+                    endDate: end,
+                    startDate: start
+                }
+            });
+        }
+    };
+
+    const handleViewChange = (view) => {
+        setDefaultView(view);
     };
 
     return (
@@ -128,37 +245,40 @@ export default function Home() {
                 <Typography variant="h2" component="h1" className="text-center text-break my-5">
                     Accueil Connecté
                 </Typography>
-                {isGranted(features.AGENDA_ACCESS, user) && (
+                {canView && (
+                    <DnDCalendar
+                        messages={messages}
+                        localizer={localizer}
+                        events={events}
+                        startAccessor="startDate"
+                        endAccessor="endDate"
+                        titleAccessor="name"
+                        selectable
+                        onSelectSlot={handleSelectSlot}
+                        onSelectEvent={handleSelectEvent}
+                        onEventDrop={updateEvent}
+                        resizable
+                        onEventResize={updateEvent}
+                        culture={"fr"}
+                        style={{ height: 500 }}
+                        onView={handleViewChange}
+                        defaultView={defaultView}
+                    />
+                )}
+                {crudAllowed && (
                     <React.Fragment>
-                        <DnDCalendar
-                            messages={messages}
-                            localizer={localizer}
-                            events={events}
-                            startAccessor="startDate"
-                            endAccessor="endDate"
-                            titleAccessor="name"
-                            selectable
-                            onSelectSlot={handleSelectSlot}
-                            onSelectEvent={handleSelectEvent}
-                            onEventDrop={updateEvent}
-                            resizable
-                            onEventResize={updateEvent}
-                            culture={"fr"}
-                            style={{ height: 500 }}
-                        />
-                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => handleNewEvent()}>
+                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => handleNewEvent()} disabled={!actionEnabled}>
                             <AddIcon />
                         </Fab>
-                        {openModal && (
-                            <AddEventModal
-                                editEventMutation={editEventMutation}
-                                handleClose={handleClose}
-                                initialValuesOverride={initialValuesOverride}
-                                mode={formMode}
-                                refetch={refetch}
-                                user={user}
-                            />
-                        )}
+                        <AddEventModal
+                            addEventMutation={addEventMutation}
+                            editEventMutation={editEventMutation}
+                            handleClose={handleClose}
+                            initialValuesOverride={initialValuesOverride}
+                            open={openModal}
+                            user={user}
+                            selectedEvent={selectedEvent}
+                        />
                     </React.Fragment>
                 )}
             </div>
@@ -168,9 +288,10 @@ export default function Home() {
 
 export async function getServerSideProps({ req }) {
     const queryClient = new QueryClient();
+    let user;
 
     try {
-        await queryClient.fetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
+        user = await queryClient.fetchQuery("user", () => getCurrentUserFromServer(req.headers.cookie));
     } catch (error) {
         return {
             redirect: {
@@ -180,6 +301,17 @@ export async function getServerSideProps({ req }) {
             props: {}
         };
     }
+
+    try {
+        if (Boolean(user)) {
+            if (isGranted(features.AGENDA_ACCESS, user)) {
+                await queryClient.prefetchQuery("events", () => getEventsFromServer(req.headers.cookie));
+            }
+        }
+    } catch (error) {
+        // TODO error logging
+    }
+
     return {
         props: {
             dehydratedState: dehydrate(queryClient)

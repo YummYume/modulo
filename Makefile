@@ -67,7 +67,7 @@ ssh-api:
 	$(EXECAPI) sh
 
 ssh-app:
-	$(EXECAPP) sh
+	$(EXECAPP) bash
 
 ssh-nginx:
 	$(EXECNGINX) bash
@@ -91,23 +91,21 @@ yarn-api:
 
 yarn-api-compile:
 	make yarn-api
-ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
-	if exist api\public\bundles rmdir api\public\bundles /S /Q
-else
-	rm -rf api\public\bundles
-endif
-	$(EXECAPI) php bin/console assets:install
+	make assets-api
 	$(EXECAPI) yarn dev
 
 yarn-api-watch:
 	make yarn-api
+	make assets-api
+	$(EXECAPI) yarn watch
+
+assets-api:
 ifeq ($(OS)$(SHELL),Windows_NTsh.exe)
 	if exist api\public\bundles rmdir api\public\bundles /S /Q
 else
 	rm -rf api\public\bundles
 endif
 	$(EXECAPI) php bin/console assets:install
-	$(EXECAPI) yarn watch
 
 composer-sync: composer sync-dependencies-api
 

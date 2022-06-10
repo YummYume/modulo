@@ -4,12 +4,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\Category;
 use App\Repository\RoleRepository;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class CategoryCrudController extends AbstractCrudController
@@ -40,8 +40,18 @@ class CategoryCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name', 'category.name'),
-            TextField::new('description', 'category.description'),
-            AssociationField::new('invitedRoles', 'category.invitedRoles'),
+            TextareaField::new('description', 'category.description'),
+            AssociationField::new('invitedRoles', 'category.invited_roles')
+                ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
+                    $category = $this->getContext()->getEntity()->getInstance();
+
+                    return $qb
+                        ->andWhere($qb->expr()->isMemberOf(':category', 'entity.categories'))
+                        ->setParameter('category', $category)
+                    ;
+                })
+                ->setFormTypeOption('help', 'category.invited_roles.help')
+                ->hideWhenCreating(),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
@@ -51,12 +61,5 @@ class CategoryCrudController extends AbstractCrudController
             TextField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
-    }
-
-    public function configureActions(Actions $actions): Actions
-    {
-        return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-        ;
     }
 }

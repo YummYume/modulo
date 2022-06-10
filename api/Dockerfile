@@ -23,8 +23,11 @@ RUN mkdir -p var/cache/prod var/cache/dev var/cache/test var/log \
    && chown -R www-data:www-data var/ \
    && chmod -R ug+rwX var/
 
-COPY ./api/package.json ./api/yarn.lock ./
+COPY ./api .
 COPY ./nginx/php.ini $PHP_INI_DIR/conf.d/
+
+# This is for Symfony UX Chart.js to stop crying about missing files in the vendor directory
+RUN composer install -n
 
 RUN apk update && apk add -u yarn
 RUN yarn install

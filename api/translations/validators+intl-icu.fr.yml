@@ -66,6 +66,7 @@ event.description.blank: Veuillez saisir une description.
 event.start_date.type: Veuillez saisir une date de début valide.
 event.end_date.type: Veuillez saisir une date de fin valide.
 event.end_date.invalid: La date de fin doit être postérieure à la date de début.
+event.participants.min: Veuillez sélectionner au moins un participant.
 
 ### Commands
 command.dispatcher.invalid: The command's attribute "{attribute}" is invalid ({message}).

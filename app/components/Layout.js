@@ -17,7 +17,7 @@ export default function Layout({ children, isPageReady }) {
     return (
         <div className={`d-flex flex-column justify-content-between ${styles.app}`}>
             <NextNProgress color={theme.palette.primary.light} options={{ showSpinner: false }} />
-            <Navbar />
+            <Navbar isPageReady={isPageReady} />
             <main className="d-flex flex-grow-1">{children}</main>
             <Footer />
             <ToastContainer

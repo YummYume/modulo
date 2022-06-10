@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
@@ -10,27 +10,58 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import { useCookies } from "react-cookie";
+import { useRouter } from "next/router";
+import LoadingButton from "@mui/lab/LoadingButton";
+import ArrowForward from "@mui/icons-material/ArrowForward";
 
-export default function UserScopeModal({ user, open, handleClose }) {
-    const [cookies, setCookie] = useCookies(["current_scope"]);
+import { useUserSwitchScope } from "../hooks/useUserSwitchScope";
 
-    const handleScopeSelection = (scope) => {
-        setCookie("current_scope", scope.id, {
-            path: "/",
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-            sameSite: "lax",
-            secure: true
-        });
+export default function UserScopeModal({ user, open, handleClose, isPageReady }) {
+    const [selectedScope, setSelectedScope] = useState(null);
+    const router = useRouter();
+    const onMutationPostSuccess = async () => {
+        if (router.pathname !== "/home") {
+            await router.push("/home");
+        }
 
         handleClose();
     };
+    const onMutationFailure = () => {
+        toast.error("Une erreur est survenue. Veuillez réessayer.");
+    };
+    const userSwitchScope = useUserSwitchScope(null, onMutationPostSuccess, onMutationFailure);
+
+    const handleScopeSelection = (scope) => {
+        if (!userSwitchScope.isLoading && isPageReady) {
+            setSelectedScope(scope);
+        }
+    };
+
+    const handleScopeConfirmation = () => {
+        if (null !== selectedScope) {
+            userSwitchScope.mutate(selectedScope.id);
+        }
+    };
+
+    const handleOnClose = () => {
+        if (!userSwitchScope.isLoading && isPageReady) {
+            handleClose();
+        }
+    };
+
+    useEffect(() => {
+        if (Boolean(user)) {
+            setSelectedScope(user.currentScope); // this is required to avoid difference between ssr and csr
+        } else {
+            setSelectedScope(null);
+        }
+    }, [user]);
 
     return (
         <Modal
             aria-labelledby="user-scopes-title"
             open={open}
-            onClose={handleClose}
+            onClose={handleOnClose}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -57,7 +88,7 @@ export default function UserScopeModal({ user, open, handleClose }) {
                         {user.scopes.map((scope) => (
                             <ListItem disablePadding onClick={() => handleScopeSelection(scope)} key={scope.id}>
                                 <ListItemButton>
-                                    {user.currentScope?.id === scope.id && (
+                                    {selectedScope?.id === scope.id && (
                                         <ListItemIcon>
                                             <CheckIcon sx={{ color: "primary.text.main" }} />
                                         </ListItemIcon>
@@ -67,6 +98,23 @@ export default function UserScopeModal({ user, open, handleClose }) {
                             </ListItem>
                         ))}
                     </List>
+                    <div className="text-center">
+                        <LoadingButton
+                            variant="text"
+                            endIcon={<ArrowForward />}
+                            id="confirm-scope-choice"
+                            loading={userSwitchScope.isLoading}
+                            loadingPosition="end"
+                            disabled={!isPageReady || null === selectedScope}
+                            onClick={handleScopeConfirmation}
+                            size="large"
+                            sx={{
+                                color: "primary.text.main"
+                            }}
+                        >
+                            Changer de fonction
+                        </LoadingButton>
+                    </div>
                 </Box>
             </Fade>
         </Modal>
