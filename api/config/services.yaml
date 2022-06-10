@@ -86,7 +86,3 @@ services:
         tags:
             - name: "doctrine.event_listener"
               event: "postUpdate"
-
-    App\Serializer\UserNormalizer:
-        tags:
-            - { name: 'serializer.normalizer', priority: 100 }
