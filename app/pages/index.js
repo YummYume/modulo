@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 import Head from "next/head";
 import Image from "next/image";
 import { useCookies } from "react-cookie";
-import { getCookie, removeCookies } from "cookies-next";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";

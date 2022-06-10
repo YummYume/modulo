@@ -84,8 +84,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             'path' => '/switch-scope',
             'defaults' => ['id' => 0],
             'openapi_context' => [
-                'summary' => 'Get the current user.',
-                'description' => 'Get the current user.',
+                'summary' => 'Change the current user scope.',
+                'description' => 'Change the current user scope.',
                 'responses' => [
                     '200' => [
                         'description' => 'The current user.',
@@ -106,6 +106,9 @@ use Symfony\Component\Validator\Constraints as Assert;
                                 ],
                             ],
                         ],
+                    ],
+                    '400' => [
+                        'description' => 'Missing or non numerical "scope" parameter.',
                     ],
                     '401' => [
                         'description' => 'The JWT is missing or invalid.',

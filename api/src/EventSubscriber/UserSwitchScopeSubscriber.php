@@ -37,23 +37,24 @@ final class UserSwitchScopeSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // Contains the CORS headers
+        $response = $event->getResponse();
         $scope = $request->get('scope');
 
         if (null === $scope) {
-            $event->setResponse(new JsonResponse(['error' => 'Missing "scope" parameter.', 'code' => 400], 400));
+            $event->setResponse(new JsonResponse(['error' => 'Missing "scope" parameter.', 'code' => 400], 400, $response->headers->all()));
 
             return;
         } elseif (!is_numeric($scope)) {
             $event->setResponse(new JsonResponse(
                 ['error' => 'The "scope" parameter must be a numeric corresponding to the id of the desired scope.', 'code' => 400],
-                400
+                400,
+                $response->headers->all()
             ));
 
             return;
         }
 
-        // Contains the CORS headers
-        $response = $event->getResponse();
         $authResponse = $this->authenticationSuccessHandler->handleAuthenticationSuccess($user);
         $cookies = $authResponse->headers->getCookies();
 
