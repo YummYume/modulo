@@ -13,6 +13,7 @@ import getDay from "date-fns/getDay";
 import fr from "date-fns/locale/fr";
 import parse from "date-fns/parse";
 import { toast, Flip } from "react-toastify";
+import { parseFromTimeZone } from "date-fns-timezone/dist/parseFromTimeZone";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -35,7 +36,14 @@ export default function Home({ isPageReady }) {
         initialData: [],
         refetchOnWindowFocus: true,
         refetchInterval: 60000,
-        enabled: canView
+        enabled: canView,
+        select: (data) => {
+            return data.map((event) => ({
+                ...event,
+                startDate: event.startDate ? parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }) : null,
+                endDate: event.endDate ? parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" }) : null
+            }));
+        }
     });
     const DnDCalendar = withDragAndDrop(Calendar);
     const messages = {
@@ -129,6 +137,10 @@ export default function Home({ isPageReady }) {
             return previousEvents;
         },
         onSuccess: ({ data }) => {
+            queryClient.setQueryData("events", (currentEvent) =>
+                currentEvent.map((event) => (event["@id"] === data?.id ? { ...event, ...data?.values } : event))
+            );
+
             if (toast.isActive(eventStatusToast.current)) {
                 toast.update(eventStatusToast.current, {
                     render: `Evénement ${data.name} modifié avec succès.`,

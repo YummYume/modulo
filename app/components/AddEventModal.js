@@ -103,7 +103,7 @@ export default function AddEventModal({
 
     return (
         <Modal open={open} onClose={handleClose} className="d-flex justify-content-center align-items-center">
-            <Box backgroundColor="box.index.backgroundLogin" maxWidth="90%" width="35rem" className="p-4 rounded">
+            <Box backgroundColor="box.index.backgroundLogin" className="rounded p-4 col-11 col-sm-10 col-md-8 col-lg-7 col-xl-6">
                 <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize>
                     {({ isSubmitting, values, touched, errors, handleChange, handleBlur, setFieldValue, setFieldTouched }) => (
                         <Form>

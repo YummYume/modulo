@@ -1,5 +1,3 @@
-import { parseFromTimeZone } from "date-fns-timezone";
-
 import { axiosApiInstance } from "./axios/api";
 
 export const addEvent = async (event) => {
@@ -33,12 +31,6 @@ export const deleteEvent = async (id) => {
 export const getEvents = async () => {
     const response = await axiosApiInstance().get("/events");
 
-    response.data["hydra:member"] = response.data["hydra:member"].map((event) => ({
-        ...event,
-        startDate: event.startDate ? parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }) : null,
-        endDate: event.endDate ? parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" }) : null
-    }));
-
     return response.data["hydra:member"];
 };
 
@@ -48,12 +40,6 @@ export const getEventsFromServer = async (cookie = null) => {
             Cookie: cookie
         }
     });
-
-    response.data["hydra:member"] = response.data["hydra:member"].map((event) => ({
-        ...event,
-        startDate: event.startDate ? parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }) : null,
-        endDate: event.endDate ? parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" }) : null
-    }));
 
     return response.data["hydra:member"];
 };
