@@ -2,6 +2,7 @@
 
 const { createSecureHeaders } = require("next-secure-headers");
 const withNextBundleAnalyzer = require("@next/bundle-analyzer")({ enabled: "true" === process.env.ANALYZE });
+const path = require("path");
 
 const srcSubDomain = `*.${process.env.NEXT_PUBLIC_HOST_DOMAIN}`;
 const imageSubDomains = process.env.NEXT_PUBLIC_API_HOSTNAME;
@@ -46,6 +47,14 @@ const nextConfig = {
         config.watchOptions = {
             poll: 1000,
             aggregateTimeout: 300
+        };
+
+        return config;
+    },
+    webpack: (config) => {
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            "timezone-support$": path.join(__dirname, "node_modules/timezone-support/dist/index-2012-2022.js")
         };
 
         return config;
