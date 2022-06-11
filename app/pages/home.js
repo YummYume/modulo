@@ -6,7 +6,6 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import format from "date-fns/format";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
@@ -14,6 +13,8 @@ import fr from "date-fns/locale/fr";
 import parse from "date-fns/parse";
 import { toast, Flip } from "react-toastify";
 import { zonedTimeToUtc } from "date-fns-tz";
+
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -30,11 +31,12 @@ export default function Home({ isPageReady }) {
     const [initialValuesOverride, setInitialValuesOverride] = useState(null);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [defaultView, setDefaultView] = useState("month");
+    const [defaultDate, setDefaultDate] = useState(new Date());
     const eventStatusToast = useRef(null);
     const { data: user } = useUser();
     const { data: events, refetch: refetchEvents } = useQuery("events", getEvents, {
         initialData: [],
-        refetchOnWindowFocus: true,
+        refetchOnWindowFocus: false,
         refetchInterval: 60000,
         enabled: canView,
         select: (data) => {
@@ -207,8 +209,9 @@ export default function Home({ isPageReady }) {
         setInitialValuesOverride(null);
     };
 
-    const handleNewEvent = () => {
+    const handleNewEvent = (date = null) => {
         if (actionEnabled) {
+            date && setDefaultDate(date);
             setSelectedEvent(null);
             setOpenModal(true);
         }
@@ -216,6 +219,7 @@ export default function Home({ isPageReady }) {
 
     const handleSelectEvent = (event) => {
         if (actionEnabled) {
+            event?.startDate && setDefaultDate(event.startDate);
             setInitialValuesOverride(event);
             setSelectedEvent(event);
             setOpenModal(true);
@@ -225,7 +229,7 @@ export default function Home({ isPageReady }) {
     const handleSelectSlot = ({ start, end }) => {
         if (actionEnabled) {
             setInitialValuesOverride({ startDate: start, endDate: end });
-            handleNewEvent();
+            handleNewEvent(start);
         }
     };
 
@@ -234,6 +238,7 @@ export default function Home({ isPageReady }) {
         setSelectedEvent(null);
 
         if (actionEnabled) {
+            setDefaultDate(start);
             editEventMutation.mutate({
                 id: event["@id"],
                 values: {
@@ -244,7 +249,7 @@ export default function Home({ isPageReady }) {
         }
     };
 
-    const handleViewChange = (view) => {
+    const handleViewChange = (view, date) => {
         setDefaultView(view);
     };
 
@@ -276,6 +281,7 @@ export default function Home({ isPageReady }) {
                         style={{ height: 500 }}
                         onView={handleViewChange}
                         defaultView={defaultView}
+                        defaultDate={defaultDate}
                     />
                 )}
                 {crudAllowed && (
