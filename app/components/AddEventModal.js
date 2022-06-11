@@ -108,7 +108,7 @@ export default function AddEventModal({
                     {({ isSubmitting, values, touched, errors, handleChange, handleBlur, setFieldValue, setFieldTouched }) => (
                         <Form>
                             <Typography variant="h4" className="text-center my-4">
-                                Créer un événement
+                                {selectedEvent ? "Modifier un événement" : "Créer un événement"}
                             </Typography>
                             <TextField
                                 id="name"
@@ -256,6 +256,7 @@ export default function AddEventModal({
                                             value={values.active}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
+                                            checked={values.active}
                                             error={touched.active && !!errors.active}
                                         />
                                     }
