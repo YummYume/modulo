@@ -13,7 +13,7 @@ import getDay from "date-fns/getDay";
 import fr from "date-fns/locale/fr";
 import parse from "date-fns/parse";
 import { toast, Flip } from "react-toastify";
-import { parseFromTimeZone } from "date-fns-timezone/dist/parseFromTimeZone";
+import { zonedTimeToUtc } from "date-fns-tz";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -40,8 +40,8 @@ export default function Home({ isPageReady }) {
         select: (data) => {
             return data.map((event) => ({
                 ...event,
-                startDate: event.startDate ? parseFromTimeZone(event.startDate, { timeZone: "Etc/Universal" }) : null,
-                endDate: event.endDate ? parseFromTimeZone(event.endDate, { timeZone: "Etc/Universal" }) : null
+                startDate: event.startDate ? zonedTimeToUtc(event.startDate, "Etc/Universal") : null,
+                endDate: event.endDate ? zonedTimeToUtc(event.endDate, "Etc/Universal") : null
             }));
         }
     });
