@@ -14,6 +14,7 @@ final class CreateMediaImageAction extends AbstractController
     public function __invoke(Request $request): MediaImage
     {
         $uploadedImage = $request->files->get('image');
+
         if (!$uploadedImage) {
             throw new BadRequestHttpException('Parameter "image" is required.');
         }

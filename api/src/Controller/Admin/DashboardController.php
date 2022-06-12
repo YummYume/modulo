@@ -2,10 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\AgeSection;
 use App\Entity\Category;
 use App\Entity\Event;
 use App\Entity\Role;
 use App\Entity\Scope;
+use App\Entity\Structure;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
@@ -30,7 +32,7 @@ use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
-class DashboardController extends AbstractDashboardController
+final class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         private TranslatorInterface $translator,
@@ -184,10 +186,12 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('view.admin.dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('view.admin.scope', 'fas fa-users-cog', Scope::class);
-        yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list-ul', Category::class);
         yield MenuItem::linkToCrud('view.admin.role', 'fas fa-user-tag', Role::class);
+        yield MenuItem::linkToCrud('view.admin.structure', 'fas fa-people-roof', Structure::class);
         yield MenuItem::linkToCrud('view.admin.user', 'fas fa-users', User::class);
         yield MenuItem::linkToCrud('view.admin.event', 'fas fa-calendar-alt', Event::class);
+        yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list-ul', Category::class);
+        yield MenuItem::linkToCrud('view.admin.age_section', 'fas fa-portrait', AgeSection::class);
     }
 
     public function configureUserMenu(UserInterface|User $user): UserMenu

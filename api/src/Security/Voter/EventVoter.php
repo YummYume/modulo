@@ -5,68 +5,129 @@ namespace App\Security\Voter;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Enum\Feature;
+use App\Enum\Visibility;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+// Heavily commented Voter to not get lost with the scope permissions.
+// This Voter obviously only applies for the API and not the admin.
 final class EventVoter extends Voter
 {
     public const VIEW = 'EVENT_VIEW';
     public const ADD = 'EVENT_ADD';
     public const EDIT = 'EVENT_EDIT';
     public const DELETE = 'EVENT_DELETE';
+    public const ADD_PARTICIPANTS = 'EVENT_ADD_PARTICIPANTS';
+    public const ADD_ROLES = 'EVENT_ADD_ROLES';
+    public const SET_VISIBILITY = 'EVENT_SET_VISIBILITY';
 
+    // Can the user view an event?
     public function canView(User $user, Event $event): bool
     {
+        // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        if (null === $scope || !$user->isValidScope($scope)) {
+        // If no access to the agenda, then no access to the event
+        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
             return false;
         }
 
-        if ($scope !== $event->getScope()) {
-            return false;
+        // If the user created the event, or has the same structure as the event, or is part of the participants
+        if ($event->getCreatedBy() === $user
+            || $event->getScope()->getStructure() === $scope->getStructure()
+            || $event->getParticipants()->contains($user)
+            || $event->getScope()->getStructure()->getParentStructure() === $scope->getStructure()
+            || $event->getScope()->getStructure()->getChildStructures()->contains($scope->getStructure())
+        ) {
+            // If the event is a child structure but the scope cannot see child events, then no access
+            if ($event->getScope()->getStructure()->getParentStructure() === $scope->getStructure() && !$scope->hasFeature(Feature::SEE_CHILD_EVENTS)) {
+                return false;
+            }
+
+            // If the visibility is public, then the user can view the event
+            // If the visibility is restricted, then the user can view the event if he is part of the participants or is the creator
+            // If the visibility is private, then the user can view the event if he is the creator
+            return match ($event->getVisibility()) {
+                Visibility::PUBLIC_ACCESS => true,
+                Visibility::RESTRICTED_ACCESS => $event->getCreatedBy() === $user
+                    || $event->getParticipants()->contains($user)
+                    || $event->getScope()->getStructure() === $scope->getStructure(),
+                Visibility::PRIVATE_ACCESS => $event->getCreatedBy() === $user,
+                default => false,
+            };
         }
 
-        return $scope->hasFeature(Feature::AGENDA_ACCESS);
+        // Always return false by default
+        return false;
     }
 
+    // Can the user add an event?
     public function canAdd(User $user, Event $event): bool
     {
+        // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        if (null === $scope || !$user->isValidScope($scope)) {
-            return false;
-        }
-
-        return $scope->hasFeature(Feature::EVENT_CRUD);
+        // Can add an event if access to the agenda and if permission to add events
+        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::EVENT_CRUD);
     }
 
+    // Can the user edit an event?
     public function canEdit(User $user, Event $event): bool
     {
+        // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        if (null === $scope || !$user->isValidScope($scope)) {
-            return false;
-        }
-
-        return $scope->hasFeature(Feature::EVENT_CRUD);
+        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::EVENT_CRUD);
     }
 
+    // Can the user delete an event?
     public function canDelete(User $user, Event $event): bool
     {
+        // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        if (null === $scope || !$user->isValidScope($scope)) {
-            return false;
-        }
-
-        return $scope->hasFeature(Feature::EVENT_CRUD);
+        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::EVENT_CRUD);
     }
 
-    protected function supports(string $attribute, $subject): bool
+    // Can the user add participants to an event?
+    public function canAddParticipants(User $user, Event $event): bool
     {
-        return \in_array($attribute, [self::VIEW, self::ADD, self::EDIT, self::DELETE], true) && $subject instanceof Event;
+        // The scope currently used by the user
+        $scope = $user->getCurrentScope();
+
+        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::NOMINATIVE_INVITATIONS);
+    }
+
+    // Can the user add roles to an event?
+    public function canAddRoles(User $user, Event $event): bool
+    {
+        // The scope currently used by the user
+        $scope = $user->getCurrentScope();
+
+        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::CUSTOMIZE_GUEST_FUNCTIONS);
+    }
+
+    // Can the user change the visibility of an event?
+    public function canSetVisibility(User $user, Event $event): bool
+    {
+        // The scope currently used by the user
+        $scope = $user->getCurrentScope();
+
+        return $scope->hasFeature(Feature::AGENDA_ACCESS) && ($scope->hasFeature(Feature::CUSTOMIZE_EVENT_VISIBILITY) || $event->getCreatedBy() === $user);
+    }
+
+    protected function supports(string $attribute, mixed $subject): bool
+    {
+        return \in_array($attribute, [
+            self::VIEW,
+            self::ADD,
+            self::EDIT,
+            self::DELETE,
+            self::ADD_PARTICIPANTS,
+            self::ADD_ROLES,
+            self::SET_VISIBILITY,
+        ], true) && $subject instanceof Event;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -77,23 +138,19 @@ final class EventVoter extends Voter
             return false;
         }
 
-        switch ($attribute) {
-            case self::VIEW:
-                return $this->canView($user, $subject);
-                break;
-            case self::ADD:
-                return $this->canAdd($user, $subject);
-                break;
-            case self::EDIT:
-                return $this->canEdit($user, $subject);
-                break;
-            case self::DELETE:
-                return $this->canDelete($user, $subject);
-                break;
-            default:
-                throw new \LogicException('This code should not be reached.');
+        if (null === $user->getCurrentScope() || !$user->isValidScope($user->getCurrentScope())) {
+            return false;
         }
 
-        return false;
+        return match ($attribute) {
+            self::VIEW => $this->canView($user, $subject),
+            self::ADD => $this->canAdd($user, $subject),
+            self::EDIT => $this->canEdit($user, $subject),
+            self::DELETE => $this->canDelete($user, $subject),
+            self::ADD_PARTICIPANTS => $this->canAddParticipants($user, $subject),
+            self::ADD_ROLES => $this->canAddRoles($user, $subject),
+            self::SET_VISIBILITY => $this->canSetVisibility($user, $subject),
+            default => false,
+        };
     }
 }

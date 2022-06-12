@@ -30,16 +30,20 @@ class Structure
     #[ORM\Column(type: 'string', length: 10)]
     private ?string $code;
 
-    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'childStructures')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Structure $parentStructure = null;
 
     #[ORM\OneToMany(mappedBy: 'structure', targetEntity: Scope::class, orphanRemoval: true)]
     private Collection $scopes;
 
+    #[ORM\OneToMany(mappedBy: 'parentStructure', targetEntity: self::class)]
+    private Collection $childStructures;
+
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
+        $this->childStructures = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -112,6 +116,36 @@ class Structure
             // set the owning side to null (unless already changed)
             if ($scope->getStructure() === $this) {
                 $scope->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getChildStructures(): Collection
+    {
+        return $this->childStructures;
+    }
+
+    public function addChildStructure(self $childStructure): self
+    {
+        if (!$this->childStructures->contains($childStructure)) {
+            $this->childStructures[] = $childStructure;
+            $childStructure->setParentStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChildStructure(self $childStructure): self
+    {
+        if ($this->childStructures->removeElement($childStructure)) {
+            // set the owning side to null (unless already changed)
+            if ($childStructure->getParentStructure() === $this) {
+                $childStructure->setParentStructure(null);
             }
         }
 

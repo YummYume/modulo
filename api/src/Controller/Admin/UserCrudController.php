@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
-class UserCrudController extends AbstractCrudController
+final class UserCrudController extends AbstractCrudController
 {
     public function __construct(
         private TranslatorInterface $translator,
@@ -42,10 +42,10 @@ class UserCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setPageTitle('index', 'view.user.index')
-            ->setPageTitle('new', 'view.user.create')
-            ->setPageTitle('edit', 'view.user.edit')
-            ->setPageTitle('detail', 'view.user.detail')
+            ->setPageTitle(Crud::PAGE_INDEX, 'view.user.index')
+            ->setPageTitle(Crud::PAGE_NEW, 'view.user.create')
+            ->setPageTitle(Crud::PAGE_EDIT, 'view.user.edit')
+            ->setPageTitle(Crud::PAGE_DETAIL, 'view.user.detail')
             ->setEntityLabelInSingular('view.user.single')
             ->setEntityLabelInPlural('view.user.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])
@@ -72,25 +72,29 @@ class UserCrudController extends AbstractCrudController
                 ->setRequired(false),
             ChoiceField::new('gender', 'user.gender')
                 ->hideOnForm()
-                ->setChoices(function () {
+                ->setChoices(static function () {
                     $choices = array_map(static fn (?Gender $unit) => [$unit->value => $unit->name], Gender::cases());
 
                     return array_merge(...$choices);
                 })
                 ->setFormType(EnumType::class)
-                ->setFormTypeOption('class', Gender::class)
-                ->setFormTypeOption('choice_label', fn (Gender $gender) => $gender->value)
+                ->setFormTypeOptions([
+                    'class' => Gender::class,
+                    'choice_label' => static fn (Gender $gender): string => $gender->value,
+                ])
                 ->formatValue(static fn (string $gender): string => $gender),
             ChoiceField::new('gender', 'user.gender')
                 ->onlyOnForms()
-                ->setChoices(function () {
+                ->setChoices(static function () {
                     $choices = array_map(static fn (?Gender $unit) => [$unit->value => $unit], Gender::cases());
 
                     return array_merge(...$choices);
                 })
                 ->setFormType(EnumType::class)
-                ->setFormTypeOption('class', Gender::class)
-                ->setFormTypeOption('choice_label', fn (Gender $gender) => $gender->value),
+                ->setFormTypeOptions([
+                    'class' => Gender::class,
+                    'choice_label' => static fn (Gender $gender): string => $gender->value,
+                ]),
             AvatarField::new('avatar', 'user.avatar')
                 ->onlyOnIndex()
                 ->formatValue(function (?string $path, User $user): ?string {

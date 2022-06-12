@@ -3,15 +3,18 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Event;
+use App\Enum\Visibility;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
-class EventCrudController extends AbstractCrudController
+final class EventCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -21,10 +24,10 @@ class EventCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setPageTitle('index', 'view.event.index')
-            ->setPageTitle('new', 'view.event.create')
-            ->setPageTitle('edit', 'view.event.edit')
-            ->setPageTitle('detail', 'view.event.detail')
+            ->setPageTitle(Crud::PAGE_INDEX, 'view.event.index')
+            ->setPageTitle(Crud::PAGE_NEW, 'view.event.create')
+            ->setPageTitle(Crud::PAGE_EDIT, 'view.event.edit')
+            ->setPageTitle(Crud::PAGE_DETAIL, 'view.event.detail')
             ->setEntityLabelInSingular('view.event.single')
             ->setEntityLabelInPlural('view.event.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])
@@ -40,6 +43,31 @@ class EventCrudController extends AbstractCrudController
             AssociationField::new('roles', 'event.roles'),
             AssociationField::new('users', 'event.users'),
             AssociationField::new('scope', 'event.scope'),
+            ChoiceField::new('visibility', 'event.visibility')
+                ->hideOnForm()
+                ->setChoices(static function () {
+                    $choices = array_map(static fn (?Visibility $unit) => [$unit->value => $unit->name], Visibility::cases());
+
+                    return array_merge(...$choices);
+                })
+                ->setFormType(EnumType::class)
+                ->setFormTypeOptions([
+                    'class' => Visibility::class,
+                    'choice_label' => static fn (Visibility $visibility): string => $visibility->value,
+                ])
+                ->formatValue(static fn (string $visibility): string => $visibility),
+            ChoiceField::new('visibility', 'event.visibility')
+                ->onlyOnForms()
+                ->setChoices(static function () {
+                    $choices = array_map(static fn (?Visibility $unit) => [$unit->value => $unit], Visibility::cases());
+
+                    return array_merge(...$choices);
+                })
+                ->setFormType(EnumType::class)
+                ->setFormTypeOptions([
+                    'class' => Visibility::class,
+                    'choice_label' => static fn (Visibility $visibility): string => $visibility->value,
+                ]),
             DateTimeField::new('startDate', 'event.start_date')->renderAsChoice(),
             DateTimeField::new('endDate', 'event.end_date')->renderAsChoice(),
             BooleanField::new('active', 'event.active'),

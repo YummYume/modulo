@@ -11,7 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class RoleCrudController extends AbstractCrudController
+final class RoleCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -21,10 +21,10 @@ class RoleCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setPageTitle('index', 'view.role.index')
-            ->setPageTitle('new', 'view.role.create')
-            ->setPageTitle('edit', 'view.role.edit')
-            ->setPageTitle('detail', 'view.role.detail')
+            ->setPageTitle(Crud::PAGE_INDEX, 'view.role.index')
+            ->setPageTitle(Crud::PAGE_NEW, 'view.role.create')
+            ->setPageTitle(Crud::PAGE_EDIT, 'view.role.edit')
+            ->setPageTitle(Crud::PAGE_DETAIL, 'view.role.detail')
             ->setEntityLabelInSingular('view.role.single')
             ->setEntityLabelInPlural('view.role.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])
@@ -42,8 +42,14 @@ class RoleCrudController extends AbstractCrudController
             ChoiceField::new('features', 'role.features')
                 ->setChoices(Feature::toArray(true))
                 ->allowMultipleChoices()
-                ->renderExpanded()
-                ->setFormTypeOption('error_bubbling', false),
+                ->setFormTypeOption('error_bubbling', false)
+                ->formatValue(static function (string $value) use ($pageName): string {
+                    if (Crud::PAGE_INDEX !== $pageName) {
+                        return $value;
+                    }
+
+                    return 150 < \strlen($value) ? substr($value, 0, 150).'...' : $value;
+                }),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')

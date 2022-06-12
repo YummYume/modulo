@@ -12,7 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class CategoryCrudController extends AbstractCrudController
+final class CategoryCrudController extends AbstractCrudController
 {
     public function __construct(private RoleRepository $roleRepository)
     {
@@ -26,10 +26,10 @@ class CategoryCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setPageTitle('index', 'view.category.index')
-            ->setPageTitle('new', 'view.category.create')
-            ->setPageTitle('edit', 'view.category.edit')
-            ->setPageTitle('detail', 'view.category.detail')
+            ->setPageTitle(Crud::PAGE_INDEX, 'view.category.index')
+            ->setPageTitle(Crud::PAGE_NEW, 'view.category.create')
+            ->setPageTitle(Crud::PAGE_EDIT, 'view.category.edit')
+            ->setPageTitle(Crud::PAGE_DETAIL, 'view.category.detail')
             ->setEntityLabelInSingular('view.category.single')
             ->setEntityLabelInPlural('view.category.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])

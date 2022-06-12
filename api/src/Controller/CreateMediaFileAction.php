@@ -14,6 +14,7 @@ final class CreateMediaFileAction extends AbstractController
     public function __invoke(Request $request): MediaFile
     {
         $uploadedFile = $request->files->get('file');
+
         if (!$uploadedFile) {
             throw new BadRequestHttpException('Parameter "file" is required.');
         }

@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\ScopeableTrait;
 use App\Entity\Traits\TimestampableTrait;
+use App\Enum\Visibility;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -62,6 +63,10 @@ class Event
     #[ORM\Column(type: 'boolean')]
     #[Groups(['event:get'])]
     private bool $active = true;
+
+    #[ORM\Column(type: 'string', nullable: false, enumType: Visibility::class)]
+    #[Groups(['event:get'])]
+    private Visibility $visibility;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Groups(['event:get'])]
@@ -179,6 +184,18 @@ class Event
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getVisibility(): ?Visibility
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(Visibility $visibility): self
+    {
+        $this->visibility = $visibility;
 
         return $this;
     }
