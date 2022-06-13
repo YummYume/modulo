@@ -197,7 +197,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Scope::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['get:me', 'event:get'])]
-    #[Assert\Valid()]
+    #[Assert\Valid]
     #[Assert\Unique(message: 'user.scopes.unique', normalizer: 'trim')]
     private Collection $scopes;
 

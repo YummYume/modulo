@@ -3,18 +3,21 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use App\Entity\Role;
 use App\Repository\RoleRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 final class CategoryCrudController extends AbstractCrudController
 {
-    public function __construct(private RoleRepository $roleRepository)
+    public function __construct(private RoleRepository $roleRepository, private AdminUrlGenerator $adminUrlGenerator)
     {
     }
 
@@ -33,6 +36,7 @@ final class CategoryCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('view.category.single')
             ->setEntityLabelInPlural('view.category.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])
+            ->setTimezone('Europe/Paris')
         ;
     }
 
@@ -41,6 +45,33 @@ final class CategoryCrudController extends AbstractCrudController
         return [
             TextField::new('name', 'category.name'),
             TextareaField::new('description', 'category.description'),
+            AssociationField::new('roles', 'category.roles')
+                ->setFormTypeOption('by_reference', false)
+                ->onlyOnForms(),
+            CollectionField::new('roles', 'category.roles')
+                ->hideOnForm()
+                ->formatValue(function (string $count, Category $category) use ($pageName): string {
+                    if (CRUD::PAGE_INDEX === $pageName) {
+                        return $category->getRoles()->count();
+                    }
+
+                    $baseUrl = $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(RoleCrudController::class)
+                        ->setAction(Crud::PAGE_DETAIL)
+                    ;
+
+                    $roles = array_map(function (Role $role) use ($baseUrl): string {
+                        $url = $baseUrl
+                            ->setEntityId($role->getId())
+                            ->generateUrl()
+                        ;
+
+                        return sprintf('<a href="%s">%s</a>', $url, $role);
+                    }, $category->getRoles()->toArray());
+
+                    return implode(', ', $roles);
+                }),
             AssociationField::new('invitedRoles', 'category.invited_roles')
                 ->setQueryBuilder(function (QueryBuilder $qb): QueryBuilder {
                     $category = $this->getContext()->getEntity()->getInstance();
@@ -51,14 +82,38 @@ final class CategoryCrudController extends AbstractCrudController
                     ;
                 })
                 ->setFormTypeOption('help', 'category.invited_roles.help')
-                ->hideWhenCreating(),
+                ->onlyWhenUpdating(),
+            CollectionField::new('invitedRoles', 'category.invited_roles')
+                ->hideOnForm()
+                ->formatValue(function (string $value, Category $category) use ($pageName): string {
+                    if (CRUD::PAGE_INDEX === $pageName) {
+                        return $category->getInvitedRoles()->count();
+                    }
+
+                    $baseUrl = $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(RoleCrudController::class)
+                        ->setAction(Crud::PAGE_DETAIL)
+                    ;
+
+                    $invitedRoles = array_map(function (Role $role) use ($baseUrl): string {
+                        $url = $baseUrl
+                            ->setEntityId($role->getId())
+                            ->generateUrl()
+                        ;
+
+                        return sprintf('<a href="%s">%s</a>', $url, $role);
+                    }, $category->getInvitedRoles()->toArray());
+
+                    return implode(', ', $invitedRoles);
+                }),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
                 ->hideOnForm(),
-            TextField::new('createdBy', 'common.created_by')
+            AssociationField::new('createdBy', 'common.created_by')
                 ->hideOnForm(),
-            TextField::new('updatedBy', 'common.updated_by')
+            AssociationField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
     }

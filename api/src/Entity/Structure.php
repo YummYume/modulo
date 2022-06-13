@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StructureRepository::class)]
 #[ApiResource]
@@ -32,12 +33,15 @@ class Structure
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'childStructures')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Assert\Expression(expression: 'value not in this.getChildStructures().toArray()', message: 'structure.parent_structure.not_in_child_structures')]
+    #[Assert\Expression(expression: 'value !== this', message: 'structure.parent_structure.not_self')]
     private ?Structure $parentStructure = null;
 
     #[ORM\OneToMany(mappedBy: 'structure', targetEntity: Scope::class, orphanRemoval: true)]
     private Collection $scopes;
 
     #[ORM\OneToMany(mappedBy: 'parentStructure', targetEntity: self::class)]
+    #[Assert\Valid]
     private Collection $childStructures;
 
     public function __construct()

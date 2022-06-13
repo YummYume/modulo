@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\AgeSection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -26,6 +27,7 @@ final class AgeSectionCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('view.age_section.single')
             ->setEntityLabelInPlural('view.age_section.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])
+            ->setTimezone('Europe/Paris')
         ;
     }
 
@@ -39,9 +41,9 @@ final class AgeSectionCrudController extends AbstractCrudController
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
                 ->hideOnForm(),
-            TextField::new('createdBy', 'common.created_by')
+            AssociationField::new('createdBy', 'common.created_by')
                 ->hideOnForm(),
-            TextField::new('updatedBy', 'common.updated_by')
+            AssociationField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
     }

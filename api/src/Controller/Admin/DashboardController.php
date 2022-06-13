@@ -23,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,7 +43,8 @@ final class DashboardController extends AbstractDashboardController
         private KernelInterface $kernel,
         private ChartBuilderInterface $chartBuilder,
         private CategoryRepository $categoryRepository,
-        private EventRepository $eventRepository
+        private EventRepository $eventRepository,
+        private ParameterBagInterface $parameterBag
     ) {
     }
 
@@ -206,6 +208,9 @@ final class DashboardController extends AbstractDashboardController
         return parent::configureUserMenu($user)
             ->setName($user->getFullName())
             ->setAvatarUrl($userAvatar)
+            ->addMenuItems([
+                MenuItem::linkToUrl('view.public_site', 'fas fa-home', $this->parameterBag->get('public_site_url')),
+            ])
         ;
     }
 

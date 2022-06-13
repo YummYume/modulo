@@ -2,17 +2,24 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Category;
 use App\Entity\Role;
 use App\Enum\Feature;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 final class RoleCrudController extends AbstractCrudController
 {
+    public function __construct(private AdminUrlGenerator $adminUrlGenerator)
+    {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Role::class;
@@ -28,6 +35,7 @@ final class RoleCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('view.role.single')
             ->setEntityLabelInPlural('view.role.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])
+            ->setTimezone('Europe/Paris')
         ;
     }
 
@@ -38,25 +46,45 @@ final class RoleCrudController extends AbstractCrudController
             TextField::new('feminineName', 'role.feminine_name'),
             TextField::new('code', 'role.code'),
             AssociationField::new('ageSection', 'role.age_section'),
-            AssociationField::new('categories', 'role.categories'),
-            ChoiceField::new('features', 'role.features')
-                ->setChoices(Feature::toArray(true))
-                ->allowMultipleChoices()
-                ->setFormTypeOption('error_bubbling', false)
-                ->formatValue(static function (string $value) use ($pageName): string {
-                    if (Crud::PAGE_INDEX !== $pageName) {
-                        return $value;
+            AssociationField::new('categories', 'role.categories')
+                ->onlyOnForms(),
+            CollectionField::new('categories', 'role.categories')
+                ->hideOnForm()
+                ->formatValue(function (string $value, Role $role) use ($pageName): string {
+                    if (CRUD::PAGE_INDEX === $pageName) {
+                        return $role->getCategories()->count();
                     }
 
-                    return 150 < \strlen($value) ? substr($value, 0, 150).'...' : $value;
+                    $baseUrl = $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(CategoryCrudController::class)
+                        ->setAction(Crud::PAGE_DETAIL)
+                    ;
+
+                    $categories = array_map(function (Category $category) use ($baseUrl): string {
+                        $url = $baseUrl
+                            ->setEntityId($category->getId())
+                            ->generateUrl()
+                        ;
+
+                        return sprintf('<a href="%s">%s</a>', $url, $category);
+                    }, $role->getCategories()->toArray());
+
+                    return implode(', ', $categories);
                 }),
+            ChoiceField::new('features', 'role.features')
+                ->setChoices(Feature::toArray(true))
+                ->renderExpanded()
+                ->allowMultipleChoices()
+                ->setFormTypeOption('error_bubbling', false)
+                ->hideOnIndex(),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
                 ->hideOnForm(),
-            TextField::new('createdBy', 'common.created_by')
+            AssociationField::new('createdBy', 'common.created_by')
                 ->hideOnForm(),
-            TextField::new('updatedBy', 'common.updated_by')
+            AssociationField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
     }

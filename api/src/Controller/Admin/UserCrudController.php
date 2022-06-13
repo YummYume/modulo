@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Scope;
 use App\Entity\User;
 use App\Enum\Gender;
 use App\Enum\StaticRole;
@@ -17,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -30,7 +32,8 @@ final class UserCrudController extends AbstractCrudController
     public function __construct(
         private TranslatorInterface $translator,
         private UploaderHelper $uploaderHelper,
-        private CacheManager $imagineCacheManager
+        private CacheManager $imagineCacheManager,
+        private AdminUrlGenerator $adminUrlGenerator
     ) {
     }
 
@@ -49,6 +52,7 @@ final class UserCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('view.user.single')
             ->setEntityLabelInPlural('view.user.plural')
             ->setDefaultSort(['updatedAt' => 'DESC'])
+            ->setTimezone('Europe/Paris')
         ;
     }
 
@@ -62,8 +66,8 @@ final class UserCrudController extends AbstractCrudController
                 ->allowMultipleChoices()
                 ->onlyOnForms(),
             ChoiceField::new('roles', 'user.roles')
-                ->hideOnForm()
                 ->setChoices(StaticRole::toArray(true))
+                ->hideOnForm()
                 ->allowMultipleChoices(),
             TextField::new('firstName', 'user.first_name'),
             TextField::new('lastName', 'user.last_name'),
@@ -157,22 +161,41 @@ final class UserCrudController extends AbstractCrudController
                     ],
                 ])
                 ->onlyWhenUpdating(),
-            AssociationField::new('scopes', 'user.scopes')
-                ->hideOnForm(),
             CollectionField::new('scopes', 'user.scopes')
                 ->allowAdd()
                 ->allowDelete()
                 ->setEntryType(UserScopeFormType::class)
                 ->renderExpanded()
                 ->setFormTypeOption('error_bubbling', false)
-                ->onlyOnForms(),
+                ->formatValue(function (string $value, User $user) use ($pageName): string {
+                    if (CRUD::PAGE_INDEX === $pageName) {
+                        return $user->getScopes()->count();
+                    }
+
+                    $baseUrl = $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(ScopeCrudController::class)
+                        ->setAction(Crud::PAGE_DETAIL)
+                    ;
+
+                    $scopes = array_map(function (Scope $scope) use ($baseUrl): string {
+                        $url = $baseUrl
+                            ->setEntityId($scope->getId())
+                            ->generateUrl()
+                        ;
+
+                        return sprintf('<a href="%s">%s</a>', $url, $scope);
+                    }, $user->getScopes()->toArray());
+
+                    return implode(', ', $scopes);
+                }),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')
                 ->hideOnForm(),
-            TextField::new('createdBy', 'common.created_by')
+            AssociationField::new('createdBy', 'common.created_by')
                 ->hideOnForm(),
-            TextField::new('updatedBy', 'common.updated_by')
+            AssociationField::new('updatedBy', 'common.updated_by')
                 ->hideOnForm(),
         ];
     }

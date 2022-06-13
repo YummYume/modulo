@@ -19,6 +19,7 @@ flash.user.warning.scopes: L'utilisateur {name} ne possède aucune scope active.
 ### Views
 
 view.login.title: Connexion à {app_name}
+view.public_site: Site public
 
 view.admin.dashboard: Tableau de bord
 dashboard.disk_space_used_title: Espace disque utilisé
@@ -125,6 +126,7 @@ scope.active: Actif
 # Category
 category.name: Nom
 category.description: Description
+category.roles: Rôles autorisant cette catégorie
 category.invited_roles: Rôles invités par défault
 category.invited_roles.help: Seuls les rôles qui autorisent cette catégorie peuvent être invités.
 
@@ -141,6 +143,7 @@ role.features: Fonctionnalités autorisées
 structure.name: Nom
 structure.code: Code
 structure.parent_structure: Structure parente
+structure.child_structures: Structures enfants
 
 # Event
 event.name: Nom
