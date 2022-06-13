@@ -57,8 +57,7 @@ class Event
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     #[Groups(['event:get'])]
-    #[Assert\Count(min: 1, minMessage: 'event.participants.min')]
-    private Collection $participants;
+    private Collection $users;
 
     #[ORM\Column(type: 'boolean')]
     #[Groups(['event:get'])]
@@ -75,10 +74,19 @@ class Event
     #[Assert\GreaterThanOrEqual(propertyPath: 'startDate', message: 'event.end_date.invalid')]
     private ?\DateTime $endDate;
 
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['event:get'])]
+    private bool $visible;
+
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'events')]
+    #[Groups(['event:get'])]
+    private Collection $roles;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->participants = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function __toString()
@@ -142,23 +150,23 @@ class Event
     /**
      * @return Collection<int, User>
      */
-    public function getParticipants(): Collection
+    public function getUsers(): Collection
     {
-        return $this->participants;
+        return $this->users;
     }
 
-    public function addParticipant(User $participant): self
+    public function addUser(User $user): self
     {
-        if (!$this->participants->contains($participant)) {
-            $this->participants[] = $participant;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
         }
 
         return $this;
     }
 
-    public function removeParticipant(User $participant): self
+    public function removeUser(User $user): self
     {
-        $this->participants->removeElement($participant);
+        $this->users->removeElement($user);
 
         return $this;
     }
@@ -195,6 +203,42 @@ class Event
     public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): self
+    {
+        $this->visible = $visible;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        $this->roles->removeElement($role);
 
         return $this;
     }

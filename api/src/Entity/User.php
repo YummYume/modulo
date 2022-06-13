@@ -201,7 +201,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Unique(message: 'user.scopes.unique', normalizer: 'trim')]
     private Collection $scopes;
 
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users')]
     private Collection $events;
 
     public function __construct()

@@ -23,18 +23,18 @@ view.login.title: Connexion à {app_name}
 view.admin.dashboard: Tableau de bord
 dashboard.disk_space_used_title: Espace disque utilisé
 dashboard.disk_space_used: >
-  {diskUsedSpace, plural,
-    =0 {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
-    one {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
-    other {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisés}
-  }
-  {diskFreeSpace, plural,
-    =0 {(# {diskFreeSpaceUnit} libre)}
-    one {(# {diskFreeSpaceUnit} libre)}
-    other {(# {diskFreeSpaceUnit} libres)}
-  }
+    {diskUsedSpace, plural,
+      =0 {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
+      one {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
+      other {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisés}
+    }
+    {diskFreeSpace, plural,
+      =0 {(# {diskFreeSpaceUnit} libre)}
+      one {(# {diskFreeSpaceUnit} libre)}
+      other {(# {diskFreeSpaceUnit} libres)}
+    }
 dashboard.disk_space_used_percentage: >
-  Pourcentage d'espace disque utilisé, dont {diskMediaFolderUsedSpace} {diskMediaFolderUsedSpaceUnit} ({diskMediaFolderUsedPercentage}%) pour les fichiers multimédias.
+    Pourcentage d'espace disque utilisé, dont {diskMediaFolderUsedSpace} {diskMediaFolderUsedSpaceUnit} ({diskMediaFolderUsedPercentage}%) pour les fichiers multimédias.
 dashboard.chart.active_events_count: Nombre d'événements actifs
 dashboard.chart.active_events_count.active: Événements actifs
 dashboard.chart.active_events_count.inactive: Événements inactifs
@@ -125,11 +125,13 @@ role.features: Fonctionnalités autorisées
 event.name: Nom
 event.description: Description
 event.categories: Catégories
-event.participants: Participants invités
+event.users: Personnes invités
+event.roles: Rôles invités
 event.start_date: Date de début
 event.end_date: Date de fin
 event.scope: Scope
 event.active: Actif
+event.visible: Visible
 
 # MediaImage
 media_image.help: "Taille maximum: 2MB"
@@ -164,13 +166,13 @@ see_child_events: Voir les événements des structures enfant
 ### Units
 
 disk_unit: >-
-  {unit, select,
-    TB {To}
-    GB {Go}
-    MB {Mo}
-    KB {Ko}
-    other {Ko}
-  }
+    {unit, select,
+      TB {To}
+      GB {Go}
+      MB {Mo}
+      KB {Ko}
+      other {Ko}
+    }
 
 ### Security
 
