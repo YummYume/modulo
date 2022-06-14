@@ -28,15 +28,15 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        // If no access to the agenda, then no access to the event
-        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
+        // If no access to the agenda, or the event isn't active, then no access to the event
+        if (!$event->isActive() || !$scope->hasFeature(Feature::AGENDA_ACCESS)) {
             return false;
         }
 
         // If the user created the event, or has the same structure as the event, or is part of the participants
         if ($event->getCreatedBy() === $user
             || $event->getScope()->getStructure() === $scope->getStructure()
-            || $event->getParticipants()->contains($user)
+            || $event->getUsers()->contains($user)
             || $event->getScope()->getStructure()->getParentStructure() === $scope->getStructure()
             || $event->getScope()->getStructure()->getChildStructures()->contains($scope->getStructure())
         ) {
@@ -51,7 +51,7 @@ final class EventVoter extends Voter
             return match ($event->getVisibility()) {
                 Visibility::PUBLIC_ACCESS => true,
                 Visibility::RESTRICTED_ACCESS => $event->getCreatedBy() === $user
-                    || $event->getParticipants()->contains($user)
+                    || $event->getUsers()->contains($user)
                     || $event->getScope()->getStructure() === $scope->getStructure(),
                 Visibility::PRIVATE_ACCESS => $event->getCreatedBy() === $user,
                 default => false,

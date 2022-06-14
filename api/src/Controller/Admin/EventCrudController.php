@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Category;
 use App\Entity\Event;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Enum\Visibility;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -51,8 +52,6 @@ final class EventCrudController extends AbstractCrudController
                 ->hideOnIndex(),
             AssociationField::new('categories', 'event.categories')
                 ->onlyOnForms(),
-            AssociationField::new('roles', 'event.roles')
-                ->onlyOnForms(),
             CollectionField::new('categories', 'event.categories')
                 ->hideOnForm()
                 ->formatValue(function (string $value, Event $event) use ($pageName): string {
@@ -77,14 +76,40 @@ final class EventCrudController extends AbstractCrudController
 
                     return implode(', ', $categories);
                 }),
-            AssociationField::new('participants', 'event.participants')
-                ->autocomplete()
+            AssociationField::new('roles', 'event.roles')
                 ->onlyOnForms(),
-            CollectionField::new('participants', 'event.participants')
+            CollectionField::new('roles', 'event.roles')
                 ->hideOnForm()
                 ->formatValue(function (string $value, Event $event) use ($pageName): string {
                     if (CRUD::PAGE_INDEX === $pageName) {
-                        return $event->getParticipants()->count();
+                        return $event->getRoles()->count();
+                    }
+
+                    $baseUrl = $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(RoleCrudController::class)
+                        ->setAction(Crud::PAGE_DETAIL)
+                    ;
+
+                    $roles = array_map(function (Role $role) use ($baseUrl): string {
+                        $url = $baseUrl
+                            ->setEntityId($role->getId())
+                            ->generateUrl()
+                        ;
+
+                        return sprintf('<a href="%s">%s</a>', $url, $role);
+                    }, $event->getRoles()->toArray());
+
+                    return implode(', ', $roles);
+                }),
+            AssociationField::new('users', 'event.users')
+                ->autocomplete()
+                ->onlyOnForms(),
+            CollectionField::new('users', 'event.users')
+                ->hideOnForm()
+                ->formatValue(function (string $value, Event $event) use ($pageName): string {
+                    if (CRUD::PAGE_INDEX === $pageName) {
+                        return $event->getUsers()->count();
                     }
 
                     $baseUrl = $this->adminUrlGenerator
@@ -93,14 +118,14 @@ final class EventCrudController extends AbstractCrudController
                         ->setAction(Crud::PAGE_DETAIL)
                     ;
 
-                    $users = array_map(function (User $participant) use ($baseUrl): string {
+                    $users = array_map(function (User $user) use ($baseUrl): string {
                         $url = $baseUrl
-                            ->setEntityId($participant->getId())
+                            ->setEntityId($user->getId())
                             ->generateUrl()
                         ;
 
-                        return sprintf('<a href="%s">%s</a>', $url, $participant);
-                    }, $event->getParticipants()->toArray());
+                        return sprintf('<a href="%s">%s</a>', $url, $user);
+                    }, $event->getUsers()->toArray());
 
                     return implode(', ', $users);
                 }),
@@ -133,7 +158,6 @@ final class EventCrudController extends AbstractCrudController
             DateTimeField::new('startDate', 'event.start_date'),
             DateTimeField::new('endDate', 'event.end_date'),
             BooleanField::new('active', 'event.active'),
-            BooleanField::new('visible', 'event.visible'),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')

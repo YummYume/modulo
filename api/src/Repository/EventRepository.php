@@ -45,6 +45,15 @@ final class EventRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllExceptInactive(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.active = true')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findByCountAndDate(
         \DateTimeImmutable|\DateTime $since,
         \DateTimeImmutable|\DateTime $to = new \DateTimeImmutable('today 23:59:59')

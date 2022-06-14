@@ -23,6 +23,56 @@ use Symfony\Component\Validator\Constraints as Assert;
             'security_post_denormalize' => "is_granted('EVENT_ADD', object)",
             'security_post_denormalize_message' => 'You are not allowed to add an event.',
         ],
+        'get-allowed' => [
+            'method' => 'GET',
+            'path' => '/events/allowed',
+            'openapi_context' => [
+                'summary' => 'Get only the events which the current user can see.',
+                'description' => 'Get only the events which the current user can see.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The events allowed for the current user.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Event',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Event',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Event',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '401' => [
+                        'description' => 'The JWT is missing or invalid.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ],
     itemOperations: [
         'get' => [
@@ -90,10 +140,6 @@ class Event
     #[Assert\Type(type: 'datetime', message: 'event.end_date.type')]
     #[Assert\GreaterThanOrEqual(propertyPath: 'startDate', message: 'event.end_date.invalid')]
     private ?\DateTime $endDate;
-
-    #[ORM\Column(type: 'boolean')]
-    #[Groups(['event:get'])]
-    private bool $visible;
 
     #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'events')]
     #[Groups(['event:get'])]
@@ -188,7 +234,7 @@ class Event
         return $this;
     }
 
-    public function getActive(): ?bool
+    public function isActive(): ?bool
     {
         return $this->active;
     }
@@ -232,18 +278,6 @@ class Event
     public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
-
-        return $this;
-    }
-
-    public function getVisible(): ?bool
-    {
-        return $this->visible;
-    }
-
-    public function setVisible(bool $visible): self
-    {
-        $this->visible = $visible;
 
         return $this;
     }

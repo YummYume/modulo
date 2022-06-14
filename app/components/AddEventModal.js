@@ -2,9 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Formik, Form } from "formik";
 import TextField from "@mui/material/TextField";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -59,8 +56,7 @@ export default function AddEventModal({
         name: yup.string().required("Veuillez saisir un nom."),
         users: yup.array(),
         roles: yup.array(),
-        startDate: yup.date().typeError("Veuillez saisir une date valide.").nullable(),
-        visible: yup.boolean()
+        startDate: yup.date().typeError("Veuillez saisir une date valide.").nullable()
     });
     const [initialValues, setInitialValues] = useState({
         categories: [],
@@ -69,7 +65,6 @@ export default function AddEventModal({
         name: "",
         users: [],
         roles: [],
-        visible: true,
         startDate: null
     });
     const [disabledRoles, setDisabledRoles] = useState([]);
@@ -359,25 +354,6 @@ export default function AddEventModal({
                                         />
                                     </div>
                                 </div>
-                            </div>
-                            <div className="d-flex justify-content-center">
-                                <FormGroup>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                id="visible"
-                                                name="visible"
-                                                variant="outlined"
-                                                value={values.visible}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                checked={values.visible}
-                                                error={touched.visible && !!errors.visible}
-                                            />
-                                        }
-                                        label="Visible"
-                                    />
-                                </FormGroup>
                             </div>
                             <div className="text-center my-4">
                                 <LoadingButton

@@ -449,7 +449,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->events->contains($event)) {
             $this->events[] = $event;
-            $event->addParticipant($this);
+            $event->addUser($this);
         }
 
         return $this;
@@ -458,7 +458,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeEvent(Event $event): self
     {
         if ($this->events->removeElement($event)) {
-            $event->removeParticipant($this);
+            $event->removeUser($this);
         }
 
         return $this;
