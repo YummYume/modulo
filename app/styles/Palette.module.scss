@@ -1,8 +1,12 @@
 @import "variables";
 
 :export {
-  primaryBlueMain: $primary-blue-main;
-  primaryBlueLight: $primary-blue-light;
-  secondaryGreenMain: $secondary-green-main;
-  secondaryGreenLight: $secondary-green-light;
+  lightprimarymain: $primary-main;
+  lightprimary: $primary-light;
+  lightsecondarymain: $secondary-main-light;
+  lightsecondary: $secondary-light;
+  darkprimarymain: $primary-main;
+  darkprimary: $primary-dark;
+  darksecondarymain: $secondary-main-dark;
+  darksecondary: $secondary-dark;
 }
