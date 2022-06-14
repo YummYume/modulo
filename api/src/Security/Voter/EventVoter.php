@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 // Heavily commented Voter to not get lost with the scope permissions.
-// This Voter obviously only applies for the API and not the admin.
+// This Voter obviously only applies for the API and not the admin, thus admin roles are not relevant.
 final class EventVoter extends Voter
 {
     public const VIEW = 'EVENT_VIEW';
@@ -68,8 +68,13 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
+        // If no access to the agenda, then impossible to add an event
+        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
+            return false;
+        }
+
         // Can add an event if access to the agenda and if permission to add events
-        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::EVENT_CRUD);
+        return $scope->hasFeature(Feature::EVENT_CRUD);
     }
 
     // Can the user edit an event?
@@ -78,7 +83,28 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::EVENT_CRUD);
+        // If no access to the agenda, then impossible to edit an event
+        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
+            return false;
+        }
+
+        // If is creator of the event, then the user can edit the event if granted
+        if ($event->getCreatedBy() === $user) {
+            return $scope->hasFeature(Feature::EVENT_CRUD);
+        }
+
+        // If same structure, then the user can edit the event if granted
+        if ($event->getScope()->getStructure() === $scope->getStructure()) {
+            return $scope->hasFeature(Feature::EDIT_THIRD_PARTY_EVENT);
+        }
+
+        // If child structure, then the user can edit the event if granted
+        if ($scope->getStructure()->getChildStructures()->contains($event->getScope()->getStructure())) {
+            return $scope->hasFeature(Feature::EDIT_CHILD_EVENT);
+        }
+
+        // Return false by default
+        return false;
     }
 
     // Can the user delete an event?
@@ -87,7 +113,28 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::EVENT_CRUD);
+        // If no access to the agenda, then impossible to delete an event
+        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
+            return false;
+        }
+
+        // If is creator of the event, then the user can delete the event if granted
+        if ($event->getCreatedBy() === $user) {
+            return $scope->hasFeature(Feature::EVENT_CRUD);
+        }
+
+        // If same structure, then the user can delete the event if granted
+        if ($event->getScope()->getStructure() === $scope->getStructure()) {
+            return $scope->hasFeature(Feature::DELETE_THIRD_PARTY_EVENT);
+        }
+
+        // If child structure, then the user can delete the event if granted
+        if ($scope->getStructure()->getChildStructures()->contains($event->getScope()->getStructure())) {
+            return $scope->hasFeature(Feature::DELETE_CHILD_EVENT);
+        }
+
+        // Return false by default
+        return false;
     }
 
     // Can the user add participants to an event?
@@ -96,7 +143,12 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::NOMINATIVE_INVITATIONS);
+        // If no access to the agenda, then impossible to add participants to an event
+        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
+            return false;
+        }
+
+        return $scope->hasFeature(Feature::NOMINATIVE_INVITATIONS);
     }
 
     // Can the user add roles to an event?
@@ -105,7 +157,12 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        return $scope->hasFeature(Feature::AGENDA_ACCESS) && $scope->hasFeature(Feature::CUSTOMIZE_GUEST_FUNCTIONS);
+        // If no access to the agenda, then impossible to add roles to an event
+        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
+            return false;
+        }
+
+        return $scope->hasFeature(Feature::CUSTOMIZE_GUEST_FUNCTIONS);
     }
 
     // Can the user change the visibility of an event?
@@ -114,7 +171,12 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        return $scope->hasFeature(Feature::AGENDA_ACCESS) && ($scope->hasFeature(Feature::CUSTOMIZE_EVENT_VISIBILITY) || $event->getCreatedBy() === $user);
+        // If no access to the agenda, then impossible to change the visibility of an event
+        if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
+            return false;
+        }
+
+        return $scope->hasFeature(Feature::CUSTOMIZE_EVENT_VISIBILITY) || $event->getCreatedBy() === $user;
     }
 
     protected function supports(string $attribute, mixed $subject): bool

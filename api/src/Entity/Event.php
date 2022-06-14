@@ -25,10 +25,22 @@ use Symfony\Component\Validator\Constraints as Assert;
         ],
     ],
     itemOperations: [
-        'get',
-        'patch',
-        'put',
-        'delete',
+        'get' => [
+            'security_post_denormalize' => "is_granted('EVENT_VIEW', object)",
+            'security_post_denormalize_message' => 'You are not allowed to view this event.',
+        ],
+        'patch' => [
+            'security_post_denormalize' => "is_granted('EVENT_EDIT', object)",
+            'security_post_denormalize_message' => 'You are not allowed to edit this event.',
+        ],
+        'put' => [
+            'security_post_denormalize' => "is_granted('EVENT_EDIT', object)",
+            'security_post_denormalize_message' => 'You are not allowed to edit this event.',
+        ],
+        'delete' => [
+            'security_post_denormalize' => "is_granted('EVENT_DELETE', object)",
+            'security_post_denormalize_message' => 'You are not allowed to delete this event.',
+        ],
     ]
 )]
 class Event
