@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Formik, Form } from "formik";
 import TextField from "@mui/material/TextField";
@@ -73,7 +73,7 @@ export default function AddEventModal({
         startDate: null
     });
     const [disabledRoles, setDisabledRoles] = useState([]);
-    const [previousCategoriesNumber, setPreviousCategoriesNumber] = useState(0);
+    const formRef = useRef();
 
     const handleSubmit = async (values) => {
         if (Boolean(selectedEvent)) {
@@ -101,34 +101,34 @@ export default function AddEventModal({
         setFieldValue("categories", categories);
         setDisabledRoles([]);
 
+        let formRoles = formRef.current.values.roles;
+        let defaultRoles = [];
         let rolesId = [];
 
         // Get each category's default invited roles id
 
-        categories.forEach(({ invitedRoles }) => {
-            invitedRoles.forEach((role) => {
-                if (!rolesId.includes(role)) {
-                    rolesId.push(role);
-                }
+        categories.map(({ invitedRoles }) => {
+            invitedRoles.map((role) => {
+                defaultRoles.push(role);
             });
         });
 
-        // Set new roles if we added categories
+        // Set new roles
 
-        if (categories.length > previousCategoriesNumber) {
-            let defaultRoles = [];
-
-            roles["hydra:member"].forEach((role) => {
+        setFieldValue(
+            "roles",
+            [...defaultRoles, ...formRoles].filter((role) => {
                 if (rolesId.includes(role["@id"])) {
-                    defaultRoles.push(role);
+                    return false;
                 }
-            });
 
-            setFieldValue("roles", defaultRoles);
-        }
+                rolesId.push(role["@id"]);
 
-        setDisabledRoles(rolesId);
-        setPreviousCategoriesNumber(categories.length);
+                return true;
+            })
+        );
+
+        setDisabledRoles(defaultRoles);
     };
 
     useEffect(() => {
@@ -151,7 +151,13 @@ export default function AddEventModal({
     return (
         <Modal open={open} onClose={handleClose} className="d-flex justify-content-center align-items-center row">
             <Box backgroundColor="box.index.backgroundLogin" className="rounded col-11 col-sm-10 col-md-9 col-lg-8 col-xl-7">
-                <Formik initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize>
+                <Formik
+                    initialValues={initialValues}
+                    onSubmit={handleSubmit}
+                    validationSchema={validationSchema}
+                    enableReinitialize
+                    innerRef={formRef}
+                >
                     {({ isSubmitting, values, touched, errors, handleChange, handleBlur, setFieldValue, setFieldTouched }) => (
                         <Form>
                             <Typography variant="h4" className="text-center mt-4 mb-5">
@@ -286,7 +292,7 @@ export default function AddEventModal({
                                                             {...getTagProps({ index })}
                                                             key={index}
                                                             label={option.name}
-                                                            disabled={disabledRoles.indexOf(option["@id"]) !== -1}
+                                                            disabled={disabledRoles.indexOf(option) !== -1}
                                                         />
                                                     ))
                                                 }
