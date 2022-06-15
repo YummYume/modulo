@@ -29,13 +29,13 @@ export const deleteEvent = async (id) => {
 };
 
 export const getEvents = async () => {
-    const response = await axiosApiInstance().get("/events");
+    const response = await axiosApiInstance().get("/events/allowed");
 
     return response.data["hydra:member"];
 };
 
 export const getEventsFromServer = async (cookie = null) => {
-    const response = await axiosApiInstance().get("/events", {
+    const response = await axiosApiInstance().get("/events/allowed", {
         headers: {
             Cookie: cookie
         }

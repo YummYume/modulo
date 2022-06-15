@@ -23,6 +23,10 @@ category.invited_roles.expression: Certains rôles n'autorisent pas cette catég
 # Role
 role.features.choice: Une ou plusieurs fonctionnalités sélectionnées ne sont pas valides.
 
+# Structure
+structure.parent_structure.not_in_child_structures: La structure parente ne peut pas être une structure enfant.
+structure.parent_structure.not_self: La structure parente ne peut pas être la même que la structure courante.
+
 # MediaImage
 media_image.corrupted: L'image est corrompue.
 media_image.max_size: >
@@ -67,6 +71,9 @@ event.start_date.type: Veuillez saisir une date de début valide.
 event.end_date.type: Veuillez saisir une date de fin valide.
 event.end_date.invalid: La date de fin doit être postérieure à la date de début.
 event.participants.min: Veuillez sélectionner au moins un participant.
+
+# Age section
+age_section.color.css_color: Veuillez saisir une couleur valide.
 
 ### Commands
 command.dispatcher.invalid: The command's attribute "{attribute}" is invalid ({message}).

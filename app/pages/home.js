@@ -42,8 +42,8 @@ export default function Home({ isPageReady }) {
         select: (data) => {
             return data.map((event) => ({
                 ...event,
-                startDate: event.startDate ? zonedTimeToUtc(event.startDate, "Etc/Universal") : null,
-                endDate: event.endDate ? zonedTimeToUtc(event.endDate, "Etc/Universal") : null
+                startDate: event.startDate ? zonedTimeToUtc(event.startDate, "Europe/Paris") : null,
+                endDate: event.endDate ? zonedTimeToUtc(event.endDate, "Europe/Paris") : null
             }));
         }
     });

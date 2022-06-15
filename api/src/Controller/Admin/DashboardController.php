@@ -2,10 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\AgeSection;
 use App\Entity\Category;
 use App\Entity\Event;
 use App\Entity\Role;
 use App\Entity\Scope;
+use App\Entity\Structure;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
@@ -21,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,7 +33,7 @@ use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
-class DashboardController extends AbstractDashboardController
+final class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         private TranslatorInterface $translator,
@@ -40,7 +43,8 @@ class DashboardController extends AbstractDashboardController
         private KernelInterface $kernel,
         private ChartBuilderInterface $chartBuilder,
         private CategoryRepository $categoryRepository,
-        private EventRepository $eventRepository
+        private EventRepository $eventRepository,
+        private ParameterBagInterface $parameterBag
     ) {
     }
 
@@ -184,10 +188,12 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('view.admin.dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('view.admin.scope', 'fas fa-users-cog', Scope::class);
-        yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list-ul', Category::class);
         yield MenuItem::linkToCrud('view.admin.role', 'fas fa-user-tag', Role::class);
+        yield MenuItem::linkToCrud('view.admin.structure', 'fas fa-people-roof', Structure::class);
         yield MenuItem::linkToCrud('view.admin.user', 'fas fa-users', User::class);
         yield MenuItem::linkToCrud('view.admin.event', 'fas fa-calendar-alt', Event::class);
+        yield MenuItem::linkToCrud('view.admin.category', 'fas fa-list-ul', Category::class);
+        yield MenuItem::linkToCrud('view.admin.age_section', 'fas fa-portrait', AgeSection::class);
     }
 
     public function configureUserMenu(UserInterface|User $user): UserMenu
@@ -202,6 +208,9 @@ class DashboardController extends AbstractDashboardController
         return parent::configureUserMenu($user)
             ->setName($user->getFullName())
             ->setAvatarUrl($userAvatar)
+            ->addMenuItems([
+                MenuItem::linkToUrl('view.public_site', 'fas fa-home', $this->parameterBag->get('public_site_url')),
+            ])
         ;
     }
 
