@@ -7,6 +7,7 @@ parameters:
     host_domain: "%env(HOST_DOMAIN)%"
     host_domain_api: "api.%env(HOST_DOMAIN)%"
     host_domain_admin: "admin.%env(HOST_DOMAIN)%"
+    public_site_url: "%env(PUBLIC_SITE_URL)%"
 
 services:
     # default configuration for services in *this* file

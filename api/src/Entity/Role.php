@@ -27,7 +27,7 @@ class Role
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 100)]
-    #[Groups(['get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     private ?string $name;
 
     #[ORM\Column(type: 'string', length: 10)]
@@ -56,12 +56,16 @@ class Role
     #[Assert\Choice(callback: 'getAllowedFeatures', multipleMessage: 'role.features.choice', multiple: true)]
     private array $features = [];
 
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'roles')]
+    private Collection $events;
+
     #[Pure]
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->defaultCategories = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -230,5 +234,32 @@ class Role
     public function getAllowedFeatures(): array
     {
         return Feature::toArray(true);
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->addRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            $event->removeRole($this);
+        }
+
+        return $this;
     }
 }

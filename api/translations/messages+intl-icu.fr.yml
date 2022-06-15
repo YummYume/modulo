@@ -19,22 +19,23 @@ flash.user.warning.scopes: L'utilisateur {name} ne possède aucune scope active.
 ### Views
 
 view.login.title: Connexion à {app_name}
+view.public_site: Site public
 
 view.admin.dashboard: Tableau de bord
 dashboard.disk_space_used_title: Espace disque utilisé
 dashboard.disk_space_used: >
-  {diskUsedSpace, plural,
-    =0 {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
-    one {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
-    other {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisés}
-  }
-  {diskFreeSpace, plural,
-    =0 {(# {diskFreeSpaceUnit} libre)}
-    one {(# {diskFreeSpaceUnit} libre)}
-    other {(# {diskFreeSpaceUnit} libres)}
-  }
+    {diskUsedSpace, plural,
+      =0 {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
+      one {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisé}
+      other {# {diskUsedSpaceUnit} / {diskTotalSpace} {diskTotalSpaceUnit} utilisés}
+    }
+    {diskFreeSpace, plural,
+      =0 {(# {diskFreeSpaceUnit} libre)}
+      one {(# {diskFreeSpaceUnit} libre)}
+      other {(# {diskFreeSpaceUnit} libres)}
+    }
 dashboard.disk_space_used_percentage: >
-  Pourcentage d'espace disque utilisé, dont {diskMediaFolderUsedSpace} {diskMediaFolderUsedSpaceUnit} ({diskMediaFolderUsedPercentage}%) pour les fichiers multimédias.
+    Pourcentage d'espace disque utilisé, dont {diskMediaFolderUsedSpace} {diskMediaFolderUsedSpaceUnit} ({diskMediaFolderUsedPercentage}%) pour les fichiers multimédias.
 dashboard.chart.active_events_count: Nombre d'événements actifs
 dashboard.chart.active_events_count.active: Événements actifs
 dashboard.chart.active_events_count.inactive: Événements inactifs
@@ -67,6 +68,14 @@ view.role.detail: Détails d'un rôle
 view.role.single: un rôle
 view.role.plural: des rôles
 
+view.admin.structure: Structures
+view.structure.index: Structures
+view.structure.create: Créer une structure
+view.structure.edit: Modifier une structure
+view.structure.detail: Détails d'une structure
+view.structure.single: une structure
+view.structure.plural: des structures
+
 view.admin.user: Utilisateurs
 view.user.index: Utilisateurs
 view.user.create: Créer un utilisateur
@@ -82,6 +91,14 @@ view.event.edit: Modifier un évènement
 view.event.detail: Détails d'un évènement
 view.event.single: un évènement
 view.event.plural: des évènements
+
+view.admin.age_section: Sections d'âge
+view.age_section.index: Sections d'âge
+view.age_section.create: Créer une section d'âge
+view.age_section.edit: Modifier une section d'âge
+view.age_section.detail: Détails d'une section d'âge
+view.age_section.single: une section d'âge
+view.age_section.plural: des sections d'âge
 
 ### Entities
 
@@ -109,6 +126,7 @@ scope.active: Actif
 # Category
 category.name: Nom
 category.description: Description
+category.roles: Rôles autorisant cette catégorie
 category.invited_roles: Rôles invités par défault
 category.invited_roles.help: Seuls les rôles qui autorisent cette catégorie peuvent être invités.
 
@@ -121,15 +139,28 @@ role.icon: Icône
 role.categories: Catégories d'événement autorisées
 role.features: Fonctionnalités autorisées
 
+# Structure
+structure.name: Nom
+structure.code: Code
+structure.parent_structure: Structure parente
+structure.child_structures: Structures enfants
+
 # Event
 event.name: Nom
 event.description: Description
 event.categories: Catégories
-event.participants: Participants invités
+event.users: Personnes invités
+event.roles: Rôles invités
 event.start_date: Date de début
 event.end_date: Date de fin
 event.scope: Scope
 event.active: Actif
+event.visibility: Visibilité
+
+# Age section
+age_section.name: Nom
+age_section.code: Code
+age_section.color: Couleur
 
 # MediaImage
 media_image.help: "Taille maximum: 2MB"
@@ -149,6 +180,11 @@ role_user: Utilisateur
 role_admin: Administrateur
 role_super_admin: Super Administrateur
 
+# Visibility
+public_access: Publique
+restricted_access: Restreinte
+private_access: Privée
+
 # Features
 event_crud: Créer un événement, le modifier, le supprimer
 edit_third_party_event: Modifier les évènements créés par un tiers dans ma structure
@@ -164,13 +200,13 @@ see_child_events: Voir les événements des structures enfant
 ### Units
 
 disk_unit: >-
-  {unit, select,
-    TB {To}
-    GB {Go}
-    MB {Mo}
-    KB {Ko}
-    other {Ko}
-  }
+    {unit, select,
+      TB {To}
+      GB {Go}
+      MB {Mo}
+      KB {Ko}
+      other {Ko}
+    }
 
 ### Security
 

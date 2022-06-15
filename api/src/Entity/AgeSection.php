@@ -8,6 +8,7 @@ use App\Entity\Traits\TimestampableTrait;
 use App\Repository\AgeSectionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AgeSectionRepository::class)]
 #[UniqueEntity('code')]
@@ -29,6 +30,7 @@ class AgeSection
     private string $code;
 
     #[ORM\Column(type: 'string', length: 50)]
+    #[Assert\CssColor(message: 'age_section.color.css_color')]
     private string $color;
 
     public function __toString(): string

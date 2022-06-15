@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['event:get']])]
 class Category
 {
     use BlameableTrait;
@@ -39,6 +39,7 @@ class Category
     #[Assert\All([
         new Assert\Expression(expression: 'value in this.getRoles().toArray()', message: 'category.invited_roles.expression'),
     ])]
+    #[Groups(['event:get'])]
     private Collection $invitedRoles;
 
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'categories')]

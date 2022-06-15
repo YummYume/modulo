@@ -86,6 +86,10 @@ final class DiskManager
 
     private function getPathSize(string $path): int
     {
+        if (!file_exists($path)) {
+            return 0;
+        }
+
         if (!is_dir($path)) {
             return filesize($path);
         }

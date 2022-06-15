@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\ScopeableTrait;
 use App\Entity\Traits\TimestampableTrait;
+use App\Enum\Visibility;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,12 +23,74 @@ use Symfony\Component\Validator\Constraints as Assert;
             'security_post_denormalize' => "is_granted('EVENT_ADD', object)",
             'security_post_denormalize_message' => 'You are not allowed to add an event.',
         ],
+        'get-allowed' => [
+            'method' => 'GET',
+            'path' => '/events/allowed',
+            'openapi_context' => [
+                'summary' => 'Get only the events which the current user can see.',
+                'description' => 'Get only the events which the current user can see.',
+                'responses' => [
+                    '200' => [
+                        'description' => 'The events allowed for the current user.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Event',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Event',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/Event',
+                                ],
+                            ],
+                        ],
+                    ],
+                    '401' => [
+                        'description' => 'The JWT is missing or invalid.',
+                        'content' => [
+                            'application/ld+json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                            'text/html' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/MissingJWT',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ],
     itemOperations: [
-        'get',
-        'patch',
-        'put',
-        'delete',
+        'get' => [
+            'security_post_denormalize' => "is_granted('EVENT_VIEW', object)",
+            'security_post_denormalize_message' => 'You are not allowed to view this event.',
+        ],
+        'patch' => [
+            'security_post_denormalize' => "is_granted('EVENT_EDIT', object)",
+            'security_post_denormalize_message' => 'You are not allowed to edit this event.',
+        ],
+        'put' => [
+            'security_post_denormalize' => "is_granted('EVENT_EDIT', object)",
+            'security_post_denormalize_message' => 'You are not allowed to edit this event.',
+        ],
+        'delete' => [
+            'security_post_denormalize' => "is_granted('EVENT_DELETE', object)",
+            'security_post_denormalize_message' => 'You are not allowed to delete this event.',
+        ],
     ]
 )]
 class Event
@@ -57,12 +120,15 @@ class Event
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
     #[Groups(['event:get'])]
-    #[Assert\Count(min: 1, minMessage: 'event.participants.min')]
-    private Collection $participants;
+    private Collection $users;
 
     #[ORM\Column(type: 'boolean')]
     #[Groups(['event:get'])]
     private bool $active = true;
+
+    #[ORM\Column(type: 'string', nullable: false, enumType: Visibility::class)]
+    #[Groups(['event:get'])]
+    private Visibility $visibility;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Groups(['event:get'])]
@@ -75,10 +141,15 @@ class Event
     #[Assert\GreaterThanOrEqual(propertyPath: 'startDate', message: 'event.end_date.invalid')]
     private ?\DateTime $endDate;
 
+    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'events')]
+    #[Groups(['event:get'])]
+    private Collection $roles;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->participants = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function __toString()
@@ -142,28 +213,28 @@ class Event
     /**
      * @return Collection<int, User>
      */
-    public function getParticipants(): Collection
+    public function getUsers(): Collection
     {
-        return $this->participants;
+        return $this->users;
     }
 
-    public function addParticipant(User $participant): self
+    public function addUser(User $user): self
     {
-        if (!$this->participants->contains($participant)) {
-            $this->participants[] = $participant;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
         }
 
         return $this;
     }
 
-    public function removeParticipant(User $participant): self
+    public function removeUser(User $user): self
     {
-        $this->participants->removeElement($participant);
+        $this->users->removeElement($user);
 
         return $this;
     }
 
-    public function getActive(): ?bool
+    public function isActive(): ?bool
     {
         return $this->active;
     }
@@ -171,6 +242,18 @@ class Event
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getVisibility(): ?Visibility
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(Visibility $visibility): self
+    {
+        $this->visibility = $visibility;
 
         return $this;
     }
@@ -195,6 +278,30 @@ class Event
     public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        $this->roles->removeElement($role);
 
         return $this;
     }

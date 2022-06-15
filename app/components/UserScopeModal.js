@@ -13,6 +13,8 @@ import ListItemText from "@mui/material/ListItemText";
 import { useRouter } from "next/router";
 import LoadingButton from "@mui/lab/LoadingButton";
 import ArrowForward from "@mui/icons-material/ArrowForward";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
 
 import { useUserSwitchScope } from "../hooks/useUserSwitchScope";
 
@@ -68,7 +70,7 @@ export default function UserScopeModal({ user, open, handleClose, isPageReady })
                 timeout: 1000
             }}
         >
-            <Fade in={open}>
+            <Fade timeout={500} in={open}>
                 <Box
                     position="absolute"
                     top="50%"
@@ -78,13 +80,21 @@ export default function UserScopeModal({ user, open, handleClose, isPageReady })
                     minHeight="40%"
                     bgcolor="primary.main"
                     color="primary.text.main"
-                    className="p-4 border border-light rounded"
+                    className="p-4 border border-light rounded d-flex flex-column"
                     sx={{ transform: "translate(-50%, -50%)" }}
                 >
+                    <IconButton className="position-absolute top-0 end-0 m-1" aria-label="close" size="large">
+                        <CloseIcon
+                            onClick={handleOnClose}
+                            disabled={!isPageReady || userSwitchScope.isLoading}
+                            sx={{ color: "primary.text.main" }}
+                            fontSize="inherit"
+                        />
+                    </IconButton>
                     <Typography id="user-scopes-title" variant="h4" component="h2" className="text-center">
                         Je choisis ma fonction
                     </Typography>
-                    <List aria-label="scopes">
+                    <List aria-label="scopes" className="flex-grow-1">
                         {user.scopes.map((scope) => (
                             <ListItem disablePadding onClick={() => handleScopeSelection(scope)} key={scope.id}>
                                 <ListItemButton>

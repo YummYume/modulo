@@ -50,14 +50,6 @@ const nextConfig = {
         };
 
         return config;
-    },
-    webpack: (config) => {
-        config.resolve.alias = {
-            ...config.resolve.alias,
-            "timezone-support$": path.join(__dirname, "node_modules/timezone-support/dist/index-2012-2022.js")
-        };
-
-        return config;
     }
 };
 
