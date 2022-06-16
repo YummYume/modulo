@@ -24,12 +24,12 @@ body {
     sans-serif;
 
   &::-webkit-scrollbar {
-    background-color: $primary-main;
+    background-color: $primary-main-light;
     width: 10px;
   }
 
   &::-webkit-scrollbar-track {
-    background-color: $primary-main;
+    background-color: $primary-main-light;
     box-shadow: inset 0 0 6px rgba(4, 38, 62, 0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(4, 38, 62, 0.3);
     border-radius: 10px;
@@ -43,7 +43,7 @@ body {
   }
 
   &::-webkit-scrollbar-corner {
-    background-color: $primary-main;
+    background-color: $primary-main-light;
   }
 
   &::-webkit-scrollbar-button:vertical:start:increment,
@@ -57,7 +57,7 @@ body {
 
   // firefox | doesn't work
   scrollbar-width: 10px;
-  scrollbar-color: $primary-main $primary-light;
+  scrollbar-color: $primary-main-light $primary-light;
 }
 
 a {

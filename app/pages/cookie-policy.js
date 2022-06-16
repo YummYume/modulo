@@ -11,15 +11,7 @@ export default function CookiePolicy() {
                 <meta name="description" content="Qu'est-ce qu'un cookie? Comment les utilisons-nous? Les réponses ici." />
             </Head>
             <div className="container-fluid w-100 my-5 mx-lg-5 mx-md-5 mx-sm-3">
-                <Typography
-                    variant="h2"
-                    component="h1"
-                    className="text-center mb-5"
-                    sx={{
-                        color: "primary.main",
-                        fontWeight: "400"
-                    }}
-                >
+                <Typography variant="h2" component="h1" className="text-center mb-5" fontWeight={400}>
                     Gestion des cookies
                 </Typography>
                 <Fade in={true} timeout={{ enter: 1000 }}>

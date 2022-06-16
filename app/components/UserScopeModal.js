@@ -78,18 +78,19 @@ export default function UserScopeModal({ user, open, handleClose, isPageReady })
                     width="35rem"
                     maxWidth="90%"
                     minHeight="40%"
-                    bgcolor="primary.main"
-                    color="primary.text.main"
+                    bgcolor="box.secondaryBox.background"
+                    color="box.secondaryBox.color"
                     className="p-4 border border-light rounded d-flex flex-column"
                     sx={{ transform: "translate(-50%, -50%)" }}
                 >
-                    <IconButton className="position-absolute top-0 end-0 m-1" aria-label="close" size="large">
-                        <CloseIcon
-                            onClick={handleOnClose}
-                            disabled={!isPageReady || userSwitchScope.isLoading}
-                            sx={{ color: "primary.text.main" }}
-                            fontSize="inherit"
-                        />
+                    <IconButton
+                        className="position-absolute top-0 end-0 m-1"
+                        aria-label="close"
+                        size="large"
+                        onClick={handleOnClose}
+                        disabled={!isPageReady || userSwitchScope.isLoading}
+                    >
+                        <CloseIcon sx={{ color: "primary.text.main" }} fontSize="inherit" />
                     </IconButton>
                     <Typography id="user-scopes-title" variant="h4" component="h2" className="text-center">
                         Je choisis ma fonction

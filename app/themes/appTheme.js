@@ -1,7 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
 import paletteTheme from "../styles/Palette.module.scss";
-console.log(paletteTheme);
 
 export const lightTheme = createTheme({
     palette: {
@@ -9,24 +8,34 @@ export const lightTheme = createTheme({
             main: paletteTheme.lightprimarymain,
             light: paletteTheme.lightprimary,
             text: {
-                main: "#fff",
-                light: "#000"
+                main: paletteTheme.white,
+                light: paletteTheme.black
             }
         },
         secondary: {
             main: paletteTheme.lightsecondarymain,
             light: paletteTheme.lightsecondary,
             text: {
-                main: "#fff",
-                light: "#000"
+                main: paletteTheme.white,
+                light: paletteTheme.black
             }
         },
         box: {
-            index: {
-                backgroundLogin: "rgba(255, 255, 255, 0.9)"
+            mainBox: {
+                color: paletteTheme.lightprimarymain,
+                background: "rgba(255, 255, 255, 0.90)"
+            },
+            secondaryBox: {
+                color: paletteTheme.white,
+                background: paletteTheme.lightprimarymain
             },
             image: {
                 filter: "rgba(4, 38, 62, 0.25)"
+            }
+        },
+        button: {
+            hoverButton: {
+                color: paletteTheme.lightprimarymain
             }
         }
     }
@@ -38,24 +47,34 @@ export const darkTheme = createTheme({
             main: paletteTheme.darkprimarymain,
             light: paletteTheme.darkprimary,
             text: {
-                main: "#000",
-                light: "#fff"
+                main: paletteTheme.white,
+                light: paletteTheme.white
             }
         },
         secondary: {
             main: paletteTheme.darksecondarymain,
             light: paletteTheme.darksecondary,
             text: {
-                main: "#000",
-                light: "#fff"
+                main: paletteTheme.white,
+                light: paletteTheme.white
             }
         },
         box: {
-            index: {
-                backgroundLogin: "rgba(255, 255, 255, 0.9)"
+            mainBox: {
+                color: paletteTheme.white,
+                background: "rgba(5, 46, 72, 0.95)"
+            },
+            secondaryBox: {
+                color: paletteTheme.white,
+                background: paletteTheme.darkprimarymain
             },
             image: {
-                filter: "rgba(4, 38, 62, 0.25)"
+                filter: "rgba(4, 38, 62, 0.35)"
+            }
+        },
+        button: {
+            hoverButton: {
+                color: paletteTheme.white
             }
         }
     }

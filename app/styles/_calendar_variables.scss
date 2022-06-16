@@ -1,12 +1,12 @@
 @use "sass:math";
 
-$out-of-range-color: darken($primary-main, 10%);
+$out-of-range-color: darken($primary-main-light, 10%);
 $out-of-range-bg-color: transparent;
 
-$calendar-border: $primary-main;
-$cell-border: $primary-main;
+$calendar-border: $primary-main-light;
+$cell-border: $primary-main-light;
 
-$border-color: $primary-main;
+$border-color: $primary-main-light;
 
 $segment-width: percentage(math.div(1, 7)) !default;
 
@@ -22,11 +22,11 @@ $event-border-radius: 5px;
 $event-padding: 5px 10px;
 $event-zindex: 4;
 
-$btn-color: $primary-main;
-$btn-border: $primary-main;
+$btn-color: $primary-main-light;
+$btn-border: $primary-main-light;
 $btn-bg: $primary-light;
 
-$current-time-color: $primary-main;
+$current-time-color: $primary-main-light;
 
 $rbc-css-prefix: rbc-i;
 

@@ -1,17 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Formik, Form } from "formik";
-import TextField from "@mui/material/TextField";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CheckIcon from "@mui/icons-material/Check";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import Autocomplete from "@mui/material/Autocomplete";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -23,6 +20,9 @@ import frLocale from "date-fns/locale/fr";
 import { getUsers } from "../api/user";
 import { getCategories } from "../api/category";
 import { getRoles } from "../api/role";
+import DarkTextField from "./Mui/DarkTextField";
+import DarkAutocomplete from "./Mui/DarkAutocomplete";
+import DarkDateTimePicker from "./Mui/DarkDateTimePicker";
 
 export default function AddEventModal({
     addEventMutation,
@@ -145,7 +145,11 @@ export default function AddEventModal({
 
     return (
         <Modal open={open} onClose={handleClose} className="d-flex justify-content-center align-items-center row">
-            <Box backgroundColor="box.index.backgroundLogin" className="rounded col-11 col-sm-10 col-md-9 col-lg-8 col-xl-7">
+            <Box
+                backgroundColor="box.mainBox.background"
+                color="box.mainBox.color"
+                className="rounded col-11 col-sm-10 col-md-9 col-lg-8 col-xl-7"
+            >
                 <Formik
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
@@ -158,10 +162,10 @@ export default function AddEventModal({
                             <Typography variant="h4" className="text-center mt-4 mb-5">
                                 {selectedEvent ? "Modifier un événement" : "Créer un événement"}
                             </Typography>
-                            <div className="d-flex flex-wrap justify-content-between">
+                            <div className="row justify-content-between">
                                 <div className="col-12 col-xl-6">
                                     <div className="mx-4 d-flex flex-column justify-content-between">
-                                        <TextField
+                                        <DarkTextField
                                             id="name"
                                             name="name"
                                             label="Nom"
@@ -175,7 +179,7 @@ export default function AddEventModal({
                                             className="my-2"
                                         />
                                         <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
-                                            <DateTimePicker
+                                            <DarkDateTimePicker
                                                 id="startDate"
                                                 name="startDate"
                                                 label="Date de début"
@@ -184,19 +188,24 @@ export default function AddEventModal({
                                                 variant="outlined"
                                                 ampm={false}
                                                 renderInput={(props) => (
-                                                    <TextField
+                                                    <DarkTextField
                                                         {...props}
                                                         className="my-2"
                                                         fullWidth
                                                         error={touched.startDate && !!errors.startDate}
                                                         onBlur={() => setFieldTouched("startDate", true)}
                                                         helperText={touched.startDate && errors.startDate}
+                                                        sx={{
+                                                            "& .MuiSvgIcon-root": {
+                                                                color: "box.mainBox.color"
+                                                            }
+                                                        }}
                                                     />
                                                 )}
                                             />
                                         </LocalizationProvider>
                                         <LocalizationProvider dateAdapter={AdapterDateFns} locale={frLocale}>
-                                            <DateTimePicker
+                                            <DarkDateTimePicker
                                                 id="endDate"
                                                 name="endDate"
                                                 label="Date de fin"
@@ -205,13 +214,18 @@ export default function AddEventModal({
                                                 variant="outlined"
                                                 ampm={false}
                                                 renderInput={(props) => (
-                                                    <TextField
+                                                    <DarkTextField
                                                         {...props}
                                                         className="my-2"
                                                         fullWidth
                                                         error={touched.endDate && !!errors.endDate}
                                                         onBlur={() => setFieldTouched("endDate", true)}
                                                         helperText={touched.endDate && errors.endDate}
+                                                        sx={{
+                                                            "& .MuiSvgIcon-root": {
+                                                                color: "box.mainBox.color"
+                                                            }
+                                                        }}
                                                     />
                                                 )}
                                             />
@@ -221,7 +235,7 @@ export default function AddEventModal({
                                 <div className="col-12 col-xl-6">
                                     <div className="mx-4">
                                         <FormControl fullWidth className="my-2" error={touched.categories && !!errors.categories}>
-                                            <Autocomplete
+                                            <DarkAutocomplete
                                                 loading={isCategoriesLoading}
                                                 loadingText="Chargement..."
                                                 noOptionsText="Aucune catégorie trouvée"
@@ -245,7 +259,7 @@ export default function AddEventModal({
                                                         {name}
                                                     </li>
                                                 )}
-                                                renderInput={(params) => <TextField {...params} label="Catégories" />}
+                                                renderInput={(params) => <DarkTextField {...params} label="Catégories" />}
                                                 multiple
                                                 openOnFocus
                                                 limitTags={2}
@@ -253,7 +267,7 @@ export default function AddEventModal({
                                             <FormHelperText>{touched.categories && errors.categories}</FormHelperText>
                                         </FormControl>
                                         <FormControl fullWidth className="my-2" error={touched.roles && !!errors.roles}>
-                                            <Autocomplete
+                                            <DarkAutocomplete
                                                 loading={isRolesLoading}
                                                 loadingText="Chargement..."
                                                 noOptionsText="Aucun rôle trouvé"
@@ -277,7 +291,7 @@ export default function AddEventModal({
                                                         {name}
                                                     </li>
                                                 )}
-                                                renderInput={(params) => <TextField {...params} label="Rôles invités" />}
+                                                renderInput={(params) => <DarkTextField {...params} label="Rôles invités" />}
                                                 multiple
                                                 openOnFocus
                                                 limitTags={1}
@@ -295,7 +309,7 @@ export default function AddEventModal({
                                             <FormHelperText>{touched.roles && errors.roles}</FormHelperText>
                                         </FormControl>
                                         <FormControl fullWidth className="my-2" error={touched.users && !!errors.users}>
-                                            <Autocomplete
+                                            <DarkAutocomplete
                                                 loading={isusersLoading}
                                                 loadingText="Chargement..."
                                                 noOptionsText="Aucun utilisateur trouvé"
@@ -322,7 +336,7 @@ export default function AddEventModal({
                                                     </li>
                                                 )}
                                                 renderInput={(params) => (
-                                                    <TextField
+                                                    <DarkTextField
                                                         {...params}
                                                         label="Personnes invitées"
                                                         error={touched.users && !!errors.users}
@@ -338,7 +352,7 @@ export default function AddEventModal({
                                 </div>
                                 <div className="col-12">
                                     <div className="my-2 mx-4">
-                                        <TextField
+                                        <DarkTextField
                                             id="description"
                                             name="description"
                                             label="Description"

@@ -5,7 +5,6 @@ import Link from "next/link";
 import NextNProgress from "nextjs-progressbar";
 import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
-import { useTheme } from "@mui/material/styles";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -15,21 +14,17 @@ import { lightTheme, darkTheme } from "../themes/appTheme";
 import styles from "../styles/Layout.module.scss";
 
 export default function Layout({ children, isPageReady }) {
-    const theme = useTheme();
     const [mode, setMode] = useState("light");
     const [currentTheme, setCurrentTheme] = useState(lightTheme);
     const colorMode = useMemo(
         () => ({
-            // The dark mode switch would invoke this method
             toggleColorMode: () => {
                 setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-            }
+            },
+            mode: mode
         }),
-        []
+        [mode]
     );
-    const handleModeChange = () => {
-        setMode("light" === mode ? "dark" : "light");
-    };
 
     useEffect(() => {
         setCurrentTheme("light" === mode ? lightTheme : darkTheme);
@@ -37,9 +32,9 @@ export default function Layout({ children, isPageReady }) {
 
     return (
         <ThemeProvider theme={currentTheme}>
-            <Box bgcolor="primary.main" className={`d-flex flex-column justify-content-between ${styles.app}`}>
-                <NextNProgress color={theme.palette.primary.light} options={{ showSpinner: false }} />
-                <Navbar isPageReady={isPageReady} handleModeChange={handleModeChange} />
+            <Box color="primary.text.light" bgcolor="primary.light" className={`d-flex flex-column justify-content-between ${styles.app}`}>
+                <NextNProgress color={currentTheme.palette.primary.light} options={{ showSpinner: false }} />
+                <Navbar isPageReady={isPageReady} colorMode={colorMode} />
                 <main className="d-flex flex-grow-1">{children}</main>
                 <Footer />
                 <ToastContainer

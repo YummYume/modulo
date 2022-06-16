@@ -3,7 +3,7 @@ import { domAnimation, LazyMotion, m, useAnimation } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-export default function HoverButton({ buttonProps, children }) {
+export default function HoverButton({ buttonProps, children, color }) {
     const theme = useTheme();
     const buttonControls = useAnimation();
     const buttonLineDraw = {
@@ -33,7 +33,8 @@ export default function HoverButton({ buttonProps, children }) {
                     background: "none",
                     "&:hover": {
                         background: "none"
-                    }
+                    },
+                    color: color ?? theme.palette.button.hoverButton.color
                 }}
                 component={m.button}
                 transition={{ duration: 0.25 }}
@@ -48,10 +49,17 @@ export default function HoverButton({ buttonProps, children }) {
             >
                 {children}
                 <div className="w-100 h-100 position-absolute">
-                    <m.svg height="100%" width="100%" viewBox="0 0 500 100" initial="hidden" animate={buttonControls}>
+                    <m.svg
+                        height="100%"
+                        width="100%"
+                        viewBox="0 0 500 100"
+                        initial="hidden"
+                        animate={buttonControls}
+                        preserveAspectRatio="none"
+                    >
                         <m.path
                             d="M250 100 H 0 M250 100 H 500"
-                            stroke={theme.palette.primary.main}
+                            stroke={color ?? theme.palette.button.hoverButton.color}
                             strokeWidth="5"
                             variants={buttonLineDraw}
                         />
