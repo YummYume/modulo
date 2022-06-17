@@ -50,7 +50,7 @@ export default function Layout({ children, isPageReady }) {
     return (
         <ThemeProvider theme={currentTheme}>
             <Box color="primary.text.light" bgcolor="primary.light" className={`d-flex flex-column justify-content-between ${styles.app}`}>
-                <NextNProgress color={currentTheme.palette.primary.light} options={{ showSpinner: false }} />
+                <NextNProgress color={currentTheme.palette.loading.color} options={{ showSpinner: false }} />
                 <Navbar isPageReady={isPageReady} colorMode={colorMode} />
                 <main className="d-flex flex-grow-1">{children}</main>
                 <Footer />

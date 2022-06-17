@@ -4,11 +4,11 @@ import { styled } from "@mui/material/styles";
 
 const DarkMenu = styled(Menu)(({ theme }) => ({
     [`& .${menuClasses.paper}`]: {
-        color: theme.palette.box.mainBox.color,
-        backgroundColor: theme.palette.box.mainBox.background
+        color: theme.palette.menu.color,
+        backgroundColor: theme.palette.menu.background
     },
     [`& .${menuClasses.list} > .MuiMenuItem-root > .MuiListItemIcon-root`]: {
-        color: theme.palette.box.mainBox.color
+        color: theme.palette.menu.color
     }
 }));
 
