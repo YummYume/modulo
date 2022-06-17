@@ -161,6 +161,7 @@ export default function AddEventModal({
                     backgroundColor="box.mainBox.background"
                     color="box.mainBox.color"
                     className="rounded col-11 col-sm-10 col-md-9 col-lg-8 col-xl-7"
+                    zIndex={1}
                 >
                     <Formik
                         initialValues={initialValues}
