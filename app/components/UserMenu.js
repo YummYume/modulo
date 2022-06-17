@@ -11,8 +11,10 @@ import LoginIcon from "@mui/icons-material/LoginTwoTone";
 import { useRouter } from "next/router";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Fade from "@mui/material/Fade";
+import SecurityIcon from "@mui/icons-material/Security";
 
 import { useUserLogout } from "../hooks/useUserLogout";
+import { adminRoles } from "../services/user";
 import UserScopeModal from "./UserScopeModal";
 import UserAvatar from "./UserAvatar";
 import UserPreferencesModal from "./UserPreferencesModal";
@@ -90,6 +92,17 @@ export default function UserMenu({ user, isFetched, isPageReady, colorMode }) {
                                 <Typography variant="body1">Mes fonctions</Typography>
                             </MenuItem>
                             <UserPreferencesMenuItem />
+                            {Boolean(user.roles) && user.roles.some((r) => adminRoles().indexOf(r) >= 0) && (
+                                <MenuItem
+                                    disabled={logoutMutation.isLoading}
+                                    onClick={() => (window.location.href = process.env.NEXT_PUBLIC_ADMIN_SITE_URL)}
+                                >
+                                    <ListItemIcon>
+                                        <SecurityIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    <Typography variant="body1">Administration</Typography>
+                                </MenuItem>
+                            )}
                             <MenuItem disabled={logoutMutation.isLoading} onClick={handleLogout}>
                                 <ListItemIcon>
                                     <LogoutIcon fontSize="small" />
