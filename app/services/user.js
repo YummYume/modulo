@@ -11,6 +11,12 @@ export const features = {
     SEE_CHILD_EVENTS: "SEE_CHILD_EVENTS"
 };
 
+export const roles = {
+    ROLE_USER: "ROLE_USER",
+    ROLE_ADMIN: "ROLE_ADMIN",
+    ROLE_SUPER_ADMIN: "ROLE_SUPER_ADMIN"
+};
+
 export const isGranted = (permission, user) => {
     const currentScope = user?.currentScope;
 
@@ -20,3 +26,5 @@ export const isGranted = (permission, user) => {
 
     return currentScope.role?.features?.includes(permission);
 };
+
+export const adminRoles = () => [roles.ROLE_ADMIN, roles.ROLE_SUPER_ADMIN];

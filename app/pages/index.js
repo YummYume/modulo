@@ -1,5 +1,4 @@
 import React from "react";
-import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import LoginIcon from "@mui/icons-material/Login";
@@ -17,6 +16,7 @@ import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { useUserLogin } from "../hooks/useUserLogin";
 import backgroundImage from "../public/images/scout-bg.jpg";
+import DarkTextField from "../components/Mui/DarkTextField";
 
 export default function Home({ isPageReady }) {
     const router = useRouter();
@@ -86,14 +86,15 @@ export default function Home({ isPageReady }) {
                                 width="550px"
                                 height="350px"
                                 borderRadius="0.5rem"
+                                color="box.mainBox.color"
                                 sx={{
-                                    backgroundColor: "box.index.backgroundLogin"
+                                    backgroundColor: "box.mainBox.background"
                                 }}
                             >
-                                <Typography variant="h4" component="h1" color="primary.main">
+                                <Typography variant="h4" component="h1">
                                     Connexion
                                 </Typography>
-                                <TextField
+                                <DarkTextField
                                     id="uuid"
                                     name="uuid"
                                     label="N° d'adhérent"
@@ -104,7 +105,7 @@ export default function Home({ isPageReady }) {
                                     error={submitCount > 0 && !!errors.uuid}
                                     helperText={submitCount > 0 && errors.uuid}
                                 />
-                                <TextField
+                                <DarkTextField
                                     id="password"
                                     name="password"
                                     label="Mot de passe"

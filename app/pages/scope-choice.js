@@ -59,7 +59,7 @@ export default function ScopeChoice({ isPageReady }) {
             <LazyMotion features={domAnimation} strict>
                 <div className="w-100 container-fluid my-2">
                     <div className="flex-column row justify-content-around h-100">
-                        <Box className="col-12 text-center" color="primary.main">
+                        <Box className="col-12 text-center">
                             <m.div initial={{ y: -200 }} animate={{ y: 0 }} transition={{ type: "spring", duration: 2, stiffness: 200 }}>
                                 <Typography variant="h2" component="h1">
                                     Je choisis ma fonction
@@ -74,17 +74,15 @@ export default function ScopeChoice({ isPageReady }) {
                                             className="d-flex flex-column justify-content-around align-items-center text-center h-100 shadow-lg mx-2"
                                             style={{
                                                 padding: "20px 30px",
-                                                border: `2px solid ${theme.palette.primary.main}`,
+                                                border: `2px solid ${theme.palette.box.mainBox.color}`,
                                                 borderRadius: "10px",
                                                 cursor: "pointer",
                                                 backgroundColor:
-                                                    selectedScope?.id === scope.id
-                                                        ? theme.palette.primary.main
-                                                        : theme.palette.primary.secondary,
+                                                    selectedScope?.id === scope.id ? theme.palette.box.mainBox.color : "transparent",
                                                 color:
                                                     selectedScope?.id === scope.id
                                                         ? theme.palette.primary.light
-                                                        : theme.palette.primary.main,
+                                                        : theme.palette.box.mainBox.color,
                                                 overflow: "hidden"
                                             }}
                                             whileHover={{ scale: 1.1, borderRadius: "15px" }}

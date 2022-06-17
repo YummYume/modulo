@@ -9,20 +9,29 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AvatarIcon from "@mui/icons-material/AccountCircle";
 import LoginIcon from "@mui/icons-material/LoginTwoTone";
 import { useRouter } from "next/router";
+import SettingsIcon from "@mui/icons-material/Settings";
+import Fade from "@mui/material/Fade";
+import SecurityIcon from "@mui/icons-material/Security";
 
 import { useUserLogout } from "../hooks/useUserLogout";
+import { adminRoles } from "../services/user";
 import UserScopeModal from "./UserScopeModal";
 import UserAvatar from "./UserAvatar";
+import UserPreferencesModal from "./UserPreferencesModal";
+import DarkMenu from "./Mui/DarkMenu";
 
-export default function UserMenu({ user, isFetched, isPageReady }) {
+export default function UserMenu({ user, isFetched, isPageReady, colorMode }) {
     const router = useRouter();
     const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
     const [userScopeModalOpen, setUserScopeModalOpen] = useState(false);
+    const [userPreferencesModalOpen, setUserPreferencesModalOpen] = useState(false);
     const userMenuOpen = Boolean(userMenuAnchorEl);
     const logoutMutation = useUserLogout(null, null, () => setUserMenuAnchorEl(null));
 
     const handleUserModalOpen = () => setUserScopeModalOpen(true);
     const handleUserModalClose = () => setUserScopeModalOpen(false);
+    const handleUserPreferencesOpen = () => setUserPreferencesModalOpen(true);
+    const handleUserPreferencesClose = () => setUserPreferencesModalOpen(false);
     const handleUserMenuOpen = (event) => setUserMenuAnchorEl(event.currentTarget);
     const handleUserMenuClose = () => !logoutMutation.isLoading && setUserMenuAnchorEl(null);
     const handleLogout = () => logoutMutation.mutate();
@@ -39,7 +48,19 @@ export default function UserMenu({ user, isFetched, isPageReady }) {
             horizontal: "right"
         },
         open: userMenuOpen,
-        onClose: handleUserMenuClose
+        onClose: handleUserMenuClose,
+        TransitionComponent: Fade
+    };
+
+    const UserPreferencesMenuItem = () => {
+        return (
+            <MenuItem disabled={Boolean(user) && logoutMutation.isLoading} onClick={handleUserPreferencesOpen}>
+                <ListItemIcon>
+                    <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                <Typography variant="body1">Mes préférences</Typography>
+            </MenuItem>
+        );
     };
 
     return (
@@ -57,7 +78,7 @@ export default function UserMenu({ user, isFetched, isPageReady }) {
             {isFetched ? (
                 <React.Fragment>
                     {user ? (
-                        <Menu {...menuProps}>
+                        <DarkMenu {...menuProps}>
                             <MenuItem disabled={logoutMutation.isLoading}>
                                 <ListItemIcon>
                                     <AvatarIcon fontSize="small" />
@@ -70,30 +91,38 @@ export default function UserMenu({ user, isFetched, isPageReady }) {
                                 </ListItemIcon>
                                 <Typography variant="body1">Mes fonctions</Typography>
                             </MenuItem>
+                            <UserPreferencesMenuItem />
+                            {Boolean(user.roles) && user.roles.some((r) => adminRoles().indexOf(r) >= 0) && (
+                                <MenuItem
+                                    disabled={logoutMutation.isLoading}
+                                    onClick={() => (window.location.href = process.env.NEXT_PUBLIC_ADMIN_SITE_URL)}
+                                >
+                                    <ListItemIcon>
+                                        <SecurityIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    <Typography variant="body1">Administration</Typography>
+                                </MenuItem>
+                            )}
                             <MenuItem disabled={logoutMutation.isLoading} onClick={handleLogout}>
                                 <ListItemIcon>
                                     <LogoutIcon fontSize="small" />
                                 </ListItemIcon>
-                                <Typography variant="body1">
+                                <Typography variant="body1" className="d-flex flex-grow-1 align-items-center justify-content-between">
                                     Déconnexion{" "}
-                                    {logoutMutation.isLoading && (
-                                        <CircularProgress
-                                            size={16}
-                                            sx={{ position: "absolute", right: 0, top: "50%", marginTop: "-8px", marginRight: 1 }}
-                                        />
-                                    )}
+                                    {logoutMutation.isLoading && <CircularProgress size={16} sx={{ color: "box.mainBox.color" }} />}
                                 </Typography>
                             </MenuItem>
-                        </Menu>
+                        </DarkMenu>
                     ) : (
-                        <Menu {...menuProps}>
+                        <DarkMenu {...menuProps}>
                             <MenuItem onClick={handleLoginRedirect}>
                                 <ListItemIcon>
                                     <LoginIcon fontSize="small" />
                                 </ListItemIcon>
                                 <Typography variant="body1">Connexion</Typography>
                             </MenuItem>
-                        </Menu>
+                            <UserPreferencesMenuItem />
+                        </DarkMenu>
                     )}
                 </React.Fragment>
             ) : (
@@ -102,6 +131,7 @@ export default function UserMenu({ user, isFetched, isPageReady }) {
                 </Menu>
             )}
             {user && <UserScopeModal user={user} open={userScopeModalOpen} handleClose={handleUserModalClose} isPageReady={isPageReady} />}
+            <UserPreferencesModal open={userPreferencesModalOpen} handleClose={handleUserPreferencesClose} colorMode={colorMode} />
         </div>
     );
 }

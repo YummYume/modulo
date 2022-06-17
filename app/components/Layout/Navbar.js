@@ -5,12 +5,12 @@ import Typography from "@mui/material/Typography";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Link from "next/link";
 
-import { useUser } from "../hooks/useUser";
-import UserMenu from "./UserMenu";
+import { useUser } from "../../hooks/useUser";
+import UserMenu from "../UserMenu";
 
-import styles from "../styles/Navbar.module.scss";
+import styles from "../../styles/Navbar.module.scss";
 
-export default function Navbar({ isPageReady }) {
+export default function Navbar({ isPageReady, colorMode }) {
     const { data: user, isFetched } = useUser();
     const trigger = useScrollTrigger({ disableHysteresis: true });
 
@@ -25,7 +25,7 @@ export default function Navbar({ isPageReady }) {
                         <Typography variant="h6">Modulo</Typography>
                     </a>
                 </Link>
-                <UserMenu user={user} isFetched={isFetched} isPageReady={isPageReady} />
+                <UserMenu user={user} isFetched={isFetched} isPageReady={isPageReady} colorMode={colorMode} />
             </Toolbar>
         </AppBar>
     );

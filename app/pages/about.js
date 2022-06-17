@@ -11,15 +11,7 @@ export default function About() {
                 <meta name="description" content="À propos de nous et du site modulo-scout.fr." />
             </Head>
             <div className="container-fluid w-100 my-5 mx-lg-5 mx-md-5 mx-sm-3">
-                <Typography
-                    variant="h2"
-                    component="h1"
-                    className="text-center mb-5"
-                    sx={{
-                        color: "primary.main",
-                        fontWeight: "400"
-                    }}
-                >
+                <Typography variant="h2" component="h1" className="text-center mb-5" fontWeight={400}>
                     À propos
                 </Typography>
                 <Fade in={true} timeout={{ enter: 1000 }}>
