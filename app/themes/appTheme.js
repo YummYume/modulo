@@ -62,7 +62,8 @@ export const darkTheme = createTheme({
         box: {
             mainBox: {
                 color: paletteTheme.white,
-                background: "rgba(5, 46, 72, 0.95)"
+                background: "rgba(2, 20, 34, 0.95)",
+                outline: "rgba(255, 255, 255, 0.1)"
             },
             secondaryBox: {
                 color: paletteTheme.white,

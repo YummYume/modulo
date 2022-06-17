@@ -11,12 +11,15 @@ const DarkTextField = styled(TextField)(({ theme }) => ({
         "&:hover": {
             "& .MuiOutlinedInput-notchedOutline": {
                 color: theme.palette.box.mainBox.color,
-                borderColor: theme.palette.box.mainBox.color
+                borderColor: theme.palette.box.mainBox.outline
             }
         },
         "& .MuiOutlinedInput-notchedOutline": {
             color: theme.palette.box.mainBox.color,
-            borderColor: theme.palette.box.mainBox.color
+            borderColor: theme.palette.box.mainBox.outline
+        },
+        "& .MuiChip-deleteIcon": {
+            color: theme.palette.box.mainBox.color
         }
     },
     "& .MuiOutlinedInput-input": {
