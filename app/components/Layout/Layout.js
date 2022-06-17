@@ -5,17 +5,20 @@ import Link from "next/link";
 import NextNProgress from "nextjs-progressbar";
 import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
+import { useCookies } from "react-cookie";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import ScrollToTop from "../components/ScrollToTop";
-import { lightTheme, darkTheme } from "../themes/appTheme";
+import ScrollToTop from "./ScrollToTop";
+import { lightTheme, darkTheme } from "../../themes/appTheme";
 
-import styles from "../styles/Layout.module.scss";
+import styles from "../../styles/Layout.module.scss";
 
 export default function Layout({ children, isPageReady }) {
+    const [cookies, setCookie] = useCookies(["color_mode"]);
     const [mode, setMode] = useState("light");
     const [currentTheme, setCurrentTheme] = useState(lightTheme);
+    const allowedValues = ["light", "dark"];
     const colorMode = useMemo(
         () => ({
             toggleColorMode: () => {
@@ -27,8 +30,22 @@ export default function Layout({ children, isPageReady }) {
     );
 
     useEffect(() => {
-        setCurrentTheme("light" === mode ? lightTheme : darkTheme);
+        if (allowedValues.includes(mode)) {
+            setCurrentTheme("dark" === mode ? darkTheme : lightTheme);
+            setCookie("color_mode", mode, {
+                path: "/",
+                maxAge: 60 * 60 * 24 * 365 * 3, // 3 years
+                sameSite: "strict",
+                secure: true
+            });
+        }
     }, [mode]);
+
+    useEffect(() => {
+        if (cookies.color_mode && allowedValues.includes(cookies.color_mode)) {
+            setMode(cookies.color_mode);
+        }
+    }, []);
 
     return (
         <ThemeProvider theme={currentTheme}>

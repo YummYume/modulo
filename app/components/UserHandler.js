@@ -74,7 +74,7 @@ export default function UserHandler() {
         } else if (toast.isActive(userStatusToast.current) && !userFailure) {
             toast.dismiss(userStatusToast.current);
         }
-    }, [userFailure, user, isOnline, refreshUser]);
+    }, [userFailure]);
 
     useEffect(() => {
         if (isOnline) {

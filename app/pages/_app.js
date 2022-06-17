@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import Layout from "../components/Layout";
+import Layout from "../components/Layout/Layout";
 import UserHandler from "../components/UserHandler";
 import theme from "../themes/appTheme";
 

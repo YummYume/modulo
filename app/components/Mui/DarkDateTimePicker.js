@@ -26,7 +26,10 @@ const popperProps = {
         backgroundColor: "box.mainBox.background"
     },
     "& .MuiTab-root": {
-        color: "box.mainBox.color"
+        color: "box.mainBox.color",
+        "+.Mui-selected": {
+            color: "box.mainBox.color"
+        }
     },
     "& .MuiTabs-indicator": {
         backgroundColor: "box.mainBox.color"

@@ -5,10 +5,10 @@ import Typography from "@mui/material/Typography";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Link from "next/link";
 
-import { useUser } from "../hooks/useUser";
-import UserMenu from "./UserMenu";
+import { useUser } from "../../hooks/useUser";
+import UserMenu from "../UserMenu";
 
-import styles from "../styles/Navbar.module.scss";
+import styles from "../../styles/Navbar.module.scss";
 
 export default function Navbar({ isPageReady, colorMode }) {
     const { data: user, isFetched } = useUser();
@@ -25,8 +25,7 @@ export default function Navbar({ isPageReady, colorMode }) {
                         <Typography variant="h6">Modulo</Typography>
                     </a>
                 </Link>
-                <button onClick={() => colorMode.toggleColorMode()}>Mode</button>
-                <UserMenu user={user} isFetched={isFetched} isPageReady={isPageReady} />
+                <UserMenu user={user} isFetched={isFetched} isPageReady={isPageReady} colorMode={colorMode} />
             </Toolbar>
         </AppBar>
     );
