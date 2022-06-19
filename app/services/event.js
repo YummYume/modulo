@@ -1,11 +1,3 @@
-const viewEvent = "EVENT_VIEW";
-const addEvent = "EVENT_ADD";
-const editEvent = "EVENT_EDIT";
-const deleteEvent = "EVENT_DELETE";
-const addParticipants = "EVENT_ADD_PARTICIPANTS";
-const addRoles = "EVENT_ADD_ROLES";
-const setVisibility = "EVENT_SET_VISIBILITY";
-
 const eventCrud = "event_crud";
 const editThirdPartyEvent = "edit_third_party_event";
 const editChildEvent = "edit_child_event";
@@ -21,8 +13,29 @@ const publicAccess = "public_access";
 const restrictedAccess = "restricted_access";
 const privateAccess = "private_access";
 
+export const isGrantedEvent = (permission, user, event) => {
+    switch (permission) {
+        case "canView":
+            return canView(user, event);
+        case "canAdd":
+            return canAdd(user);
+        case "canEdit":
+            return canEdit(user, event);
+        case "canDelete":
+            return canDelete(user, event);
+        case "canAddParticipants":
+            return canAddParticipants(user);
+        case "canAddRoles":
+            return canAddRoles(user);
+        case "canSetVisibility":
+            return canSetVisibility(user, event);
+        default:
+            return false;
+    }
+};
+
 // Can the user view an event?
-const canView = (event, user) => {
+const canView = (user, event) => {
     // The scope currently used by the user
     let scope = user.currentScope;
 
@@ -77,7 +90,7 @@ const canAdd = (user) => {
 };
 
 // Can the user edit an event?
-const canEdit = (event, user) => {
+const canEdit = (user, event) => {
     // The scope currently used by the user
     let scope = user.currentScope;
 
@@ -106,7 +119,7 @@ const canEdit = (event, user) => {
 };
 
 // Can the user delete an event?
-const canDelete = (event, user) => {
+const canDelete = (user, event) => {
     // The scope currently used by the user
     let scope = user.currentScope;
 
@@ -161,7 +174,7 @@ const canAddRoles = (user) => {
 };
 
 // Can the user change the visibility of an event?
-const canSetVisibility = (event, user) => {
+const canSetVisibility = (user, event) => {
     // The scope currently used by the user
     let scope = user.currentScope;
 

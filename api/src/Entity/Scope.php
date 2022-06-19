@@ -14,7 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ScopeRepository::class)]
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['event:get']])]
 #[UniqueEntity(fields: ['structure', 'role'], message: 'scope.unique')]
 class Scope
 {
@@ -29,12 +29,12 @@ class Scope
 
     #[ORM\ManyToOne(targetEntity: Structure::class, inversedBy: 'scopes')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     private ?Structure $structure;
 
     #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'scopes')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     private ?Role $role;
 
     #[ORM\Column(type: 'boolean')]
