@@ -18,6 +18,7 @@ export default function SecondaryModal({ open, handleClose, disabled, title, lab
             BackdropProps={{
                 timeout: 1000
             }}
+            disableScrollLock={true}
         >
             <Fade timeout={500} in={open}>
                 <Box

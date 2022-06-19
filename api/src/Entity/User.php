@@ -195,19 +195,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Valid]
     private ?MediaImage $avatar;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Scope::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
-    #[Groups(['get:me', 'event:get'])]
-    #[Assert\Valid]
-    #[Assert\Unique(message: 'user.scopes.unique', normalizer: 'trim')]
-    private Collection $scopes;
-
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'users')]
     private Collection $events;
 
+    #[ORM\ManyToMany(targetEntity: Scope::class, inversedBy: 'users')]
+    #[Groups(['get:me', 'event:get'])]
+    #[Assert\Valid]
+    private Collection $scopes;
+
     public function __construct()
     {
-        $this->scopes = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->scopes = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -324,7 +323,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[Groups(['get:me'])]
+    #[Groups(['get:me', 'event:get'])]
     public function getFullName(): string
     {
         return trim(sprintf('%s %s', $this->getFirstName(), $this->getLastName()));
@@ -394,28 +393,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->scopes;
     }
 
-    public function addScope(Scope $scope): self
-    {
-        if (!$this->scopes->contains($scope)) {
-            $this->scopes[] = $scope;
-            $scope->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeScope(Scope $scope): self
-    {
-        if ($this->scopes->removeElement($scope)) {
-            // set the owning side to null (unless already changed)
-            if ($scope->getUser() === $this) {
-                $scope->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Scope>
      */
@@ -472,5 +449,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getDefaultScope(): ?Scope
     {
         return $this->getActiveScopes()->first() ?? null;
+    }
+
+    public function addScope(Scope $scope): self
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes[] = $scope;
+        }
+
+        return $this;
+    }
+
+    public function removeScope(Scope $scope): self
+    {
+        $this->scopes->removeElement($scope);
+
+        return $this;
     }
 }

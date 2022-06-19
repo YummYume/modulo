@@ -12,7 +12,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserFixture extends Fixture
+final class UserFixture extends Fixture
 {
     public const DEFAULT_PASSWORD = 'password';
 
@@ -61,7 +61,7 @@ class UserFixture extends Fixture
                 }
 
                 $adminScope = (new Scope())
-                    ->setUser($admin)
+                    ->addUser($admin)
                     ->setStructure($adminStructure)
                     ->setRole($adminRole)
                 ;
@@ -90,7 +90,7 @@ class UserFixture extends Fixture
             }
 
             $scope = (new Scope())
-                ->setUser($user)
+                ->addUser($user)
                 ->setStructure($structure)
                 ->setRole($role)
             ;
@@ -108,7 +108,7 @@ class UserFixture extends Fixture
                 }
 
                 $scope = (new Scope())
-                    ->setUser($user)
+                    ->addUser($user)
                     ->setStructure($structure2)
                     ->setRole($role2)
                 ;

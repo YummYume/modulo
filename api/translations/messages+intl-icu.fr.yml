@@ -118,7 +118,7 @@ user.avatar: Avatar
 user.description: Description
 
 # Scope
-scope.user: Utilisateur
+scope.users: Utilisateurs
 scope.structure: Structure
 scope.role: Rôle
 scope.active: Actif

@@ -1,6 +1,6 @@
 ### Entities
 # Scope
-scope.unique: Cette scope existe déjà pour l'utilisateur {value}.
+scope.unique: Cette scope existe déjà.
 
 # User
 user.uuid.invalid: Le numéro d'adhérent doit être composé de 9 chiffres.

@@ -4,7 +4,7 @@ import { getCurrentUser } from "../api/user";
 
 export const useUser = (onQuerySuccess, onQueryFailure, onQuerySettled) => {
     return useQuery("user", getCurrentUser, {
-        refetchInterval: 120000,
+        refetchInterval: 60000 * 3, // 3 minutes
         retry: 2,
         refetchOnWindowFocus: false,
         select: (data) => {
