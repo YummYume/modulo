@@ -33,7 +33,7 @@ const DarkTextField = styled(TextField)(({ theme }) => ({
     "& .MuiOutlinedInput-input": {
         color: theme.palette.box.mainBox.color
     },
-    "& .MuiInputLabel-root:not(.Mui-error)": {
+    "& .MuiInputLabel-root:not(.Mui-error, .Mui-disabled)": {
         color: theme.palette.box.mainBox.color
     }
 }));

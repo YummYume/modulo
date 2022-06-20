@@ -63,6 +63,7 @@ import {
     StyledWeekTimeScaleLayoutComponent,
     StyledWeekViewDayLayoutComponent
 } from "../components/Scheduler/StyledScheduler";
+import { attributes, isGrantedEvent } from "../services/event";
 
 export default function Home({ isPageReady }) {
     const theme = useTheme();
@@ -252,7 +253,7 @@ export default function Home({ isPageReady }) {
     useEffect(() => {
         if (Boolean(user)) {
             setCanView(isGranted(features.AGENDA_ACCESS, user));
-            setCanAddEvent(isGranted(features.EVENT_CRUD, user));
+            setCanAddEvent(isGrantedEvent(attributes.ADD, user));
         }
     }, []);
 
@@ -324,7 +325,8 @@ export default function Home({ isPageReady }) {
                         endDate: newValues.endDate ? zonedTimeToUtc(newValues.endDate, serverTimezone) : null,
                         categories: newValues.categories.map((category) => category["@id"]),
                         users: newValues.users.map((participant) => participant["@id"]),
-                        roles: newValues.roles.map((role) => role["@id"])
+                        roles: newValues.roles.map((role) => role["@id"]),
+                        scope: newValues.scope["@id"]
                     }
                 });
             }
@@ -336,16 +338,18 @@ export default function Home({ isPageReady }) {
     };
 
     // Tooltips
-    const TooltipLayoutComponent = ({ children, onOpenButtonClick, onDeleteButtonClick, visible, ...restProps }) => (
-        <StyledTooltipLayoutComponent
-            {...restProps}
-            onOpenButtonClick={actionEnabled ? onOpenButtonClick : undefined}
-            onDeleteButtonClick={actionEnabled ? onDeleteButtonClick : undefined}
-            visible={actionEnabled ? visible : false}
-        >
-            {children}
-        </StyledTooltipLayoutComponent>
-    );
+    const TooltipLayoutComponent = ({ children, visible, ...restProps }) => {
+        const event = restProps?.appointmentMeta?.data;
+
+        return (
+            <StyledTooltipLayoutComponent
+                {...restProps}
+                visible={Boolean(event) && actionEnabled && isGrantedEvent(attributes.VIEW, user, event) ? visible : false}
+            >
+                {children}
+            </StyledTooltipLayoutComponent>
+        );
+    };
 
     const TooltipCommandButtonComponent = ({ children, ...restProps }) => (
         <AppointmentTooltip.CommandButton
@@ -354,9 +358,23 @@ export default function Home({ isPageReady }) {
         ></AppointmentTooltip.CommandButton>
     );
 
-    const TooltipHeaderComponent = ({ children, ...restProps }) => (
-        <StyledTooltipHeaderComponent {...restProps}></StyledTooltipHeaderComponent>
-    );
+    const TooltipHeaderComponent = ({ children, onOpenButtonClick, onDeleteButtonClick, ...restProps }) => {
+        const event = restProps?.appointmentData;
+
+        return (
+            <StyledTooltipHeaderComponent
+                {...restProps}
+                showOpenButton={Boolean(event) && isGrantedEvent(attributes.EDIT, user, event)}
+                showDeleteButton={Boolean(event) && isGrantedEvent(attributes.DELETE, user, event)}
+                onOpenButtonClick={
+                    Boolean(event) && actionEnabled && isGrantedEvent(attributes.EDIT, user, event) ? onOpenButtonClick : undefined
+                }
+                onDeleteButtonClick={
+                    Boolean(event) && actionEnabled && isGrantedEvent(attributes.DELETE, user, event) ? onDeleteButtonClick : undefined
+                }
+            ></StyledTooltipHeaderComponent>
+        );
+    };
 
     const TooltipContentComponent = ({ children, appointmentData, ...restProps }) => (
         <StyledTooltipContentComponent {...restProps} appointmentData={appointmentData}>
@@ -460,12 +478,14 @@ export default function Home({ isPageReady }) {
         <StyledMonthViewDayCellComponent
             {...restProps}
             onDoubleClick={() => {
-                setEventDefaultValues({
-                    startDate: restProps.startDate,
-                    endDate: restProps.endDate
-                });
+                if (canAddEvent) {
+                    setEventDefaultValues({
+                        startDate: restProps.startDate,
+                        endDate: restProps.endDate
+                    });
 
-                onDoubleClick();
+                    onDoubleClick();
+                }
             }}
         >
             {children}
@@ -481,12 +501,14 @@ export default function Home({ isPageReady }) {
         <WeekView.TimeTableCell
             {...restProps}
             onDoubleClick={() => {
-                setEventDefaultValues({
-                    startDate: restProps.startDate,
-                    endDate: restProps.endDate
-                });
+                if (canAddEvent) {
+                    setEventDefaultValues({
+                        startDate: restProps.startDate,
+                        endDate: restProps.endDate
+                    });
 
-                onDoubleClick();
+                    onDoubleClick();
+                }
             }}
         >
             {children}
@@ -506,12 +528,14 @@ export default function Home({ isPageReady }) {
         <DayView.TimeTableCell
             {...restProps}
             onDoubleClick={() => {
-                setEventDefaultValues({
-                    startDate: restProps.startDate,
-                    endDate: restProps.endDate
-                });
+                if (canAddEvent) {
+                    setEventDefaultValues({
+                        startDate: restProps.startDate,
+                        endDate: restProps.endDate
+                    });
 
-                onDoubleClick();
+                    onDoubleClick();
+                }
             }}
         >
             {children}
@@ -644,28 +668,29 @@ export default function Home({ isPageReady }) {
                         <AppointmentTooltip
                             showCloseButton
                             showOpenButton
-                            showDeleteButton={actionEnabled}
+                            showDeleteButton
                             commandButtonComponent={TooltipCommandButtonComponent}
                             headerComponent={TooltipHeaderComponent}
                             contentComponent={TooltipContentComponent}
                             layoutComponent={TooltipLayoutComponent}
                         />
                         <DragDropProvider
-                            allowDrag={() => actionEnabled}
-                            allowResize={() => actionEnabled}
+                            allowDrag={(event) => actionEnabled && isGrantedEvent(attributes.EDIT, user, event)}
+                            allowResize={(event) => actionEnabled && isGrantedEvent(attributes.EDIT, user, event)}
                             draftAppointmentComponent={DragAndDropLayoutComponent}
                             sourceAppointmentComponent={DragAndDropSourceLayoutComponent}
                         />
                         <AppointmentForm
-                            readOnly={!actionEnabled}
-                            visible={actionEnabled && openedEditForm}
+                            visible={openedEditForm}
                             onVisibilityChange={handleOpenedEditFormChange}
                             overlayComponent={connectProps(SchedulerEventFormOverlay, () => {
                                 return {
                                     event: currentSelectedEvent,
                                     eventDefaultValues: eventDefaultValues ?? {},
                                     handleCommit: handleCommit,
-                                    setOpenedEditForm: setOpenedEditForm
+                                    setOpenedEditForm: setOpenedEditForm,
+                                    actionEnabled: actionEnabled,
+                                    user: user
                                 };
                             })}
                         />
