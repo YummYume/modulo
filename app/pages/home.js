@@ -300,10 +300,11 @@ export default function Home({ isPageReady }) {
         if (Boolean(added)) {
             addEventMutation.mutate({
                 name: added.name,
-                description: added.notes,
+                description: added.description,
                 startDate: added.startDate ? zonedTimeToUtc(added.startDate, serverTimezone) : null,
                 endDate: added.endDate ? zonedTimeToUtc(added.endDate, serverTimezone) : null,
-                scope: user?.currentScope["@id"]
+                scope: user?.currentScope["@id"],
+                visibility: added.visibility
             });
         } else if (Boolean(changed)) {
             const changedId = Object.keys(changed)[0];

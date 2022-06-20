@@ -19,6 +19,9 @@ import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 
 import { getUsers } from "../api/user";
 import { getCategories } from "../api/category";
@@ -49,6 +52,8 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
         refetchInterval: 60000 * 5, // 5 minutes
         enabled: restProps.visible
     });
+    const visibilities = ["public_access", "restricted_access", "private_access"];
+    const optionLabels = { public_access: "Publique", restricted_access: "Restreinte", private_access: "Privée" };
     const validationSchema = yup.object({
         categories: yup.array(),
         description: yup.string().required("Veuillez saisir une description."),
@@ -60,7 +65,8 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
             .nullable(),
         name: yup.string().required("Veuillez saisir un nom."),
         users: yup.array(),
-        roles: yup.array()
+        roles: yup.array(),
+        visibility: yup.string().typeError("Veuillez saisir une visibilité valide.")
     });
     const initialValues = event ?? {
         categories: [],
@@ -70,6 +76,7 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
         name: "",
         users: [],
         roles: [],
+        visibility: null,
         ...eventDefaultValues
     };
     const [disabledRoles, setDisabledRoles] = useState([]);
@@ -352,6 +359,20 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                             minRows="3"
                                         />
                                     </div>
+                                    <FormControl fullWidth className="my-2" error={touched.visibility && !!errors.visibility}>
+                                        <DarkAutocomplete
+                                            id="visibility"
+                                            name="visibility"
+                                            value={values.visibility}
+                                            onChange={(event, value) => setFieldValue("visibility", value)}
+                                            onBlur={handleBlur}
+                                            options={visibilities}
+                                            getOptionLabel={(option) => optionLabels[option]}
+                                            renderInput={(params) => <DarkTextField {...params} label="Visibilité" />}
+                                            openOnFocus
+                                        />
+                                        <FormHelperText>{touched.visibility && errors.visibility}</FormHelperText>
+                                    </FormControl>
                                 </div>
                             </div>
                             <div className="text-center my-4 pb-2">
