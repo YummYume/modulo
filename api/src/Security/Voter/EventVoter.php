@@ -171,14 +171,14 @@ final class EventVoter extends Voter
         // The scope currently used by the user
         $scope = $user->getCurrentScope();
 
-        // If creating an event, then the user can change the visibility
-        if (null === $event->getId()) {
-            return true;
-        }
-
         // If no access to the agenda, then impossible to change the visibility of an event
         if (!$scope->hasFeature(Feature::AGENDA_ACCESS)) {
             return false;
+        }
+
+        // If creating an event, then the user can change the visibility
+        if (null === $event->getId()) {
+            return true;
         }
 
         return $scope->hasFeature(Feature::CUSTOMIZE_EVENT_VISIBILITY) || $event->getCreatedBy() === $user;

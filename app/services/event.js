@@ -185,17 +185,17 @@ const canSetVisibility = (user, event) => {
     // The scope currently used by the user
     const scope = user.currentScope;
 
-    // If creating an event, then the user can change the visibility
-    if (null === event) {
-        return true;
-    }
-
     // If no access to the agenda, then impossible to change the visibility of an event
     if (!hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
-    return hasFeature(scope, features.CUSTOMIZE_EVENT_VISIBILITY || event.createdBy["@id"] === user["@id"]);
+    // If creating an event, then the user can change the visibility
+    if (null === event) {
+        return true;
+    }
+
+    return hasFeature(scope, features.CUSTOMIZE_EVENT_VISIBILITY) || event.createdBy["@id"] === user["@id"];
 };
 
 const hasFeature = (scope, feature) => (scope.role?.features ? Object.values(scope.role.features).includes(feature) : false);

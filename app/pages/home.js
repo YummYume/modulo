@@ -305,6 +305,9 @@ export default function Home({ isPageReady }) {
                 startDate: added.startDate ? zonedTimeToUtc(added.startDate, serverTimezone) : null,
                 endDate: added.endDate ? zonedTimeToUtc(added.endDate, serverTimezone) : null,
                 scope: user?.currentScope["@id"],
+                categories: added.categories.map((category) => category["@id"]),
+                users: added.users.map((participant) => participant["@id"]),
+                roles: added.roles.map((role) => role["@id"]),
                 visibility: added.visibility
             });
         } else if (Boolean(changed)) {
@@ -389,13 +392,13 @@ export default function Home({ isPageReady }) {
                         </Grid>
                     </React.Fragment>
                 )}
-                {appointmentData.users?.length && (
+                {appointmentData.users?.length > 0 && (
                     <React.Fragment>
                         <Grid item xs={2} className="text-center" sx={{ alignSelf: "baseline" }}>
                             <PeopleIcon />
                         </Grid>
                         <Grid item xs={10}>
-                            {appointmentData.users.map((participant) => (
+                            {appointmentData.users.slice(0, 3).map((participant) => (
                                 <div key={participant["@id"]} className="row justify-content-center align-items-center mb-2">
                                     <div className="col-2">
                                         <UserAvatar user={participant} />
@@ -405,6 +408,13 @@ export default function Home({ isPageReady }) {
                                     </div>
                                 </div>
                             ))}
+                            {appointmentData.users.length > 3 && (
+                                <div className="row align-items-center mb-2">
+                                    <div className="col-2 text-center">
+                                        <Typography variant="h6" component="span">{`+${appointmentData.users.length - 3}`}</Typography>
+                                    </div>
+                                </div>
+                            )}
                         </Grid>
                     </React.Fragment>
                 )}

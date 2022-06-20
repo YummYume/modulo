@@ -86,7 +86,7 @@ export default function SchedulerEventFormOverlay({
         name: "",
         users: [],
         roles: [],
-        visibility: null,
+        visibility: "public_access",
         ...eventDefaultValues
     };
     const [disabledRoles, setDisabledRoles] = useState([]);
@@ -94,7 +94,7 @@ export default function SchedulerEventFormOverlay({
     const canEdit = event ? isGrantedEvent(attributes.EDIT, user, event) : false;
     const canAddParticipants = isGrantedEvent(attributes.ADD_PARTICIPANTS, user);
     const canAddRoles = isGrantedEvent(attributes.ADD_ROLES, user);
-    const canChangeVisibility = isGrantedEvent(attributes.CHANGE_VISIBILITY, user, event);
+    const canChangeVisibility = isGrantedEvent(attributes.SET_VISIBILITY, user, event);
     const formRef = useRef();
 
     const handleCategoryChange = (setFieldValue, categories) => {
@@ -381,6 +381,7 @@ export default function SchedulerEventFormOverlay({
                                     </div>
                                     <FormControl fullWidth className="my-2" error={touched.visibility && !!errors.visibility}>
                                         <DarkAutocomplete
+                                            disabled={!canChangeVisibility}
                                             id="visibility"
                                             name="visibility"
                                             value={values.visibility}
@@ -388,7 +389,14 @@ export default function SchedulerEventFormOverlay({
                                             onBlur={handleBlur}
                                             options={visibilities}
                                             getOptionLabel={(option) => optionLabels[option]}
-                                            renderInput={(params) => <DarkTextField {...params} label="Visibilité" />}
+                                            renderInput={(params) => (
+                                                <DarkTextField
+                                                    {...params}
+                                                    label="Visibilité"
+                                                    error={touched.visibility && !!errors.visibility}
+                                                    disabled={!canChangeVisibility}
+                                                />
+                                            )}
                                             openOnFocus
                                         />
                                         <FormHelperText>{touched.visibility && errors.visibility}</FormHelperText>
