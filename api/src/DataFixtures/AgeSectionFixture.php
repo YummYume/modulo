@@ -6,7 +6,7 @@ use App\Entity\AgeSection;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class AgeSectionFixture extends Fixture
+final class AgeSectionFixture extends Fixture
 {
     public const SUPPORT_ROLE_REF = 'age-section-Support';
 

@@ -7,13 +7,15 @@ use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\TimestampableTrait;
 use App\Enum\Feature;
 use App\Repository\ScopeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ScopeRepository::class)]
 #[ApiResource]
-#[UniqueEntity(fields: ['user', 'structure', 'role'], message: 'scope.unique')]
+#[UniqueEntity(fields: ['structure', 'role'], message: 'scope.unique')]
 class Scope
 {
     use BlameableTrait;
@@ -24,10 +26,6 @@ class Scope
     #[ORM\Column(type: 'integer')]
     #[Groups(['get:me'])]
     private ?int $id = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'scopes')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user;
 
     #[ORM\ManyToOne(targetEntity: Structure::class, inversedBy: 'scopes')]
     #[ORM\JoinColumn(nullable: false)]
@@ -43,6 +41,14 @@ class Scope
     #[Groups(['get:me'])]
     private bool $active = true;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'scopes')]
+    private Collection $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
+
     public function __toString()
     {
         return $this->structure.' - '.$this->role;
@@ -51,18 +57,6 @@ class Scope
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     public function getStructure(): ?Structure
@@ -104,5 +98,32 @@ class Scope
     public function hasFeature(Feature $feature): bool
     {
         return \in_array($feature->name, $this->getRole()->getFeatures(), true);
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addScope($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeScope($this);
+        }
+
+        return $this;
     }
 }

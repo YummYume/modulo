@@ -13,5 +13,5 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
 }));
 
 export default function StyledComponent(props) {
-    return <DarkMenu {...props} />;
+    return <DarkMenu disableScrollLock={true} {...props} />;
 }

@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Enum\Gender;
 use App\Enum\StaticRole;
 use App\Form\Admin\MediaImageType;
-use App\Form\Admin\UserScopeFormType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -99,6 +98,32 @@ final class UserCrudController extends AbstractCrudController
                     'class' => Gender::class,
                     'choice_label' => static fn (Gender $gender): string => $gender->value,
                 ]),
+                AssociationField::new('scopes', 'user.scopes')
+                ->onlyOnForms(),
+            CollectionField::new('scopes', 'user.scopes')
+                ->hideOnForm()
+                ->formatValue(function (string $value, User $user) use ($pageName): string {
+                    if (CRUD::PAGE_INDEX === $pageName) {
+                        return $user->getScopes()->count();
+                    }
+
+                    $baseUrl = $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(ScopeCrudController::class)
+                        ->setAction(Crud::PAGE_DETAIL)
+                    ;
+
+                    $scopes = array_map(function (Scope $scope) use ($baseUrl): string {
+                        $url = $baseUrl
+                            ->setEntityId($scope->getId())
+                            ->generateUrl()
+                        ;
+
+                        return sprintf('<a href="%s">%s</a>', $url, $scope);
+                    }, $user->getScopes()->toArray());
+
+                    return implode(', ', $scopes);
+                }),
             AvatarField::new('avatar', 'user.avatar')
                 ->onlyOnIndex()
                 ->formatValue(function (?string $path, User $user): ?string {
@@ -161,34 +186,6 @@ final class UserCrudController extends AbstractCrudController
                     ],
                 ])
                 ->onlyWhenUpdating(),
-            CollectionField::new('scopes', 'user.scopes')
-                ->allowAdd()
-                ->allowDelete()
-                ->setEntryType(UserScopeFormType::class)
-                ->renderExpanded()
-                ->setFormTypeOption('error_bubbling', false)
-                ->formatValue(function (string $value, User $user) use ($pageName): string {
-                    if (CRUD::PAGE_INDEX === $pageName) {
-                        return $user->getScopes()->count();
-                    }
-
-                    $baseUrl = $this->adminUrlGenerator
-                        ->unsetAll()
-                        ->setController(ScopeCrudController::class)
-                        ->setAction(Crud::PAGE_DETAIL)
-                    ;
-
-                    $scopes = array_map(function (Scope $scope) use ($baseUrl): string {
-                        $url = $baseUrl
-                            ->setEntityId($scope->getId())
-                            ->generateUrl()
-                        ;
-
-                        return sprintf('<a href="%s">%s</a>', $url, $scope);
-                    }, $user->getScopes()->toArray());
-
-                    return implode(', ', $scopes);
-                }),
             DateTimeField::new('createdAt', 'common.created_at')
                 ->hideOnForm(),
             DateTimeField::new('updatedAt', 'common.updated_at')

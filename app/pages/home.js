@@ -2,83 +2,106 @@ import React, { useState, useEffect, useRef } from "react";
 import { dehydrate, QueryClient, useQuery, useMutation, useQueryClient } from "react-query";
 import Typography from "@mui/material/Typography";
 import Head from "next/head";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
-import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import format from "date-fns/format";
-import startOfWeek from "date-fns/startOfWeek";
-import getDay from "date-fns/getDay";
-import fr from "date-fns/locale/fr";
-import parse from "date-fns/parse";
 import { toast, Flip } from "react-toastify";
 import { zonedTimeToUtc } from "date-fns-tz";
-
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import Paper from "@mui/material/Paper";
+import {
+    Scheduler,
+    Appointments,
+    MonthView,
+    DayView,
+    WeekView,
+    Toolbar,
+    ViewSwitcher,
+    DateNavigator,
+    TodayButton,
+    AppointmentTooltip,
+    DragDropProvider,
+    ConfirmationDialog,
+    AppointmentForm,
+    AllDayPanel
+} from "@devexpress/dx-react-scheduler-material-ui";
+import { EditingState, IntegratedEditing, ViewState } from "@devexpress/dx-react-scheduler";
+import { connectProps } from "@devexpress/dx-react-core";
+import DescriptionIcon from "@mui/icons-material/Description";
+import Grid from "@mui/material/Grid";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import { useTheme, styled } from "@mui/material/styles";
+import PeopleIcon from "@mui/icons-material/People";
+import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
 import { isGranted, features } from "../services/user";
-import { getEvents, getEventsFromServer, addEvent, editEvent } from "../api/event";
-import AddEventModal from "../components/AddEventModal";
+import { getEvents, getEventsFromServer, addEvent, editEvent, deleteEvent } from "../api/event";
+import SchedulerEventFormOverlay from "../components/SchedulerEventFormOverlay";
+import UserAvatar from "../components/UserAvatar";
+import DarkSelect from "../components/Mui/DarkSelect";
+import {
+    StyledAllDayPanelCellComponent,
+    StyledAllDayPanelTitleCellComponent,
+    StyledAppointmentComponent,
+    StyledConfirmationDialogOverlayComponent,
+    StyledDateOverlayComponent,
+    StyledDayTimeScaleLayoutComponent,
+    StyledDayViewDayLayoutComponent,
+    StyledDragAndDropLayoutComponent,
+    StyledDragAndDropSourceLayoutComponent,
+    StyledMonthViewDayCellComponent,
+    StyledMonthViewDayLayoutComponent,
+    StyledNavigationButtonComponent,
+    StyledOpenButtonComponent,
+    StyledTodayButtonComponent,
+    StyledTooltipContentComponent,
+    StyledTooltipHeaderComponent,
+    StyledTooltipLayoutComponent,
+    StyledWeekTimeScaleLayoutComponent,
+    StyledWeekViewDayLayoutComponent
+} from "../components/Scheduler/StyledScheduler";
 
 export default function Home({ isPageReady }) {
+    const theme = useTheme();
     const queryClient = useQueryClient();
-    const [openModal, setOpenModal] = useState(false);
     const [canView, setCanView] = useState(false);
-    const [crudAllowed, setCrudAllowed] = useState(false);
+    const [canAddEvent, setCanAddEvent] = useState(false);
     const [actionEnabled, setActionEnabled] = useState(false);
-    const [initialValuesOverride, setInitialValuesOverride] = useState(null);
-    const [selectedEvent, setSelectedEvent] = useState(null);
-    const [defaultView, setDefaultView] = useState("month");
-    const [defaultDate, setDefaultDate] = useState(new Date());
+    const [currentSelectedEvent, setCurrentSelectedEvent] = useState(null);
+    const [eventDefaultValues, setEventDefaultValues] = useState({});
+    const [openedEditForm, setOpenedEditForm] = useState(false);
+    const defaultCurrentDate = new Date();
+    const defaultCurrentViewName = "Day";
     const eventStatusToast = useRef(null);
+    const serverTimezone = process.env.NEXT_PUBLIC_SERVER_TIMEZONE ?? "Etc/Greenwich";
     const { data: user } = useUser();
-    const { data: events, refetch: refetchEvents } = useQuery("events", getEvents, {
+    const {
+        data: events,
+        isFetching: isFetchingEvents,
+        refetch: fetchEvents
+    } = useQuery("events", getEvents, {
         initialData: [],
         refetchOnWindowFocus: false,
-        refetchInterval: 60000,
-        enabled: canView,
+        refetchInterval: false,
+        enabled: false,
         select: (data) => {
             return data.map((event) => ({
                 ...event,
+                id: event["@id"], // this is required for the Scheduler to differentiate between events, we could use the normal id or simply the @id
+                title: event.name, // this is required for the Scheduler to display the title
                 startDate: event.startDate ? zonedTimeToUtc(event.startDate, "Europe/Paris") : null,
                 endDate: event.endDate ? zonedTimeToUtc(event.endDate, "Europe/Paris") : null
             }));
         }
     });
-    const DnDCalendar = withDragAndDrop(Calendar);
-    const messages = {
-        date: "Date",
-        time: "Heure",
-        event: "Evénement",
-        allDay: "Toute la journée",
-        week: "Semaine",
-        work_week: "Semaine de travail",
-        day: "Jour",
-        month: "Mois",
-        previous: "Précédent",
-        next: "Suivant",
-        yesterday: "Hier",
-        tomorrow: "Demain",
-        today: "Aujourd'hui",
-        agenda: "Agenda",
-        noEventsInRange: "Il n'y a pas d'événements dans cette période.",
-        showMore: (total) => `+${total} événement${total > 1 ? "s" : ""}`
-    };
-    const locales = {
-        fr
-    };
-    const localizer = dateFnsLocalizer({
-        format,
-        parse,
-        startOfWeek,
-        getDay,
-        locales
-    });
     const addEventMutation = useMutation((values) => addEvent(values), {
-        onMutate: () => {
+        onMutate: async () => {
             eventStatusToast.current = toast.loading(`Ajout de l'événement en cours...`);
+
+            await queryClient.cancelQueries("events");
         },
         onSuccess: ({ data }) => {
             if (toast.isActive(eventStatusToast.current)) {
@@ -97,7 +120,6 @@ export default function Home({ isPageReady }) {
             }
 
             queryClient.setQueryData("events", (events) => [...events, data]);
-            handleClose();
         },
         onError: (error) => {
             let message = "Une erreur est survenue.";
@@ -129,18 +151,10 @@ export default function Home({ isPageReady }) {
             eventStatusToast.current = toast.loading(`Modification de l'événement en cours...`);
 
             await queryClient.cancelQueries("events");
-
-            const previousEvents = queryClient.getQueryData("events");
-
-            queryClient.setQueryData("events", (currentEvent) =>
-                currentEvent.map((event) => (event["@id"] === data?.id ? { ...event, ...data?.values } : event))
-            );
-
-            return previousEvents;
         },
         onSuccess: ({ data }) => {
             queryClient.setQueryData("events", (currentEvent) =>
-                currentEvent.map((event) => (event["@id"] === data?.id ? { ...event, ...data?.values } : event))
+                currentEvent.map((event) => (event["@id"] === data["@id"] ? { ...event, ...data } : event))
             );
 
             if (toast.isActive(eventStatusToast.current)) {
@@ -157,12 +171,8 @@ export default function Home({ isPageReady }) {
             } else {
                 toast.success(`Evénement ${data.name} modifié avec succès.`);
             }
-
-            handleClose();
         },
-        onError: (error, variables, context) => {
-            queryClient.setQueryData("events", context.previousEvents);
-
+        onError: (error) => {
             let message = "Une erreur est survenue.";
 
             if (422 === error?.response?.status) {
@@ -185,73 +195,357 @@ export default function Home({ isPageReady }) {
             } else {
                 toast.error(message);
             }
+        }
+    });
+    const deleteEventMutation = useMutation((data) => deleteEvent(data), {
+        onMutate: async (data) => {
+            eventStatusToast.current = toast.loading(`Suppression de l'événement en cours...`);
+
+            await queryClient.cancelQueries("events");
+
+            return events.find((event) => event["@id"] === data);
         },
-        onSettled: () => {
-            queryClient.invalidateQueries("events");
+        onSuccess: (data, id, context) => {
+            queryClient.setQueryData("events", (currentEvent) => currentEvent.filter((event) => event["@id"] !== id));
+
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: `Evénement ${context.name} supprimé avec succès.`,
+                    type: toast.TYPE.SUCCESS,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.success(`Evénement ${context.name} supprimé avec succès.`);
+            }
+        },
+        onError: (error) => {
+            let message = "Une erreur est survenue.";
+
+            if (422 === error?.response?.status) {
+                message = "Une erreur est survenue lors de la suppression.";
+            } else if (403 === error?.response?.status) {
+                message = "Vous n'êtes pas autorisé à supprimer cet événement.";
+            }
+
+            if (toast.isActive(eventStatusToast.current)) {
+                toast.update(eventStatusToast.current, {
+                    render: message,
+                    type: toast.TYPE.ERROR,
+                    autoClose: 5000,
+                    isLoading: false,
+                    closeButton: true,
+                    closeOnClick: true,
+                    draggable: true,
+                    transition: Flip
+                });
+            } else {
+                toast.error(message);
+            }
         }
     });
 
     useEffect(() => {
         if (Boolean(user)) {
             setCanView(isGranted(features.AGENDA_ACCESS, user));
-            setCrudAllowed(isGranted(features.EVENT_CRUD, user));
-            refetchEvents();
+            setCanAddEvent(isGranted(features.EVENT_CRUD, user));
         }
-    }, [user]);
+    }, []);
 
     useEffect(() => {
-        setActionEnabled(crudAllowed && !addEventMutation.isLoading && !editEventMutation.isLoading && isPageReady);
-    }, [crudAllowed, addEventMutation, editEventMutation, isPageReady]);
+        setActionEnabled(
+            canView &&
+                !addEventMutation.isLoading &&
+                !editEventMutation.isLoading &&
+                !deleteEventMutation.isLoading &&
+                !isFetchingEvents &&
+                isPageReady
+        );
+    }, [canView, addEventMutation, editEventMutation, deleteEventMutation, isFetchingEvents, isPageReady]);
 
-    const handleClose = () => {
-        setOpenModal(false);
-        setSelectedEvent(null);
-        setInitialValuesOverride(null);
-    };
-
-    const handleNewEvent = (date = null) => {
-        if (actionEnabled) {
-            date && setDefaultDate(date);
-            setSelectedEvent(null);
-            setOpenModal(true);
-        }
-    };
-
-    const handleSelectEvent = (event) => {
-        if (actionEnabled) {
-            event?.startDate && setDefaultDate(event.startDate);
-            setInitialValuesOverride(event);
-            setSelectedEvent(event);
-            setOpenModal(true);
-        }
-    };
-
-    const handleSelectSlot = ({ start, end }) => {
-        if (actionEnabled) {
-            setInitialValuesOverride({ startDate: start, endDate: end });
-            handleNewEvent(start);
-        }
-    };
-
-    const updateEvent = ({ event, end, start }) => {
-        setInitialValuesOverride(null);
-        setSelectedEvent(null);
-
-        if (actionEnabled) {
-            setDefaultDate(start);
-            editEventMutation.mutate({
-                id: event["@id"],
-                values: {
-                    endDate: end,
-                    startDate: start
+    useEffect(() => {
+        const eventRefetch = setInterval(
+            (canView, openedEditForm) => {
+                if (canView && !openedEditForm) {
+                    fetchEvents();
                 }
-            });
+            },
+            120000,
+            canView,
+            openedEditForm
+        );
+
+        return () => {
+            clearInterval(eventRefetch);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!openedEditForm) {
+            setEventDefaultValues({});
+        }
+    }, [openedEditForm]);
+
+    const handleOpenedEditFormChange = () => {
+        if (actionEnabled) {
+            setOpenedEditForm(!openedEditForm);
         }
     };
 
-    const handleViewChange = (view, date) => {
-        setDefaultView(view);
+    const handleCommit = ({ added, changed, deleted }) => {
+        if (Boolean(added)) {
+            addEventMutation.mutate({
+                name: added.name,
+                description: added.description,
+                startDate: added.startDate ? zonedTimeToUtc(added.startDate, serverTimezone) : null,
+                endDate: added.endDate ? zonedTimeToUtc(added.endDate, serverTimezone) : null,
+                scope: user?.currentScope["@id"],
+                visibility: added.visibility
+            });
+        } else if (Boolean(changed)) {
+            const changedId = Object.keys(changed)[0];
+            const changedEvent = events.find((event) => event["@id"] === changedId);
+
+            if (Boolean(changedEvent)) {
+                const newValues = {
+                    ...changedEvent,
+                    ...changed[changedId]
+                };
+
+                editEventMutation.mutate({
+                    id: changedId,
+                    values: {
+                        ...newValues,
+                        startDate: newValues.startDate ? zonedTimeToUtc(newValues.startDate, serverTimezone) : null,
+                        endDate: newValues.endDate ? zonedTimeToUtc(newValues.endDate, serverTimezone) : null,
+                        categories: newValues.categories.map((category) => category["@id"]),
+                        users: newValues.users.map((participant) => participant["@id"]),
+                        roles: newValues.roles.map((role) => role["@id"])
+                    }
+                });
+            }
+        } else if (Boolean(deleted)) {
+            deleteEventMutation.mutate(deleted);
+        }
+
+        return events;
     };
+
+    // Tooltips
+    const TooltipLayoutComponent = ({ children, onOpenButtonClick, onDeleteButtonClick, visible, ...restProps }) => (
+        <StyledTooltipLayoutComponent
+            {...restProps}
+            onOpenButtonClick={actionEnabled ? onOpenButtonClick : undefined}
+            onDeleteButtonClick={actionEnabled ? onDeleteButtonClick : undefined}
+            visible={actionEnabled ? visible : false}
+        >
+            {children}
+        </StyledTooltipLayoutComponent>
+    );
+
+    const TooltipCommandButtonComponent = ({ children, ...restProps }) => (
+        <AppointmentTooltip.CommandButton
+            {...restProps}
+            style={{ color: theme.palette.box.mainBox.color }}
+        ></AppointmentTooltip.CommandButton>
+    );
+
+    const TooltipHeaderComponent = ({ children, ...restProps }) => (
+        <StyledTooltipHeaderComponent {...restProps}></StyledTooltipHeaderComponent>
+    );
+
+    const TooltipContentComponent = ({ children, appointmentData, ...restProps }) => (
+        <StyledTooltipContentComponent {...restProps} appointmentData={appointmentData}>
+            <Grid container alignItems="center">
+                {appointmentData.description && (
+                    <React.Fragment>
+                        <Grid item xs={2} className="text-center" sx={{ paddingBottom: "12px" }}>
+                            <DescriptionIcon />
+                        </Grid>
+                        <Grid item xs={10} sx={{ paddingBottom: "12px" }}>
+                            <span>{appointmentData.description}</span>
+                        </Grid>
+                    </React.Fragment>
+                )}
+                {appointmentData.users?.length && (
+                    <React.Fragment>
+                        <Grid item xs={2} className="text-center" sx={{ alignSelf: "baseline" }}>
+                            <PeopleIcon />
+                        </Grid>
+                        <Grid item xs={10}>
+                            {appointmentData.users.map((participant) => (
+                                <div key={participant["@id"]} className="row justify-content-center align-items-center mb-2">
+                                    <div className="col-2">
+                                        <UserAvatar user={participant} />
+                                    </div>
+                                    <div className="col-10 text-start">
+                                        <span>{participant.fullName}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </Grid>
+                    </React.Fragment>
+                )}
+            </Grid>
+        </StyledTooltipContentComponent>
+    );
+
+    // Switcher
+    const SwitcherComponent = ({ currentView, availableViews, onChange }) => (
+        <FormControl
+            className="my-2"
+            sx={{
+                minWidth: 120,
+                "& .MuiInputLabel-root": {
+                    color: "menu.color"
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                    color: "menu.color"
+                }
+            }}
+            size="small"
+        >
+            <InputLabel id="view-switcher-label">Vue</InputLabel>
+            <DarkSelect
+                labelId="view-switcher-label"
+                id="view-switcher"
+                value={currentView.name}
+                label="Vue"
+                onChange={(event) => onChange(event?.target?.value ?? "Month")}
+            >
+                {availableViews.map((view) => (
+                    <MenuItem key={view.name} value={view.name}>
+                        {view.displayName}
+                    </MenuItem>
+                ))}
+            </DarkSelect>
+        </FormControl>
+    );
+
+    // Appointments
+    const AppointmentComponent = ({ children, onClick, onDoubleClick, ...restProps }) => (
+        <StyledAppointmentComponent
+            onClick={actionEnabled ? onClick : undefined}
+            onDoubleClick={actionEnabled ? onDoubleClick : undefined}
+            {...restProps}
+        >
+            {children}
+        </StyledAppointmentComponent>
+    );
+
+    // Today button
+    const TodayButtonComponent = ({ children, ...restProps }) => <StyledTodayButtonComponent {...restProps}></StyledTodayButtonComponent>;
+
+    // Date navigator
+    const NavigationButtonComponent = ({ children, ...restProps }) => (
+        <StyledNavigationButtonComponent {...restProps}></StyledNavigationButtonComponent>
+    );
+
+    const OpenButtonComponent = ({ children, ...restProps }) => <StyledOpenButtonComponent {...restProps}></StyledOpenButtonComponent>;
+
+    const DateOverlayComponent = ({ children, ...restProps }) => (
+        <StyledDateOverlayComponent {...restProps}>{children}</StyledDateOverlayComponent>
+    );
+
+    // Month view
+    const MonthViewDayLayoutComponent = ({ children, ...restProps }) => (
+        <StyledMonthViewDayLayoutComponent {...restProps}>{children}</StyledMonthViewDayLayoutComponent>
+    );
+
+    const MonthViewDayCellComponent = ({ children, onDoubleClick, ...restProps }) => (
+        <StyledMonthViewDayCellComponent
+            {...restProps}
+            onDoubleClick={() => {
+                setEventDefaultValues({
+                    startDate: restProps.startDate,
+                    endDate: restProps.endDate
+                });
+
+                onDoubleClick();
+            }}
+        >
+            {children}
+        </StyledMonthViewDayCellComponent>
+    );
+
+    // Week view
+    const WeekViewDayLayoutComponent = ({ children, ...restProps }) => (
+        <StyledWeekViewDayLayoutComponent {...restProps}>{children}</StyledWeekViewDayLayoutComponent>
+    );
+
+    const WeekViewDayCellComponent = ({ children, onDoubleClick, ...restProps }) => (
+        <WeekView.TimeTableCell
+            {...restProps}
+            onDoubleClick={() => {
+                setEventDefaultValues({
+                    startDate: restProps.startDate,
+                    endDate: restProps.endDate
+                });
+
+                onDoubleClick();
+            }}
+        >
+            {children}
+        </WeekView.TimeTableCell>
+    );
+
+    const WeekViewTimeScaleLayoutComponent = ({ children, ...restProps }) => (
+        <StyledWeekTimeScaleLayoutComponent {...restProps}>{children}</StyledWeekTimeScaleLayoutComponent>
+    );
+
+    // Day view
+    const DayViewDayLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDayViewDayLayoutComponent {...restProps}>{children}</StyledDayViewDayLayoutComponent>
+    );
+
+    const DayViewDayCellComponent = ({ children, onDoubleClick, ...restProps }) => (
+        <DayView.TimeTableCell
+            {...restProps}
+            onDoubleClick={() => {
+                setEventDefaultValues({
+                    startDate: restProps.startDate,
+                    endDate: restProps.endDate
+                });
+
+                onDoubleClick();
+            }}
+        >
+            {children}
+        </DayView.TimeTableCell>
+    );
+
+    const DayViewTimeScaleLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDayTimeScaleLayoutComponent {...restProps}>{children}</StyledDayTimeScaleLayoutComponent>
+    );
+
+    // All day panel
+    const AllDayPanelTitleCellComponent = ({ children, ...restProps }) => (
+        <StyledAllDayPanelTitleCellComponent className="test-test" {...restProps}>
+            {children}
+        </StyledAllDayPanelTitleCellComponent>
+    );
+
+    const AllDayPanelCellComponent = ({ children, ...restProps }) => (
+        <StyledAllDayPanelCellComponent {...restProps}>{children}</StyledAllDayPanelCellComponent>
+    );
+
+    // Drag and drop
+    const DragAndDropLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDragAndDropLayoutComponent {...restProps}>{children}</StyledDragAndDropLayoutComponent>
+    );
+
+    const DragAndDropSourceLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDragAndDropSourceLayoutComponent {...restProps}>{children}</StyledDragAndDropSourceLayoutComponent>
+    );
+
+    // Confirmation dialog
+    const ConfirmationDialogOverlayComponent = ({ children, ...restProps }) => (
+        <StyledConfirmationDialogOverlayComponent {...restProps}>{children}</StyledConfirmationDialogOverlayComponent>
+    );
 
     return (
         <React.Fragment>
@@ -263,43 +557,135 @@ export default function Home({ isPageReady }) {
                 <Typography variant="h2" component="h1" className="text-center text-break my-5">
                     Accueil Connecté
                 </Typography>
-                {canView && (
-                    <DnDCalendar
-                        messages={messages}
-                        localizer={localizer}
-                        events={events}
-                        startAccessor="startDate"
-                        endAccessor="endDate"
-                        titleAccessor="name"
-                        selectable
-                        onSelectSlot={handleSelectSlot}
-                        onSelectEvent={handleSelectEvent}
-                        onEventDrop={updateEvent}
-                        resizable
-                        onEventResize={updateEvent}
-                        culture={"fr"}
-                        style={{ height: 500 }}
-                        onView={handleViewChange}
-                        defaultView={defaultView}
-                        defaultDate={defaultDate}
-                    />
-                )}
-                {crudAllowed && (
-                    <React.Fragment>
-                        <Fab color="primary" className="mx-auto d-block my-5" onClick={() => handleNewEvent()} disabled={!actionEnabled}>
+                <Typography variant="h3" component="h2" className="text-break mt-2">
+                    Mon Agenda
+                </Typography>
+                <Paper
+                    className="mt-2 mb-5 position-relative"
+                    sx={{
+                        border: `2px solid ${theme.palette.box.mainBox.color}`,
+                        backgroundColor: theme.palette.menu.background,
+                        color: theme.palette.menu.color
+                    }}
+                >
+                    {!canView && (
+                        <Box
+                            className="position-absolute d-flex align-items-center justify-content-center"
+                            sx={{
+                                top: "50%",
+                                right: "50%",
+                                zIndex: "1000",
+                                transform: "translate(50%, -50%)",
+                                width: "100%",
+                                height: "100%",
+                                backgroundColor: theme.palette.box.mainBox.background,
+                                color: theme.palette.box.mainBox.color,
+                                opacity: 0.9,
+                                padding: "0.5rem"
+                            }}
+                        >
+                            <Typography variant="h2" component="h2" className="text-break text-center w-100 mt-2" sx={{ opacity: 1 }}>
+                                {"Votre fonction actuelle ne vous permet pas d'accéder à l'agenda."}
+                            </Typography>
+                        </Box>
+                    )}
+                    <Scheduler data={events} height={700} locale="fr-FR" firstDayOfWeek={1}>
+                        <ViewState
+                            defaultCurrentDate={format(defaultCurrentDate, "yyyy-MM-dd")}
+                            defaultCurrentViewName={defaultCurrentViewName}
+                        />
+                        <EditingState
+                            onCommitChanges={handleCommit}
+                            onEditingAppointmentChange={(event) => setCurrentSelectedEvent(event)}
+                            onAddedAppointmentChange={() => setCurrentSelectedEvent(null)}
+                        />
+                        <IntegratedEditing />
+                        <DayView
+                            displayName="Jour"
+                            dayScaleLayoutComponent={DayViewDayLayoutComponent}
+                            timeTableCellComponent={DayViewDayCellComponent}
+                            timeScaleLayoutComponent={DayViewTimeScaleLayoutComponent}
+                        />
+                        <WeekView
+                            displayName="Semaine"
+                            dayScaleLayoutComponent={WeekViewDayLayoutComponent}
+                            timeTableCellComponent={WeekViewDayCellComponent}
+                            timeScaleLayoutComponent={WeekViewTimeScaleLayoutComponent}
+                        />
+                        <MonthView
+                            displayName="Mois"
+                            dayScaleLayoutComponent={MonthViewDayLayoutComponent}
+                            timeTableCellComponent={MonthViewDayCellComponent}
+                        />
+                        <Toolbar />
+                        <ViewSwitcher switcherComponent={SwitcherComponent} />
+                        <Appointments appointmentComponent={AppointmentComponent} />
+                        <DateNavigator
+                            navigationButtonComponent={NavigationButtonComponent}
+                            openButtonComponent={OpenButtonComponent}
+                            overlayComponent={DateOverlayComponent}
+                        />
+                        <AllDayPanel
+                            messages={{ allDay: "Toute la journée" }}
+                            titleCellComponent={AllDayPanelTitleCellComponent}
+                            cellComponent={AllDayPanelCellComponent}
+                        />
+                        <TodayButton messages={{ today: "Aujourd'hui" }} buttonComponent={TodayButtonComponent} />
+                        <ConfirmationDialog
+                            messages={{
+                                discardButton: "Ignorer",
+                                deleteButton: "Supprimer",
+                                cancelButton: "Annuler",
+                                confirmDeleteMessage: "Voulez-vous vraiment supprimer cet événement ?",
+                                confirmCancelMessage: "Ignorer les modifications non enregistrées ?"
+                            }}
+                            overlayComponent={ConfirmationDialogOverlayComponent}
+                        />
+                        <AppointmentTooltip
+                            showCloseButton
+                            showOpenButton
+                            showDeleteButton={actionEnabled}
+                            commandButtonComponent={TooltipCommandButtonComponent}
+                            headerComponent={TooltipHeaderComponent}
+                            contentComponent={TooltipContentComponent}
+                            layoutComponent={TooltipLayoutComponent}
+                        />
+                        <DragDropProvider
+                            allowDrag={() => actionEnabled}
+                            allowResize={() => actionEnabled}
+                            draftAppointmentComponent={DragAndDropLayoutComponent}
+                            sourceAppointmentComponent={DragAndDropSourceLayoutComponent}
+                        />
+                        <AppointmentForm
+                            readOnly={!actionEnabled}
+                            visible={actionEnabled && openedEditForm}
+                            onVisibilityChange={handleOpenedEditFormChange}
+                            overlayComponent={connectProps(SchedulerEventFormOverlay, () => {
+                                return {
+                                    event: currentSelectedEvent,
+                                    eventDefaultValues: eventDefaultValues ?? {},
+                                    handleCommit: handleCommit,
+                                    setOpenedEditForm: setOpenedEditForm
+                                };
+                            })}
+                        />
+                    </Scheduler>
+                    {canAddEvent && (
+                        <Fab
+                            color="secondary"
+                            className="position-absolute"
+                            sx={{
+                                bottom: 20,
+                                right: 20,
+                                opacity: actionEnabled ? 0.85 : 0.7
+                            }}
+                            onClick={() => handleOpenedEditFormChange()}
+                            disabled={!actionEnabled}
+                        >
                             <AddIcon />
                         </Fab>
-                        <AddEventModal
-                            addEventMutation={addEventMutation}
-                            editEventMutation={editEventMutation}
-                            handleClose={handleClose}
-                            initialValuesOverride={initialValuesOverride}
-                            open={openModal}
-                            user={user}
-                            selectedEvent={selectedEvent}
-                        />
-                    </React.Fragment>
-                )}
+                    )}
+                </Paper>
             </div>
         </React.Fragment>
     );

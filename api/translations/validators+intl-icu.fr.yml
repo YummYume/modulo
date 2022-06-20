@@ -1,6 +1,6 @@
 ### Entities
 # Scope
-scope.unique: Cette scope existe déjà pour l'utilisateur {value}.
+scope.unique: Cette scope existe déjà.
 
 # User
 user.uuid.invalid: Le numéro d'adhérent doit être composé de 9 chiffres.
@@ -71,6 +71,7 @@ event.start_date.type: Veuillez saisir une date de début valide.
 event.end_date.type: Veuillez saisir une date de fin valide.
 event.end_date.invalid: La date de fin doit être postérieure à la date de début.
 event.participants.min: Veuillez sélectionner au moins un participant.
+event.visibility.blank: Veuillez sélectionner une visibilité.
 
 # Age section
 age_section.color.css_color: Veuillez saisir une couleur valide.

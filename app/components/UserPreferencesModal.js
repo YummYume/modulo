@@ -29,7 +29,6 @@ export default function UserPreferencesModal({ open, handleClose, colorMode }) {
                 <FormControlLabel
                     control={
                         <DarkSwitch
-                            defaultChecked={"dark" === colorMode.mode}
                             checked={"dark" === colorMode.mode}
                             icon={<LightModeIcon sx={{ color: "#f9d71c" }} />}
                             checkedIcon={<DarkModeIcon sx={{ color: "box.secondaryBox.color" }} />}

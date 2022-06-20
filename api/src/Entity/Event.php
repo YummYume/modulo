@@ -128,9 +128,10 @@ class Event
 
     #[ORM\Column(type: 'string', nullable: false, enumType: Visibility::class)]
     #[Groups(['event:get'])]
+    #[Assert\NotBlank(message: 'event.visibility.blank', allowNull: false)]
     private Visibility $visibility;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: false)]
     #[Groups(['event:get'])]
     #[Assert\Type(type: 'datetime', message: 'event.start_date.type')]
     private ?\DateTime $startDate;

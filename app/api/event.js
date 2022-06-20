@@ -23,7 +23,7 @@ export const editEvent = async (id, event) => {
 };
 
 export const deleteEvent = async (id) => {
-    const response = await axiosApiInstance().delete(`/events/${id}`);
+    const response = await axiosApiInstance().delete(id);
 
     return response;
 };

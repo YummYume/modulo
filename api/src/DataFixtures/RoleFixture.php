@@ -9,7 +9,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use LogicException;
 
-class RoleFixture extends Fixture
+final class RoleFixture extends Fixture
 {
     public function load(ObjectManager $manager): void
     {

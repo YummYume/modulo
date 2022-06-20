@@ -3,14 +3,21 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Scope;
+use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 final class ScopeCrudController extends AbstractCrudController
 {
+    public function __construct(private AdminUrlGenerator $adminUrlGenerator)
+    {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Scope::class;
@@ -33,7 +40,33 @@ final class ScopeCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            AssociationField::new('user', 'scope.user'),
+            AssociationField::new('users', 'scope.users')
+                ->onlyOnForms()
+                ->setFormTypeOption('by_reference', false),
+            CollectionField::new('users', 'scope.users')
+                ->hideOnForm()
+                ->formatValue(function (string $value, Scope $scope) use ($pageName): string {
+                    if (CRUD::PAGE_INDEX === $pageName) {
+                        return $scope->getUsers()->count();
+                    }
+
+                    $baseUrl = $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(UserCrudController::class)
+                        ->setAction(Crud::PAGE_DETAIL)
+                    ;
+
+                    $users = array_map(function (User $user) use ($baseUrl): string {
+                        $url = $baseUrl
+                            ->setEntityId($user->getId())
+                            ->generateUrl()
+                        ;
+
+                        return sprintf('<a href="%s">%s</a>', $url, $user);
+                    }, $scope->getUsers()->toArray());
+
+                    return implode(', ', $users);
+                }),
             AssociationField::new('structure', 'scope.structure'),
             AssociationField::new('role', 'scope.role'),
             BooleanField::new('active', 'scope.active'),

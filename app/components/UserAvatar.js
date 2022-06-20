@@ -28,7 +28,7 @@ export default function UserAvatar({ avatarProps, user }) {
     };
 
     return (
-        <Avatar {...avatarProps} sx={{ ...avatarProps.sx, backgroundColor: fullNameToColor(user?.fullName) }}>
+        <Avatar {...avatarProps} sx={{ ...avatarProps?.sx, backgroundColor: fullNameToColor(user?.fullName) }}>
             {Boolean(user) ? (
                 Boolean(user.avatar) ? (
                     <Image src={user.avatar.contentUrl} alt={initials} layout="fill" />
