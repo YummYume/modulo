@@ -32,6 +32,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { useTheme, styled } from "@mui/material/styles";
 import PeopleIcon from "@mui/icons-material/People";
 import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 
 import { getCurrentUserFromServer } from "../api/user";
 import { useUser } from "../hooks/useUser";
@@ -40,6 +42,27 @@ import { getEvents, getEventsFromServer, addEvent, editEvent, deleteEvent } from
 import SchedulerEventFormOverlay from "../components/SchedulerEventFormOverlay";
 import UserAvatar from "../components/UserAvatar";
 import DarkSelect from "../components/Mui/DarkSelect";
+import {
+    StyledAllDayPanelCellComponent,
+    StyledAllDayPanelTitleCellComponent,
+    StyledAppointmentComponent,
+    StyledConfirmationDialogOverlayComponent,
+    StyledDateOverlayComponent,
+    StyledDayTimeScaleLayoutComponent,
+    StyledDayViewDayLayoutComponent,
+    StyledDragAndDropLayoutComponent,
+    StyledDragAndDropSourceLayoutComponent,
+    StyledMonthViewDayCellComponent,
+    StyledMonthViewDayLayoutComponent,
+    StyledNavigationButtonComponent,
+    StyledOpenButtonComponent,
+    StyledTodayButtonComponent,
+    StyledTooltipContentComponent,
+    StyledTooltipHeaderComponent,
+    StyledTooltipLayoutComponent,
+    StyledWeekTimeScaleLayoutComponent,
+    StyledWeekViewDayLayoutComponent
+} from "../components/Scheduler/StyledScheduler";
 
 export default function Home({ isPageReady }) {
     const theme = useTheme();
@@ -48,6 +71,7 @@ export default function Home({ isPageReady }) {
     const [canAddEvent, setCanAddEvent] = useState(false);
     const [actionEnabled, setActionEnabled] = useState(false);
     const [currentSelectedEvent, setCurrentSelectedEvent] = useState(null);
+    const [eventDefaultValues, setEventDefaultValues] = useState({});
     const [openedEditForm, setOpenedEditForm] = useState(false);
     const defaultCurrentDate = new Date();
     const defaultCurrentViewName = "Day";
@@ -247,8 +271,6 @@ export default function Home({ isPageReady }) {
         const eventRefetch = setInterval(
             (canView, openedEditForm) => {
                 if (canView && !openedEditForm) {
-                    console.log(canView && !openedEditForm);
-                    console.log(canView, openedEditForm, !openedEditForm);
                     fetchEvents();
                 }
             },
@@ -261,6 +283,12 @@ export default function Home({ isPageReady }) {
             clearInterval(eventRefetch);
         };
     }, []);
+
+    useEffect(() => {
+        if (!openedEditForm) {
+            setEventDefaultValues({});
+        }
+    }, [openedEditForm]);
 
     const handleOpenedEditFormChange = () => {
         if (actionEnabled) {
@@ -306,16 +334,15 @@ export default function Home({ isPageReady }) {
         return events;
     };
 
-    // Tooltips
     const TooltipLayoutComponent = ({ children, onOpenButtonClick, onDeleteButtonClick, visible, ...restProps }) => (
-        <AppointmentTooltip.Layout
+        <StyledTooltipLayoutComponent
             {...restProps}
             onOpenButtonClick={actionEnabled ? onOpenButtonClick : undefined}
             onDeleteButtonClick={actionEnabled ? onDeleteButtonClick : undefined}
             visible={actionEnabled ? visible : false}
         >
             {children}
-        </AppointmentTooltip.Layout>
+        </StyledTooltipLayoutComponent>
     );
 
     const TooltipCommandButtonComponent = ({ children, ...restProps }) => (
@@ -325,36 +352,9 @@ export default function Home({ isPageReady }) {
         ></AppointmentTooltip.CommandButton>
     );
 
-    const StyledTooltipHeaderComponent = styled(AppointmentTooltip.Header)(() => ({
-        backgroundColor: theme.palette.box.mainBox.background + " !important",
-        "& .MuiButtonBase-root": {
-            color: theme.palette.box.mainBox.color + " !important",
-            "&:hover": {
-                backgroundColor: theme.palette.box.mainBox.background
-            }
-        },
-        "& .Header-line": {
-            backgroundColor: theme.palette.box.mainBox.color + " !important"
-        }
-    }));
-
     const TooltipHeaderComponent = ({ children, ...restProps }) => (
         <StyledTooltipHeaderComponent {...restProps}></StyledTooltipHeaderComponent>
     );
-
-    const StyledTooltipContentComponent = styled(AppointmentTooltip.Content)(() => ({
-        backgroundColor: theme.palette.box.mainBox.background + " !important",
-        color: theme.palette.box.mainBox.color + " !important",
-        "& .Content-title": {
-            color: theme.palette.box.mainBox.color + " !important"
-        },
-        "& .MuiGrid-container > .MuiGrid-root > .MuiSvgIcon-root": {
-            color: theme.palette.box.mainBox.color + " !important"
-        },
-        "& .Content-relativeContainer > .MuiSvgIcon-root": {
-            color: theme.palette.secondary.main + " !important"
-        }
-    }));
 
     const TooltipContentComponent = ({ children, appointmentData, ...restProps }) => (
         <StyledTooltipContentComponent {...restProps} appointmentData={appointmentData}>
@@ -425,174 +425,116 @@ export default function Home({ isPageReady }) {
     );
 
     // Appointment
-    const AppointmentComponent = ({ children, style, onClick, onDoubleClick, ...restProps }) => (
-        <Appointments.Appointment
+    const AppointmentComponent = ({ children, onClick, onDoubleClick, ...restProps }) => (
+        <StyledAppointmentComponent
             onClick={actionEnabled ? onClick : undefined}
             onDoubleClick={actionEnabled ? onDoubleClick : undefined}
             {...restProps}
-            style={{
-                ...style,
-                backgroundColor: theme.palette.secondary.main,
-                borderRadius: "5px"
-            }}
         >
             {children}
-        </Appointments.Appointment>
+        </StyledAppointmentComponent>
     );
 
-    // Today button
-    const StyledTodayButtonComponent = styled(TodayButton.Button)(() => ({
-        borderColor: theme.palette.box.mainBox.color,
-        color: theme.palette.box.mainBox.color,
-        "&:hover": {
-            backgroundColor: theme.palette.box.mainBox.background,
-            borderColor: theme.palette.box.mainBox.color
-        }
-    }));
-
     const TodayButtonComponent = ({ children, ...restProps }) => <StyledTodayButtonComponent {...restProps}></StyledTodayButtonComponent>;
-
-    // Date navigator
-    const StyledNavigationButtonComponent = styled(DateNavigator.NavigationButton)(() => ({
-        color: theme.palette.box.mainBox.color,
-        "&:hover": {
-            backgroundColor: theme.palette.box.mainBox.background
-        }
-    }));
 
     const NavigationButtonComponent = ({ children, ...restProps }) => (
         <StyledNavigationButtonComponent {...restProps}></StyledNavigationButtonComponent>
     );
 
-    const StyledOpenButtonComponent = styled(DateNavigator.OpenButton)(() => ({
-        color: theme.palette.box.mainBox.color,
-        "&:hover": {
-            backgroundColor: theme.palette.box.mainBox.background
-        }
-    }));
-
     const OpenButtonComponent = ({ children, ...restProps }) => <StyledOpenButtonComponent {...restProps}></StyledOpenButtonComponent>;
-
-    const StyledDateOverlayComponent = styled(DateNavigator.Overlay)(() => ({
-        "& .MuiPaper-root": {
-            color: theme.palette.box.mainBox.color,
-            backgroundColor: theme.palette.box.mainBox.background
-        },
-        "& .MuiIconButton-root": {
-            color: theme.palette.box.mainBox.color,
-            "&:hover": {
-                backgroundColor: theme.palette.box.secondaryBox.background,
-                color: theme.palette.box.secondaryBox.color
-            }
-        },
-        "& .MuiTableCell-head": {
-            color: theme.palette.box.mainBox.color
-        },
-        "& .MuiTableCell-body": {
-            color: theme.palette.box.mainBox.color,
-            "&:hover": {
-                backgroundColor: theme.palette.box.secondaryBox.background,
-                color: theme.palette.box.secondaryBox.color
-            }
-        }
-    }));
 
     const DateOverlayComponent = ({ children, ...restProps }) => (
         <StyledDateOverlayComponent {...restProps}>{children}</StyledDateOverlayComponent>
     );
 
-    // Month view
-    const StyledMonthViewLayoutComponent = styled(MonthView.Layout)(() => ({
-        "& .MainLayout-header": {
-            "& .MuiTableCell-root": {
-                backgroundColor: theme.palette.menu.background,
-                "& .Cell-dayOfWeek": {
-                    color: theme.palette.menu.color
-                }
-            }
-        },
-        "& .MainLayout-flexRow": {
-            "& .MuiTableCell-root": {
-                backgroundColor: theme.palette.menu.background,
-                "& .Cell-text:not(.Cell-otherMonth)": {
-                    color: theme.palette.menu.color
-                },
-                "& .Cell-otherMonth": {
-                    color: theme.palette.menu.color,
-                    opacity: 0.5
-                }
-            }
-        }
-    }));
-
-    const MonthViewLayoutComponent = ({ children, ...restProps }) => (
-        <StyledMonthViewLayoutComponent {...restProps}>{children}</StyledMonthViewLayoutComponent>
+    const MonthViewDayLayoutComponent = ({ children, ...restProps }) => (
+        <StyledMonthViewDayLayoutComponent {...restProps}>{children}</StyledMonthViewDayLayoutComponent>
     );
 
-    // Week view
-    const StyledWeekViewLayoutComponent = styled(WeekView.Layout)(() => ({
-        "& .MainLayout-header": {
-            "& .MuiTableCell-root": {
-                backgroundColor: theme.palette.menu.background,
-                "& .Cell-dayOfWeek": {
-                    color: theme.palette.menu.color
-                },
-                "& .Cell-dayOfMonth": {
-                    color: theme.palette.menu.color
-                }
-            }
-        },
-        "& .MainLayout-flexRow": {
-            "& .MuiTableCell-root": {
-                backgroundColor: theme.palette.menu.background,
-                "& .Label-label > .Label-text": {
-                    color: theme.palette.menu.color
-                }
-            }
-        },
-        "& .TitleCell-container": {
-            backgroundColor: theme.palette.menu.background,
-            "& .TitleCell-title": {
-                color: theme.palette.menu.color
-            }
-        }
-    }));
+    const MonthViewDayCellComponent = ({ children, onDoubleClick, ...restProps }) => (
+        <StyledMonthViewDayCellComponent
+            {...restProps}
+            onDoubleClick={() => {
+                setEventDefaultValues({
+                    startDate: restProps.startDate,
+                    endDate: restProps.endDate
+                });
 
-    const WeekViewLayoutComponent = ({ children, ...restProps }) => (
-        <StyledWeekViewLayoutComponent {...restProps}>{children}</StyledWeekViewLayoutComponent>
+                onDoubleClick();
+            }}
+        >
+            {children}
+        </StyledMonthViewDayCellComponent>
     );
 
-    // Day view
-    const StyledDayViewLayoutComponent = styled(DayView.Layout)(() => ({
-        "& .MainLayout-header": {
-            "& .MuiTableCell-root": {
-                backgroundColor: theme.palette.menu.background,
-                "& .Cell-dayOfWeek": {
-                    color: theme.palette.menu.color
-                },
-                "& .Cell-dayOfMonth": {
-                    color: theme.palette.menu.color
-                }
-            }
-        },
-        "& .MainLayout-flexRow": {
-            "& .MuiTableCell-root": {
-                backgroundColor: theme.palette.menu.background,
-                "& .Label-label > .Label-text": {
-                    color: theme.palette.menu.color
-                }
-            }
-        },
-        "& .TitleCell-container": {
-            backgroundColor: theme.palette.menu.background,
-            "& .TitleCell-title": {
-                color: theme.palette.menu.color
-            }
-        }
-    }));
+    const WeekViewDayLayoutComponent = ({ children, ...restProps }) => (
+        <StyledWeekViewDayLayoutComponent {...restProps}>{children}</StyledWeekViewDayLayoutComponent>
+    );
 
-    const DayViewLayoutComponent = ({ children, ...restProps }) => (
-        <StyledDayViewLayoutComponent {...restProps}>{children}</StyledDayViewLayoutComponent>
+    const WeekViewDayCellComponent = ({ children, onDoubleClick, ...restProps }) => (
+        <WeekView.TimeTableCell
+            {...restProps}
+            onDoubleClick={() => {
+                setEventDefaultValues({
+                    startDate: restProps.startDate,
+                    endDate: restProps.endDate
+                });
+
+                onDoubleClick();
+            }}
+        >
+            {children}
+        </WeekView.TimeTableCell>
+    );
+
+    const WeekViewTimeScaleLayoutComponent = ({ children, ...restProps }) => (
+        <StyledWeekTimeScaleLayoutComponent {...restProps}>{children}</StyledWeekTimeScaleLayoutComponent>
+    );
+
+    const DayViewDayLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDayViewDayLayoutComponent {...restProps}>{children}</StyledDayViewDayLayoutComponent>
+    );
+
+    const DayViewDayCellComponent = ({ children, onDoubleClick, ...restProps }) => (
+        <DayView.TimeTableCell
+            {...restProps}
+            onDoubleClick={() => {
+                setEventDefaultValues({
+                    startDate: restProps.startDate,
+                    endDate: restProps.endDate
+                });
+
+                onDoubleClick();
+            }}
+        >
+            {children}
+        </DayView.TimeTableCell>
+    );
+
+    const DayViewTimeScaleLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDayTimeScaleLayoutComponent {...restProps}>{children}</StyledDayTimeScaleLayoutComponent>
+    );
+
+    const AllDayPanelTitleCellComponent = ({ children, ...restProps }) => (
+        <StyledAllDayPanelTitleCellComponent className="test-test" {...restProps}>
+            {children}
+        </StyledAllDayPanelTitleCellComponent>
+    );
+
+    const AllDayPanelCellComponent = ({ children, ...restProps }) => (
+        <StyledAllDayPanelCellComponent {...restProps}>{children}</StyledAllDayPanelCellComponent>
+    );
+
+    const DragAndDropLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDragAndDropLayoutComponent {...restProps}>{children}</StyledDragAndDropLayoutComponent>
+    );
+
+    const DragAndDropSourceLayoutComponent = ({ children, ...restProps }) => (
+        <StyledDragAndDropSourceLayoutComponent {...restProps}>{children}</StyledDragAndDropSourceLayoutComponent>
+    );
+
+    const ConfirmationDialogOverlayComponent = ({ children, ...restProps }) => (
+        <StyledConfirmationDialogOverlayComponent {...restProps}>{children}</StyledConfirmationDialogOverlayComponent>
     );
 
     return (
@@ -648,9 +590,23 @@ export default function Home({ isPageReady }) {
                             onAddedAppointmentChange={() => setCurrentSelectedEvent(null)}
                         />
                         <IntegratedEditing />
-                        <DayView displayName="Jour" layoutComponent={DayViewLayoutComponent} />
-                        <WeekView displayName="Semaine" layoutComponent={WeekViewLayoutComponent} />
-                        <MonthView displayName="Mois" layoutComponent={MonthViewLayoutComponent} />
+                        <DayView
+                            displayName="Jour"
+                            dayScaleLayoutComponent={DayViewDayLayoutComponent}
+                            timeTableCellComponent={DayViewDayCellComponent}
+                            timeScaleLayoutComponent={DayViewTimeScaleLayoutComponent}
+                        />
+                        <WeekView
+                            displayName="Semaine"
+                            dayScaleLayoutComponent={WeekViewDayLayoutComponent}
+                            timeTableCellComponent={WeekViewDayCellComponent}
+                            timeScaleLayoutComponent={WeekViewTimeScaleLayoutComponent}
+                        />
+                        <MonthView
+                            displayName="Mois"
+                            dayScaleLayoutComponent={MonthViewDayLayoutComponent}
+                            timeTableCellComponent={MonthViewDayCellComponent}
+                        />
                         <Toolbar />
                         <ViewSwitcher switcherComponent={SwitcherComponent} />
                         <Appointments appointmentComponent={AppointmentComponent} />
@@ -659,7 +615,11 @@ export default function Home({ isPageReady }) {
                             openButtonComponent={OpenButtonComponent}
                             overlayComponent={DateOverlayComponent}
                         />
-                        <AllDayPanel messages={{ allDay: "Toute la journée" }} />
+                        <AllDayPanel
+                            messages={{ allDay: "Toute la journée" }}
+                            titleCellComponent={AllDayPanelTitleCellComponent}
+                            cellComponent={AllDayPanelCellComponent}
+                        />
                         <TodayButton messages={{ today: "Aujourd'hui" }} buttonComponent={TodayButtonComponent} />
                         <ConfirmationDialog
                             messages={{
@@ -669,6 +629,7 @@ export default function Home({ isPageReady }) {
                                 confirmDeleteMessage: "Voulez-vous vraiment supprimer cet événement ?",
                                 confirmCancelMessage: "Ignorer les modifications non enregistrées ?"
                             }}
+                            overlayComponent={ConfirmationDialogOverlayComponent}
                         />
                         <AppointmentTooltip
                             showCloseButton
@@ -679,7 +640,12 @@ export default function Home({ isPageReady }) {
                             contentComponent={TooltipContentComponent}
                             layoutComponent={TooltipLayoutComponent}
                         />
-                        <DragDropProvider allowDrag={() => actionEnabled} allowResize={() => actionEnabled} />
+                        <DragDropProvider
+                            allowDrag={() => actionEnabled}
+                            allowResize={() => actionEnabled}
+                            draftAppointmentComponent={DragAndDropLayoutComponent}
+                            sourceAppointmentComponent={DragAndDropSourceLayoutComponent}
+                        />
                         <AppointmentForm
                             readOnly={!actionEnabled}
                             visible={actionEnabled && openedEditForm}
@@ -687,12 +653,28 @@ export default function Home({ isPageReady }) {
                             overlayComponent={connectProps(SchedulerEventFormOverlay, () => {
                                 return {
                                     event: currentSelectedEvent,
+                                    eventDefaultValues: eventDefaultValues ?? {},
                                     handleCommit: handleCommit,
                                     setOpenedEditForm: setOpenedEditForm
                                 };
                             })}
                         />
                     </Scheduler>
+                    {canAddEvent && (
+                        <Fab
+                            color="secondary"
+                            className="position-absolute"
+                            sx={{
+                                bottom: 20,
+                                right: 20,
+                                opacity: actionEnabled ? 0.85 : 0.7
+                            }}
+                            onClick={() => handleOpenedEditFormChange()}
+                            disabled={!actionEnabled}
+                        >
+                            <AddIcon />
+                        </Fab>
+                    )}
                 </Paper>
             </div>
         </React.Fragment>

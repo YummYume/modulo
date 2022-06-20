@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import { Formik, Form } from "formik";
 import Button from "@mui/material/Button";
 import CheckIcon from "@mui/icons-material/Check";
+import AddIcon from "@mui/icons-material/Add";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import FormControl from "@mui/material/FormControl";
@@ -26,7 +27,7 @@ import DarkTextField from "./Mui/DarkTextField";
 import DarkAutocomplete from "./Mui/DarkAutocomplete";
 import DarkDateTimePicker from "./Mui/DarkDateTimePicker";
 
-export default function SchedulerEventFormOverlay({ children, event, handleCommit, setOpenedEditForm, ...restProps }) {
+export default function SchedulerEventFormOverlay({ children, event, eventDefaultValues, handleCommit, setOpenedEditForm, ...restProps }) {
     const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
         initialData: { "hydra:member": [] },
         refetchOnWindowFocus: false,
@@ -68,7 +69,8 @@ export default function SchedulerEventFormOverlay({ children, event, handleCommi
         endDate: null,
         name: "",
         users: [],
-        roles: []
+        roles: [],
+        ...eventDefaultValues
     };
     const [disabledRoles, setDisabledRoles] = useState([]);
     const formRef = useRef();
@@ -352,8 +354,8 @@ export default function SchedulerEventFormOverlay({ children, event, handleCommi
                                     </div>
                                 </div>
                             </div>
-                            <div className="text-center my-4">
-                                <Button type="submit" variant="contained" endIcon={<CheckIcon />}>
+                            <div className="text-center my-4 pb-2">
+                                <Button type="submit" variant="contained" endIcon={event ? <CheckIcon /> : <AddIcon />}>
                                     {event ? "Modifier" : "Ajouter"}
                                 </Button>
                             </div>
