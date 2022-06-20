@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StructureRepository::class)]
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['event:get']])]
 class Structure
 {
     use BlameableTrait;
@@ -35,6 +35,7 @@ class Structure
     #[ORM\JoinColumn(nullable: true)]
     #[Assert\Expression(expression: 'value not in this.getChildStructures().toArray()', message: 'structure.parent_structure.not_in_child_structures')]
     #[Assert\Expression(expression: 'value !== this', message: 'structure.parent_structure.not_self')]
+    #[Groups(['event:get', 'get:me'])]
     private ?Structure $parentStructure = null;
 
     #[ORM\OneToMany(mappedBy: 'structure', targetEntity: Scope::class, orphanRemoval: true)]
@@ -42,6 +43,7 @@ class Structure
 
     #[ORM\OneToMany(mappedBy: 'parentStructure', targetEntity: self::class)]
     #[Assert\Valid]
+    #[Groups(['event:get', 'get:me'])]
     private Collection $childStructures;
 
     public function __construct()

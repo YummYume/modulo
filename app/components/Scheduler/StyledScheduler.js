@@ -231,7 +231,7 @@ export const StyledAllDayPanelTitleCellComponent = styled(AllDayPanel.TitleCell)
     return {
         backgroundColor: theme.palette.menu.background,
         "& .TitleCell-title": {
-            color: theme.palette.menu.color
+            color: theme.palette.menu.color + " !important"
         }
     };
 });

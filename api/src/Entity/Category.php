@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[ApiResource(normalizationContext: ['groups' => ['event:get']])]
+#[ApiResource(normalizationContext: ['groups' => ['event:get']], forceEager: false)] // TODO investigate later, we have a problem with the normalizationContext
 class Category
 {
     use BlameableTrait;

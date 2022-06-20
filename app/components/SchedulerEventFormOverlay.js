@@ -29,8 +29,18 @@ import { getRoles } from "../api/role";
 import DarkTextField from "./Mui/DarkTextField";
 import DarkAutocomplete from "./Mui/DarkAutocomplete";
 import DarkDateTimePicker from "./Mui/DarkDateTimePicker";
+import { attributes, isGrantedEvent } from "../services/event";
 
-export default function SchedulerEventFormOverlay({ children, event, eventDefaultValues, handleCommit, setOpenedEditForm, ...restProps }) {
+export default function SchedulerEventFormOverlay({
+    children,
+    event,
+    eventDefaultValues,
+    handleCommit,
+    setOpenedEditForm,
+    actionEnabled,
+    user,
+    ...restProps
+}) {
     const { data: categories, isFetching: isCategoriesLoading } = useQuery("categories", getCategories, {
         initialData: { "hydra:member": [] },
         refetchOnWindowFocus: false,
@@ -76,10 +86,15 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
         name: "",
         users: [],
         roles: [],
-        visibility: null,
+        visibility: "public_access",
         ...eventDefaultValues
     };
     const [disabledRoles, setDisabledRoles] = useState([]);
+    const canAdd = isGrantedEvent(attributes.ADD, user);
+    const canEdit = event ? isGrantedEvent(attributes.EDIT, user, event) : false;
+    const canAddParticipants = isGrantedEvent(attributes.ADD_PARTICIPANTS, user);
+    const canAddRoles = isGrantedEvent(attributes.ADD_ROLES, user);
+    const canChangeVisibility = isGrantedEvent(attributes.SET_VISIBILITY, user, event);
     const formRef = useRef();
 
     const handleCategoryChange = (setFieldValue, categories) => {
@@ -260,6 +275,7 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                         </FormControl>
                                         <FormControl fullWidth className="my-2" error={touched.roles && !!errors.roles}>
                                             <DarkAutocomplete
+                                                disabled={!canAddRoles}
                                                 loading={isRolesLoading}
                                                 loadingText="Chargement..."
                                                 noOptionsText="Aucun rôle trouvé"
@@ -283,7 +299,9 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                                         {name}
                                                     </li>
                                                 )}
-                                                renderInput={(params) => <DarkTextField {...params} label="Rôles invités" />}
+                                                renderInput={(params) => (
+                                                    <DarkTextField {...params} label="Rôles invités" disabled={!canAddRoles} />
+                                                )}
                                                 multiple
                                                 openOnFocus
                                                 limitTags={1}
@@ -302,6 +320,7 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                         </FormControl>
                                         <FormControl fullWidth className="my-2" error={touched.users && !!errors.users}>
                                             <DarkAutocomplete
+                                                disabled={!canAddParticipants}
                                                 loading={isusersLoading}
                                                 loadingText="Chargement..."
                                                 noOptionsText="Aucun utilisateur trouvé"
@@ -332,6 +351,7 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                                         {...params}
                                                         label="Personnes invitées"
                                                         error={touched.users && !!errors.users}
+                                                        disabled={!canAddParticipants}
                                                     />
                                                 )}
                                                 multiple
@@ -361,6 +381,7 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                     </div>
                                     <FormControl fullWidth className="my-2" error={touched.visibility && !!errors.visibility}>
                                         <DarkAutocomplete
+                                            disabled={!canChangeVisibility}
                                             id="visibility"
                                             name="visibility"
                                             value={values.visibility}
@@ -368,7 +389,14 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                             onBlur={handleBlur}
                                             options={visibilities}
                                             getOptionLabel={(option) => optionLabels[option]}
-                                            renderInput={(params) => <DarkTextField {...params} label="Visibilité" />}
+                                            renderInput={(params) => (
+                                                <DarkTextField
+                                                    {...params}
+                                                    label="Visibilité"
+                                                    error={touched.visibility && !!errors.visibility}
+                                                    disabled={!canChangeVisibility}
+                                                />
+                                            )}
                                             openOnFocus
                                         />
                                         <FormHelperText>{touched.visibility && errors.visibility}</FormHelperText>
@@ -376,7 +404,12 @@ export default function SchedulerEventFormOverlay({ children, event, eventDefaul
                                 </div>
                             </div>
                             <div className="text-center my-4 pb-2">
-                                <Button type="submit" variant="contained" endIcon={event ? <CheckIcon /> : <AddIcon />}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    disabled={!actionEnabled || (event ? !canEdit : !canAdd)}
+                                    endIcon={event ? <CheckIcon /> : <AddIcon />}
+                                >
                                     {event ? "Modifier" : "Ajouter"}
                                 </Button>
                             </div>

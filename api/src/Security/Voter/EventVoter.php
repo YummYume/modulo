@@ -176,6 +176,11 @@ final class EventVoter extends Voter
             return false;
         }
 
+        // If creating an event, then the user can change the visibility
+        if (null === $event->getId()) {
+            return true;
+        }
+
         return $scope->hasFeature(Feature::CUSTOMIZE_EVENT_VISIBILITY) || $event->getCreatedBy() === $user;
     }
 

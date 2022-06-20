@@ -5,6 +5,7 @@ namespace App\Entity\Traits;
 use App\Entity\Scope;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait ScopeableTrait
 {
@@ -12,6 +13,7 @@ trait ScopeableTrait
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: 'scope.not_null')]
     #[Assert\Valid]
+    #[Groups(['event:get'])]
     private ?Scope $scope = null;
 
     public function getScope(): ?Scope

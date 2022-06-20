@@ -24,7 +24,7 @@ export const isGranted = (permission, user) => {
         return false;
     }
 
-    return currentScope.role?.features?.includes(permission);
+    return currentScope.role?.features ? Object.values(currentScope.role.features).includes(permission) : false;
 };
 
 export const adminRoles = () => [roles.ROLE_ADMIN, roles.ROLE_SUPER_ADMIN];
