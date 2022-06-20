@@ -12,7 +12,7 @@ api_platform:
                 name: Authorization
                 type: header
 
-when@prod:
-    api_platform:
-        enable_swagger: false
-        enable_swagger_ui: false
+# when@prod:
+#     api_platform:
+#         enable_swagger: false
+#         enable_swagger_ui: false
