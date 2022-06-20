@@ -334,6 +334,7 @@ export default function Home({ isPageReady }) {
         return events;
     };
 
+    // Tooltips
     const TooltipLayoutComponent = ({ children, onOpenButtonClick, onDeleteButtonClick, visible, ...restProps }) => (
         <StyledTooltipLayoutComponent
             {...restProps}
@@ -424,7 +425,7 @@ export default function Home({ isPageReady }) {
         </FormControl>
     );
 
-    // Appointment
+    // Appointments
     const AppointmentComponent = ({ children, onClick, onDoubleClick, ...restProps }) => (
         <StyledAppointmentComponent
             onClick={actionEnabled ? onClick : undefined}
@@ -435,8 +436,10 @@ export default function Home({ isPageReady }) {
         </StyledAppointmentComponent>
     );
 
+    // Today button
     const TodayButtonComponent = ({ children, ...restProps }) => <StyledTodayButtonComponent {...restProps}></StyledTodayButtonComponent>;
 
+    // Date navigator
     const NavigationButtonComponent = ({ children, ...restProps }) => (
         <StyledNavigationButtonComponent {...restProps}></StyledNavigationButtonComponent>
     );
@@ -447,6 +450,7 @@ export default function Home({ isPageReady }) {
         <StyledDateOverlayComponent {...restProps}>{children}</StyledDateOverlayComponent>
     );
 
+    // Month view
     const MonthViewDayLayoutComponent = ({ children, ...restProps }) => (
         <StyledMonthViewDayLayoutComponent {...restProps}>{children}</StyledMonthViewDayLayoutComponent>
     );
@@ -467,6 +471,7 @@ export default function Home({ isPageReady }) {
         </StyledMonthViewDayCellComponent>
     );
 
+    // Week view
     const WeekViewDayLayoutComponent = ({ children, ...restProps }) => (
         <StyledWeekViewDayLayoutComponent {...restProps}>{children}</StyledWeekViewDayLayoutComponent>
     );
@@ -491,6 +496,7 @@ export default function Home({ isPageReady }) {
         <StyledWeekTimeScaleLayoutComponent {...restProps}>{children}</StyledWeekTimeScaleLayoutComponent>
     );
 
+    // Day view
     const DayViewDayLayoutComponent = ({ children, ...restProps }) => (
         <StyledDayViewDayLayoutComponent {...restProps}>{children}</StyledDayViewDayLayoutComponent>
     );
@@ -515,6 +521,7 @@ export default function Home({ isPageReady }) {
         <StyledDayTimeScaleLayoutComponent {...restProps}>{children}</StyledDayTimeScaleLayoutComponent>
     );
 
+    // All day panel
     const AllDayPanelTitleCellComponent = ({ children, ...restProps }) => (
         <StyledAllDayPanelTitleCellComponent className="test-test" {...restProps}>
             {children}
@@ -525,6 +532,7 @@ export default function Home({ isPageReady }) {
         <StyledAllDayPanelCellComponent {...restProps}>{children}</StyledAllDayPanelCellComponent>
     );
 
+    // Drag and drop
     const DragAndDropLayoutComponent = ({ children, ...restProps }) => (
         <StyledDragAndDropLayoutComponent {...restProps}>{children}</StyledDragAndDropLayoutComponent>
     );
@@ -533,6 +541,7 @@ export default function Home({ isPageReady }) {
         <StyledDragAndDropSourceLayoutComponent {...restProps}>{children}</StyledDragAndDropSourceLayoutComponent>
     );
 
+    // Confirmation dialog
     const ConfirmationDialogOverlayComponent = ({ children, ...restProps }) => (
         <StyledConfirmationDialogOverlayComponent {...restProps}>{children}</StyledConfirmationDialogOverlayComponent>
     );
