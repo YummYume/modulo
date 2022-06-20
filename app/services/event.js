@@ -1,33 +1,36 @@
-const eventCrud = "event_crud";
-const editThirdPartyEvent = "edit_third_party_event";
-const editChildEvent = "edit_child_event";
-const deleteThirdPartyEvent = "delete_third_party_event";
-const deleteChildEvent = "delete_child_event";
-const customizeGuestFunctions = "customize_guest_functions";
-const nominativeInvitations = "nominative_invitations";
-const customizeEventVisibility = "customize_event_visibility";
-const agendaAccess = "agenda_access";
-const seeChildEvents = "see_child_events";
+import { features } from "./user";
 
-const publicAccess = "public_access";
-const restrictedAccess = "restricted_access";
-const privateAccess = "private_access";
+export const attributes = {
+    VIEW: "EVENT_VIEW",
+    ADD: "EVENT_ADD",
+    EDIT: "EVENT_EDIT",
+    DELETE: "EVENT_DELETE",
+    ADD_PARTICIPANTS: "EVENT_ADD_PARTICIPANTS",
+    ADD_ROLES: "EVENT_ADD_ROLES",
+    SET_VISIBILITY: "EVENT_SET_VISIBILITY"
+};
+
+export const accessTypes = {
+    PUBLIC_ACCESS: "public_access",
+    RESTRICTED_ACCESS: "restricted_access",
+    PRIVATE_ACCESS: "private_access"
+};
 
 export const isGrantedEvent = (permission, user, event) => {
     switch (permission) {
-        case "canView":
+        case attributes.VIEW:
             return canView(user, event);
-        case "canAdd":
+        case attributes.ADD:
             return canAdd(user);
-        case "canEdit":
+        case attributes.EDIT:
             return canEdit(user, event);
-        case "canDelete":
+        case attributes.DELETE:
             return canDelete(user, event);
-        case "canAddParticipants":
+        case attributes.ADD_PARTICIPANTS:
             return canAddParticipants(user);
-        case "canAddRoles":
+        case attributes.ADD_ROLES:
             return canAddRoles(user);
-        case "canSetVisibility":
+        case attributes.SET_VISIBILITY:
             return canSetVisibility(user, event);
         default:
             return false;
@@ -40,7 +43,7 @@ const canView = (user, event) => {
     let scope = user.currentScope;
 
     // If no access to the agenda, or the event isn't active, then no access to the event
-    if (!event.active || !hasFeature(scope, agendaAccess)) {
+    if (!event.active || !hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
@@ -53,7 +56,7 @@ const canView = (user, event) => {
         event.scope.structure.childStructures.includes(scope.structure)
     ) {
         // If the event is a child structure but the scope cannot see child events, then no access
-        if (event.scope.structure.parentStructure === scope.structure && !hasFeature(scope, seeChildEvents)) {
+        if (event.scope.structure.parentStructure === scope.structure && !hasFeature(scope, features.SEE_CHILD_EVENTS)) {
             return false;
         }
 
@@ -61,11 +64,11 @@ const canView = (user, event) => {
         // If the visibility is restricted, then the user can view the event if he is part of the participants or is the creator
         // If the visibility is private, then the user can view the event if he is the creator
         switch (event.visibility) {
-            case publicAccess:
+            case accessTypes.PUBLIC_ACCESS:
                 return true;
-            case restrictedAccess:
+            case accessTypes.RESTRICTED_ACCESS:
                 return event.createdBy === user || event.users.includes(user) || event.scope.structure === scope.structure;
-            case privateAccess:
+            case accessTypes.PRIVATE_ACCESS:
                 return event.createdBy === user;
             default:
                 return false;
@@ -81,12 +84,12 @@ const canAdd = (user) => {
     let scope = user.currentScope;
 
     // If no access to the agenda, then impossible to add an event
-    if (!hasFeature(scope, agendaAccess)) {
+    if (!hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
     // Can add an event if access to the agenda and if permission to add events
-    return hasFeature(scope, eventCrud);
+    return hasFeature(scope, features.EVENT_CRUD);
 };
 
 // Can the user edit an event?
@@ -95,23 +98,23 @@ const canEdit = (user, event) => {
     let scope = user.currentScope;
 
     // If no access to the agenda, then impossible to edit an event
-    if (!hasFeature(scope, agendaAccess)) {
+    if (!hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
     // If is creator of the event, then the user can edit the event if granted
     if (event.createdBy === user) {
-        return hasFeature(scope, eventCrud);
+        return hasFeature(scope, features.EVENT_CRUD);
     }
 
     // If same structure, then the user can edit the event if granted
     if (event.scope.structure === scope.structure) {
-        return hasFeature(scope, editThirdPartyEvent);
+        return hasFeature(scope, features.EDIT_THIRD_PARTY_EVENT);
     }
 
     // If child structure, then the user can edit the event if granted
     if (scope.structure.childStructures.includes(event.scope.structure)) {
-        return hasFeature(scope, editChildEvent);
+        return hasFeature(scope, features.EDIT_CHILD_EVENT);
     }
 
     // Return false by default
@@ -124,23 +127,23 @@ const canDelete = (user, event) => {
     let scope = user.currentScope;
 
     // If no access to the agenda, then impossible to delete an event
-    if (!hasFeature(scope, agendaAccess)) {
+    if (!hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
     // If is creator of the event, then the user can delete the event if granted
     if (event.createdBy === user) {
-        return hasFeature(scope, eventCrud);
+        return hasFeature(scope, features.EVENT_CRUD);
     }
 
     // If same structure, then the user can delete the event if granted
     if (event.scope.structure === scope.structure) {
-        return hasFeature(scope, deleteThirdPartyEvent);
+        return hasFeature(scope, features.DELETE_THIRD_PARTY_EVENT);
     }
 
     // If child structure, then the user can delete the event if granted
     if (scope.structure.childStructures.includes(event.scope.structure)) {
-        return hasFeature(scope, deleteChildEvent);
+        return hasFeature(scope, features.DELETE_CHILD_EVENT);
     }
 
     // Return false by default
@@ -153,11 +156,11 @@ const canAddParticipants = (user) => {
     let scope = user.currentScope;
 
     // If no access to the agenda, then impossible to add participants to an event
-    if (!hasFeature(scope, agendaAccess)) {
+    if (!hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
-    return hasFeature(scope, nominativeInvitations);
+    return hasFeature(scope, features.NOMINATIVE_INVITATIONS);
 };
 
 // Can the user add roles to an event?
@@ -166,11 +169,11 @@ const canAddRoles = (user) => {
     let scope = user.currentScope;
 
     // If no access to the agenda, then impossible to add roles to an event
-    if (!hasFeature(scope, agendaAccess)) {
+    if (!hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
-    return hasFeature(scope, customizeGuestFunctions);
+    return hasFeature(scope, features.CUSTOMIZE_GUEST_FUNCTIONS);
 };
 
 // Can the user change the visibility of an event?
@@ -179,11 +182,11 @@ const canSetVisibility = (user, event) => {
     let scope = user.currentScope;
 
     // If no access to the agenda, then impossible to change the visibility of an event
-    if (!hasFeature(scope, agendaAccess)) {
+    if (!hasFeature(scope, features.AGENDA_ACCESS)) {
         return false;
     }
 
-    return hasFeature(scope, customizeEventVisibility || event.createdBy === user);
+    return hasFeature(scope, features.CUSTOMIZE_EVENT_VISIBILITY || event.createdBy === user);
 };
 
 const hasFeature = (scope, feature) => {

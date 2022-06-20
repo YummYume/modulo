@@ -1,14 +1,14 @@
 export const features = {
-    EVENT_CRUD: "EVENT_CRUD",
-    EDIT_THIRD_PARTY_EVENT: "EDIT_THIRD_PARTY_EVENT",
-    EDIT_CHILD_EVENT: "EDIT_CHILD_EVENT",
-    DELETE_THIRD_PARTY_EVENT: "DELETE_THIRD_PARTY_EVENT",
-    DELETE_CHILD_EVENT: "DELETE_CHILD_EVENT",
-    CUSTOMIZE_GUEST_FUNCTIONS: "CUSTOMIZE_GUEST_FUNCTIONS",
-    NOMINATIVE_INVITATIONS: "NOMINATIVE_INVITATIONS",
-    CUSTOMIZE_EVENT_VISIBILITY: "CUSTOMIZE_EVENT_VISIBILITY",
-    AGENDA_ACCESS: "AGENDA_ACCESS",
-    SEE_CHILD_EVENTS: "SEE_CHILD_EVENTS"
+    EVENT_CRUD: "event_crud",
+    EDIT_THIRD_PARTY_EVENT: "edit_third_party_event",
+    EDIT_CHILD_EVENT: "edit_child_event",
+    DELETE_THIRD_PARTY_EVENT: "delete_third_party_event",
+    DELETE_CHILD_EVENT: "delete_child_event",
+    CUSTOMIZE_GUEST_FUNCTIONS: "customize_guest_functions",
+    NOMINATIVE_INVITATIONS: "nominative_invitations",
+    CUSTOMIZE_EVENT_VISIBILITY: "customize_event_visibility",
+    AGENDA_ACCESS: "agenda_access",
+    SEE_CHILD_EVENTS: "see_child_events"
 };
 
 export const roles = {
