@@ -42,6 +42,7 @@ final class ScopeCrudController extends AbstractCrudController
         return [
             AssociationField::new('users', 'scope.users')
                 ->onlyOnForms()
+                ->autocomplete()
                 ->setFormTypeOption('by_reference', false),
             CollectionField::new('users', 'scope.users')
                 ->hideOnForm()

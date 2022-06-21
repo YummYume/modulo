@@ -93,8 +93,8 @@ export default function Home({ isPageReady }) {
                 ...event,
                 id: event["@id"], // this is required for the Scheduler to differentiate between events, we could use the normal id or simply the @id
                 title: event.name, // this is required for the Scheduler to display the title
-                startDate: event.startDate ? zonedTimeToUtc(event.startDate, "Europe/Paris") : null,
-                endDate: event.endDate ? zonedTimeToUtc(event.endDate, "Europe/Paris") : null
+                startDate: event.startDate ? zonedTimeToUtc(event.startDate, "Europe/Paris") : undefined,
+                endDate: event.endDate ? zonedTimeToUtc(event.endDate, "Europe/Paris") : undefined
             }));
         }
     });
@@ -288,6 +288,7 @@ export default function Home({ isPageReady }) {
     useEffect(() => {
         if (!openedEditForm) {
             setEventDefaultValues({});
+            setCurrentSelectedEvent(null);
         }
     }, [openedEditForm]);
 
@@ -302,8 +303,8 @@ export default function Home({ isPageReady }) {
             addEventMutation.mutate({
                 name: added.name,
                 description: added.description,
-                startDate: added.startDate ? zonedTimeToUtc(added.startDate, serverTimezone) : null,
-                endDate: added.endDate ? zonedTimeToUtc(added.endDate, serverTimezone) : null,
+                startDate: added.startDate ? zonedTimeToUtc(added.startDate, serverTimezone) : undefined,
+                endDate: added.endDate ? zonedTimeToUtc(added.endDate, serverTimezone) : undefined,
                 scope: user?.currentScope["@id"],
                 categories: added.categories.map((category) => category["@id"]),
                 users: added.users.map((participant) => participant["@id"]),
@@ -324,8 +325,8 @@ export default function Home({ isPageReady }) {
                     id: changedId,
                     values: {
                         ...newValues,
-                        startDate: newValues.startDate ? zonedTimeToUtc(newValues.startDate, serverTimezone) : null,
-                        endDate: newValues.endDate ? zonedTimeToUtc(newValues.endDate, serverTimezone) : null,
+                        startDate: newValues.startDate ? zonedTimeToUtc(newValues.startDate, serverTimezone) : undefined,
+                        endDate: newValues.endDate ? zonedTimeToUtc(newValues.endDate, serverTimezone) : undefined,
                         categories: newValues.categories.map((category) => category["@id"]),
                         users: newValues.users.map((participant) => participant["@id"]),
                         roles: newValues.roles.map((role) => role["@id"]),
